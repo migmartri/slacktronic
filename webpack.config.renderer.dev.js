@@ -64,7 +64,7 @@ export default merge.smart(baseConfig, {
               // before react-hot-loader/babel
               'transform-class-properties',
               'transform-es2015-classes',
-              'react-hot-loader/babel'
+              'react-hot-loader/babel',
             ],
           }
         }
