@@ -8,7 +8,7 @@ const actions = [
   'SLACK_TOKEN_STORE_ERROR',
 ];
 
-const actionFormatter = (actionNames) => {
+const actionFormatter = (actionNames): { [string]: string } => {
   const formatted = {};
 
   actionNames.forEach((action) => {
@@ -18,5 +18,4 @@ const actionFormatter = (actionNames) => {
   return formatted;
 };
 
-const actionTypes = actionFormatter(actions);
-export default actionTypes;
+export default actionFormatter(actions);

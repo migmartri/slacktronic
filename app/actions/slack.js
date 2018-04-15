@@ -1,29 +1,15 @@
 // @flow
-import type { Dispatch } from './common';
+import type { Dispatch, Action } from './common';
 import actionTypes from './actionTypes';
 import configStore from '../lib/configStore';
 
 
-type StoringTokenAction = {
-  type: actionTypes.SLACK_TOKEN_STORING,
-  token: string
-};
-
-type TokenStoredAction = {
-  type: actionTypes.SLACK_TOKEN_STORED,
-  token: string
-};
-
-export type SlackAction =
-  | StoringTokenAction
-  | TokenStoredAction;
-
-const tokenStoring = (token: string): StoringTokenAction => ({
+const tokenStoring = (token: string): Action => ({
   type: actionTypes.SLACK_TOKEN_STORING,
   token
 });
 
-const tokenStored = (token: string): TokenStoredAction => ({
+const tokenStored = (token: string): Action => ({
   type: actionTypes.SLACK_TOKEN_STORED,
   token
 });
