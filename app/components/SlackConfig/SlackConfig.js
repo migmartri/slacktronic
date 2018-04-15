@@ -8,7 +8,6 @@ import styles from './SlackConfig.scss';
 
 const { Step } = Steps;
 const FormItem = Form.Item;
-const { TextArea } = Input;
 
 type Props = {};
 
@@ -53,6 +52,7 @@ class SlackConfig extends Component<Props> {
 
   handleAccessTokenSubmit() {
     this.props.onTokenCreate(this.state.token);
+    this.handleStepSubmit();
   }
 
   get authorizeUrl() {
@@ -116,8 +116,8 @@ class SlackConfig extends Component<Props> {
               <a href={this.getTokenUrl} onClick={SlackConfig.openUrl}>{this.getTokenUrl}</a>
             </p>
             <Form layout="inline" onSubmit={this.handleAccessTokenSubmit}>
-              <FormItem label="User Token" required="true">
-                <TextArea rows="4" id="token" value={this.state.token} onChange={this.handleChange} />
+              <FormItem label="User Access Token" required="true">
+                <Input type="password" id="token" value={this.state.token} onChange={this.handleChange} />
               </FormItem>
               <FormItem>
                 <Button type="primary" htmlType="submit">Finish</Button>

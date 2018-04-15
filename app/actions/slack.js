@@ -1,5 +1,6 @@
 // @flow
 import actionTypes from './actionTypes';
+import configStore from '../lib/configStore';
 
 type actionType = {
   +type: string
@@ -20,8 +21,10 @@ const tokenStored = (token: string): actionType => ({
 //   token
 // });
 
+// TODO(miguel) Add error handling
 const storeToken = (token: string) => dispatch => {
   dispatch(tokenStoring(token));
+  configStore.set('slack', { token, validToken: true });
   dispatch(tokenStored(token));
 };
 
