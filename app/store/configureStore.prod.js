@@ -10,8 +10,8 @@ const history = createBrowserHistory();
 const router = routerMiddleware(history);
 const enhancer = applyMiddleware(thunk, router);
 
-function configureStore(initialState?: counterStateType) {
-  return createStore(rootReducer, initialState, enhancer);
+function configureStore() {
+  return createStore(rootReducer, enhancer);
 }
 
 export default { configureStore, history };

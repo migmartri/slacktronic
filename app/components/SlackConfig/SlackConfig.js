@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { shell } from 'electron';
-import { RTMClient, WebClient } from '@slack/client';
 import { Link } from 'react-router-dom';
 import { Steps, Form, Input, Button } from 'antd';
 import styles from './SlackConfig.scss';
@@ -22,7 +22,7 @@ const steps = [{
   title: 'Completed!',
 }];
 
-export default class SlackConfig extends Component<Props> {
+class SlackConfig extends Component<Props> {
   static openUrl(e) {
     e.preventDefault();
     return shell.openExternal(e.target.href);
@@ -37,36 +37,10 @@ export default class SlackConfig extends Component<Props> {
       code: '',
       token: '',
     };
+
     this.handleChange = this.handleChange.bind(this);
     this.handleStepSubmit = this.handleStepSubmit.bind(this);
-  }
-
-  componentDidMount() {
-    console.warn('mounted');
-    // From the user
-    // const tokenUser = \
-    const rtm = new RTMClient(this.state.token);
-    const web = new WebClient(this.state.token);
-
-    rtm.start();
-
-    web.users.list()
-      .then(res => console.log('Message sent: ', res))
-      .catch(console.error);
-
-    rtm.on('message', (event) => {
-      console.warn('message', event);
-    });
-
-    rtm.subscribePresence(['UA7M7BMB8']);
-
-    rtm.on('presence_change', (event) => {
-      console.warn('presence_change', event);
-    });
-
-    rtm.on('manual_presence_change', (event) => {
-      console.warn('manual_presence_change', event);
-    });
+    this.handleAccessTokenSubmit = this.handleAccessTokenSubmit.bind(this);
   }
 
   handleChange({ target }) {
@@ -75,6 +49,10 @@ export default class SlackConfig extends Component<Props> {
 
   handleStepSubmit() {
     this.setState({ currentStep: this.state.currentStep + 1 });
+  }
+
+  handleAccessTokenSubmit() {
+    this.props.onTokenCreate(this.state.token);
   }
 
   get authorizeUrl() {
@@ -137,7 +115,7 @@ export default class SlackConfig extends Component<Props> {
             <p>
               <a href={this.getTokenUrl} onClick={SlackConfig.openUrl}>{this.getTokenUrl}</a>
             </p>
-            <Form layout="inline" onSubmit={this.handleStepSubmit}>
+            <Form layout="inline" onSubmit={this.handleAccessTokenSubmit}>
               <FormItem label="User Token" required="true">
                 <TextArea rows="4" id="token" value={this.state.token} onChange={this.handleChange} />
               </FormItem>
@@ -158,3 +136,9 @@ export default class SlackConfig extends Component<Props> {
     );
   }
 }
+
+SlackConfig.propTypes = {
+  onTokenCreate: PropTypes.func.isRequired
+};
+
+export default SlackConfig;
