@@ -1,20 +1,16 @@
-// @flow
 import actionTypes from '../actions/actionTypes';
-
-type actionType = {
-  +type: string
-};
+import type { Action } from '../actions/common';
 
 type slackStateType = {
-  token?: string,
-  fetching: boolean
+  +token?: string,
+  +fetching: boolean
 };
 
 const initialState: slackStateType = {
   fetching: false
 };
 
-export default function slack(state: slackStateType = initialState, action: actionType) {
+export default function slack(state: slackStateType = initialState, action: Action) {
   switch (action.type) {
     case actionTypes.SLACK_TOKEN_STORING:
       return { ...state, fetching: true };

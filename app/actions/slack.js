@@ -1,17 +1,29 @@
 // @flow
+import type { Dispatch } from './common';
 import actionTypes from './actionTypes';
 import configStore from '../lib/configStore';
 
-type actionType = {
-  +type: string
+
+type StoringTokenAction = {
+  type: actionTypes.SLACK_TOKEN_STORING,
+  token: string
 };
 
-const tokenStoring = (token: string): actionType => ({
+type TokenStoredAction = {
+  type: actionTypes.SLACK_TOKEN_STORED,
+  token: string
+};
+
+export type SlackAction =
+  | StoringTokenAction
+  | TokenStoredAction;
+
+const tokenStoring = (token: string): StoringTokenAction => ({
   type: actionTypes.SLACK_TOKEN_STORING,
   token
 });
 
-const tokenStored = (token: string): actionType => ({
+const tokenStored = (token: string): TokenStoredAction => ({
   type: actionTypes.SLACK_TOKEN_STORED,
   token
 });
@@ -22,7 +34,7 @@ const tokenStored = (token: string): actionType => ({
 // });
 
 // TODO(miguel) Add error handling
-const storeToken = (token: string) => dispatch => {
+const storeToken = (token: string) => (dispatch: Dispatch): void => {
   dispatch(tokenStoring(token));
   configStore.set('slack', { token, validToken: true });
   dispatch(tokenStored(token));

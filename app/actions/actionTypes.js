@@ -1,3 +1,5 @@
+// @flow
+
 const prefix = 'slacktronic';
 
 const actions = [

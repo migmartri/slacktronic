@@ -1,6 +1,5 @@
 // @flow
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { shell } from 'electron';
 import { Link } from 'react-router-dom';
 import { Steps, Form, Input, Button } from 'antd';
@@ -9,9 +8,19 @@ import styles from './SlackConfig.scss';
 const { Step } = Steps;
 const FormItem = Form.Item;
 
-type Props = {};
+type Props = {
+  onTokenCreate: (string) => void
+};
 
-const steps = [{
+type State = {
+  currentStep: number,
+  clientID: string,
+  clientSecret: string,
+  code: string,
+  token: string
+};
+
+const steps: { title: string }[] = [{
   title: 'Create application',
 }, {
   title: 'Authorize application',
@@ -21,49 +30,44 @@ const steps = [{
   title: 'Completed!',
 }];
 
-class SlackConfig extends Component<Props> {
-  static openUrl(e) {
-    e.preventDefault();
-    return shell.openExternal(e.target.href);
+class SlackConfig extends Component<Props, State> {
+  static openUrl(event: SyntheticEvent<HTMLLinkElement>) {
+    event.preventDefault();
+    return shell.openExternal(event.currentTarget.href);
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentStep: 0,
-      clientID: '',
-      clientSecret: '',
-      code: '',
-      token: '',
-    };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleStepSubmit = this.handleStepSubmit.bind(this);
-    this.handleAccessTokenSubmit = this.handleAccessTokenSubmit.bind(this);
+  state = {
+    currentStep: 0,
+    clientID: '',
+    clientSecret: '',
+    code: '',
+    token: ''
   }
 
-  handleChange({ target }) {
+  handleChange = (event: SyntheticEvent<HTMLButtonElement>) => {
+    const target = event.currentTarget;
+
     this.setState({ [target.id]: target.value });
   }
 
-  handleStepSubmit() {
+  handleStepSubmit = (): void => {
     this.setState({ currentStep: this.state.currentStep + 1 });
   }
 
-  handleAccessTokenSubmit() {
+  handleAccessTokenSubmit = (): void => {
     this.props.onTokenCreate(this.state.token);
     this.handleStepSubmit();
   }
 
-  get authorizeUrl() {
+  get authorizeUrl(): string {
     return `https://slack.com/oauth/authorize?client_id=${this.state.clientID}&scope=client`;
   }
 
-  get getTokenUrl() {
+  get getTokenUrl(): string {
     return `https://slack.com/api/oauth.access?client_id=${this.state.clientID}&client_secret=${this.state.clientSecret}&code=${this.state.code}`;
   }
 
-  get currentStep() {
+  get currentStep(): number | null {
     if (this.state.clientID === '' || this.state.clientSecret === '') {
       return 0;
     } else if (!this.state.code) {
@@ -136,9 +140,4 @@ class SlackConfig extends Component<Props> {
     );
   }
 }
-
-SlackConfig.propTypes = {
-  onTokenCreate: PropTypes.func.isRequired
-};
-
 export default SlackConfig;
