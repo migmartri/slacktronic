@@ -4,12 +4,14 @@ import { shell } from 'electron';
 import { Link } from 'react-router-dom';
 import { Steps, Form, Input, Button } from 'antd';
 import styles from './SlackConfig.scss';
+import type { slackStateType, userInfoType } from '../../reducers/slack'
 
 const { Step } = Steps;
 const FormItem = Form.Item;
 
 type Props = {
-  onTokenCreate: (string) => void
+  onTokenCreate: (string) => void,
+  data: slackStateType
 };
 
 type State = {
@@ -56,7 +58,6 @@ class SlackConfig extends Component<Props, State> {
 
   handleAccessTokenSubmit = (): void => {
     this.props.onTokenCreate(this.state.token);
-    this.handleStepSubmit();
   }
 
   get authorizeUrl(): string {
@@ -77,7 +78,35 @@ class SlackConfig extends Component<Props, State> {
     } return null;
   }
 
+  get userInfo(): ?userInfoType {
+    const { userInfo } = this.props.data;
+    if (userInfo) {
+      return userInfo;
+    } else {
+      return null;
+    }
+  }
   render() {
+    return(
+      this.userInfo ? this.completedPage() : this.onboardingFlow()
+    );
+  }
+
+  completedPage() {
+    return this.userInfo && (
+      <div>
+        <p>
+          Congratulations {this.userInfo.user},
+          you have connected Slacktronic to the {this.userInfo.team} team!
+        </p>
+        <p>
+          <Link to="/">Return to app</Link>
+        </p>
+      </div>
+    )
+  };
+
+  onboardingFlow() {
     return (
       <div>
         <Steps size="small" current={this.state.currentStep}>
@@ -128,12 +157,6 @@ class SlackConfig extends Component<Props, State> {
               </FormItem>
             </Form>
           </div>
-          )}
-          { this.state.currentStep === 3 && (
-          <p>
-            Setup completed, hello [USER!!] [avatar here]<br />
-            <Link to="/">Return to app</Link>
-          </p>
           )}
         </div>
       </div>

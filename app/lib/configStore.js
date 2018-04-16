@@ -1,3 +1,4 @@
+// @flow
 import Store from 'electron-store';
 
 // TODO(miguel) initialize it with default values
