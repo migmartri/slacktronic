@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import SlackClient from '../../lib/slackClient';
 
 type Props = {
-  slackClient?: ?SlackClient
+  slackClient?: ?SlackClient,
+  onLoad: () => void
 };
 
 type State = {
@@ -37,6 +38,10 @@ export default class SubscriptionsComponent extends Component<Props, State> {
 
   state = {
     slackSyncInitialized: false,
+  }
+
+  componentDidMount() {
+    this.props.onLoad();
   }
 
   componentWillReceiveProps(nextProps: Props) {

@@ -6,4 +6,14 @@ const mapStateToProps = (state) => ({
   slackClient: state.slack.client
 });
 
-export default connect(mapStateToProps, null)(SubscriptionsComponent);
+const mapDispatchToProps = (dispatch: Dispatch, ownprops) => ({
+  onLoad: () => {
+    // Load token from store
+    // Validate and store in redux the slack info
+    // TODO(miguel) Have a general load info from local storage
+    console.warn(dispatch);
+    console.warn(ownprops);
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SubscriptionsComponent);
