@@ -15,7 +15,12 @@ class SlackClient {
   // create a client including its validation state
   static async create(token: string, dispatch?: Dispatch) {
     const client = new SlackClient(token, dispatch);
+    client.dispatchIfNeeded(slackActions.slackClientCreating());
+
     await client.getAuthInfo();
+
+    client.dispatchIfNeeded(slackActions.slackClientCreated(client));
+
     return client;
   }
 

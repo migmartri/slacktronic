@@ -3,6 +3,8 @@
 const prefix = 'slacktronic';
 
 const actions = [
+  'SLACK_CLIENT_CREATING',
+  'SLACK_CLIENT_CREATED',
   'SLACK_USER_INFO_FETCHING',
   'SLACK_USER_INFO_FETCH_OK',
   'SLACK_USER_INFO_FETCH_KO',

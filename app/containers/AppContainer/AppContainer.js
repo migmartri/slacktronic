@@ -1,19 +1,19 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import SlackClient from '../lib/slackClient';
-import configStore from '../lib/configStore';
-import type { Dispatch } from '../actions/common';
+import SlackClient from '../../lib/slackClient';
+import configStore from '../../lib/configStore';
+import type { Dispatch } from '../../actions/common';
 
 type Props = {
   children: React.Node,
-  onLoad: () => any,
+  onLoad: () => any
 };
 
 class AppComponent extends React.Component<Props> {
   props: Props;
 
-  componentDidMount() {
+  async componentDidMount() {
     this.props.onLoad();
   }
 

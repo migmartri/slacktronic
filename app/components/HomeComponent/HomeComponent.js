@@ -3,11 +3,17 @@ import React, { Component } from 'react';
 import { Card } from 'antd';
 import { Link } from 'react-router-dom';
 import styles from './HomeComponent.scss';
+import SubscriptionsContainer from '../../containers/SubscriptionsContainer';
 
-type Props = {};
+type Props = {
+  slackConfigured: boolean
+};
 
-export default class HomeComponent extends Component<Props> {
-  props: Props;
+class HomeComponent extends Component<Props> {
+  static defaultProps = {
+    slackConfigured: false
+  }
+
   static slackConfigLink() {
     return (<Link to="/slack-config">Configure</Link>);
   }
@@ -16,14 +22,7 @@ export default class HomeComponent extends Component<Props> {
     return (
       <Card className={styles.card} title="1 - Configure Slack" extra={HomeComponent.slackConfigLink()}>
         <p>In order to continue, you need to connect your Slack account first.</p>
-      </Card>
-    );
-  }
-
-  static arduinoConfigInfo() {
-    return (
-      <Card className={styles.card} title="2 - Configure Arduino" extra={HomeComponent.slackConfigLink()}>
-        <p>Next, configure your Arduino board.</p>
+        <Link to="/slack-config">Configure</Link>
       </Card>
     );
   }
@@ -31,9 +30,11 @@ export default class HomeComponent extends Component<Props> {
   render() {
     return (
       <div className={styles.home}>
-        { HomeComponent.slackConfigInfo() }
-        { HomeComponent.arduinoConfigInfo() }
+        { !this.props.slackConfigured && HomeComponent.slackConfigInfo() }
+        <SubscriptionsContainer />
       </div>
     );
   }
 }
+
+export default HomeComponent;

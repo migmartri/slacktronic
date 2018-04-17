@@ -2,8 +2,8 @@
 import type { Dispatch, Action } from './common';
 import actionTypes from './actionTypes';
 import configStore from '../lib/configStore';
+import type SlackClient from '../lib/slackClient';
 import type { userInfoType } from '../reducers/slack';
-
 
 // Token store
 const tokenStoring = (token: string): Action => ({
@@ -44,6 +44,16 @@ export const userInfoFetched = (userInfo: userInfoType): Action => ({
 
 export const userInfoFetchError = (): Action => ({
   type: actionTypes.SLACK_USER_INFO_FETCH_KO
+});
+
+// Client creation
+export const slackClientCreating = (): Action => ({
+  type: actionTypes.SLACK_CLIENT_CREATING
+});
+
+export const slackClientCreated = (client: SlackClient): Action => ({
+  type: actionTypes.SLACK_CLIENT_CREATED,
+  client
 });
 
 // TODO(miguel) Add error handling
