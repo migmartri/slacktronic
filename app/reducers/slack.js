@@ -1,6 +1,6 @@
 // @flow
-
-import actionTypes from '../actions/actionTypes';
+import shortID from 'shortid';
+import actionTypes, { slackEventsActions } from '../actions/actionTypes';
 // import type { Action } from '../actions/common';
 
 type tokenStateType = {
@@ -17,9 +17,18 @@ export type userInfoType = {
   teamID: string
 };
 
+export type slackEventStateType = {
+  id: string,
+  type: string,
+  eventInfo: mixed
+};
+
+// TODO(miguel) Move events to its own root property
+// under the subscriptions property
 export type slackStateType = {
   +token: tokenStateType,
-  +userInfo?: userInfoType
+  +userInfo?: userInfoType,
+  +events: slackEventStateType[]
 };
 
 const initialState: slackStateType = {
@@ -27,7 +36,8 @@ const initialState: slackStateType = {
     storing: false,
     validating: false,
     valid: false,
-  }
+  },
+  events: [],
 };
 
 export default function slack(state: slackStateType = initialState, action: any) {
@@ -58,6 +68,13 @@ export default function slack(state: slackStateType = initialState, action: any)
       return { ...state, client: null };
     case actionTypes.SLACK_CLIENT_CREATED:
       return { ...state, client: action.client };
+    // Reduce the events
+    case slackEventsActions.PRESENCE_CHANGE:
+    case slackEventsActions.MESSAGE:
+      return {
+        ...state,
+        events: [...state.events, { id: shortID.generate(), type: action.type, eventInfo: { ...action.eventInfo } }]
+      };
     default:
       return state;
   }

@@ -22,7 +22,6 @@ class HomeComponent extends Component<Props> {
     return (
       <Card className={styles.card} title="1 - Configure Slack" extra={HomeComponent.slackConfigLink()}>
         <p>In order to continue, you need to connect your Slack account first.</p>
-        <Link to="/slack-config">Configure</Link>
       </Card>
     );
   }
@@ -31,7 +30,7 @@ class HomeComponent extends Component<Props> {
     return (
       <div className={styles.home}>
         { !this.props.slackConfigured && HomeComponent.slackConfigInfo() }
-        <SubscriptionsContainer />
+        { this.props.slackConfigured && <SubscriptionsContainer /> }
       </div>
     );
   }

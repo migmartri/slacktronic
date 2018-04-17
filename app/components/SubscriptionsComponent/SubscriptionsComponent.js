@@ -1,10 +1,12 @@
 // @flow
 import React, { Component } from 'react';
+import { Timeline } from 'antd';
 import SlackClient from '../../lib/slackClient';
+import type { slackEventStateType } from '../../reducers/slack';
 
 type Props = {
-  slackClient?: ?SlackClient,
-  onLoad: () => void
+  slackClient: ?SlackClient,
+  slackEvents: slackEventStateType[]
 };
 
 type State = {
@@ -15,46 +17,32 @@ type State = {
 export default class SubscriptionsComponent extends Component<Props, State> {
   props: Props;
   static defaultProps = {
-    slackClient: null
+    slackEvents: []
   }
-
-  // TODO(miguel) This will be based on some user settings
-  static initializeSlackSubscriptions(slackClient: SlackClient): void {
-    const { rtmClient } = slackClient;
-    rtmClient.start();
-
-    rtmClient.on('message', (event) => {
-      console.warn('message', event);
-    });
-
-    // We subscribe to the current User
-    rtmClient.subscribePresence([slackClient.userInfo.userID]);
-
-    rtmClient.on('presence_change', (event) => {
-      console.warn('presence_change', event);
-    });
-  }
-
 
   state = {
     slackSyncInitialized: false,
   }
 
-  componentDidMount() {
-    this.props.onLoad();
-  }
-
   componentWillReceiveProps(nextProps: Props) {
     // Initialize RTM only once
     if (nextProps.slackClient && !this.state.slackSyncInitialized) {
-      SubscriptionsComponent.initializeSlackSubscriptions(nextProps.slackClient);
+      nextProps.slackClient.initializeSlackSubscriptions();
       this.setState({ slackSyncInitialized: true });
     }
   }
 
   render() {
     return (
-      <h2>This will show the list of subscriptions</h2>
+      <Timeline pending="Waiting for events">
+        {
+          this.props.slackEvents.reverse().map((event) => (
+            <Timeline.Item key={event.id}>
+              <p>{ event.type }</p><p>{ JSON.stringify(event.eventInfo) }</p>
+            </Timeline.Item>
+          ))
+        }
+      </Timeline>
     );
   }
 }

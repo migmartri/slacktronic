@@ -7,7 +7,7 @@ import type { Dispatch } from '../../actions/common';
 
 type Props = {
   children: React.Node,
-  onLoad: () => any
+  onLoad: () => void
 };
 
 class AppComponent extends React.Component<Props> {
@@ -32,7 +32,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     // Validate and store in redux the slack info
     // TODO(miguel) Have a general load info from local storage
     const token = configStore.get('slack.token');
-    await SlackClient.create(token, dispatch);
+    if (token) {
+      await SlackClient.create(token, dispatch);
+    }
   }
 });
 
