@@ -2,7 +2,7 @@
 export type eventType = {
   id: string,
   eventInfo: {
-    type: string,
+    type: string
   }
 };
 

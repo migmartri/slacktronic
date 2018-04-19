@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import SlackClient from '../../lib/slackClient';
 import configStore from '../../lib/configStore';
 import type { Dispatch } from '../../actions/common';
+import { createSubscription } from '../../actions/subscriptions';
 
 type Props = {
   children: React.Node,
@@ -35,6 +36,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     if (token) {
       await SlackClient.create(token, dispatch);
     }
+
+    // Initialize a set of hardcoded subscriptions
+    dispatch(createSubscription({ slot: 'A', status: 'OFF' }));
+    dispatch(createSubscription({ slot: 'B', status: 'OFF' }));
   }
 });
 
