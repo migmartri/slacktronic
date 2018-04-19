@@ -1,9 +1,10 @@
 // @flow
 import { RTMClient, WebClient } from '@slack/client';
 import type { Dispatch, Action } from '../actions/common';
-import type { userInfoType } from '../reducers/slack';
 import * as slackActions from '../actions/slack';
+import type { userInfoType } from '../models/slack';
 
+// TODO(miguel) Remove client info
 class SlackClient {
   rtmClient: RTMClient
   webClient: WebClient
@@ -64,16 +65,14 @@ class SlackClient {
     rtmClient.start();
 
     rtmClient.on('message', (event) => {
-      const { channel, user } = event;
-      this.dispatchIfNeeded(slackActions.slackRTMMessage(channel, user));
+      this.dispatchIfNeeded(slackActions.slackEvent(event));
     });
 
     // We subscribe to the current User
     rtmClient.subscribePresence([this.userInfo.userID]);
 
     rtmClient.on('presence_change', (event) => {
-      const { presence, user } = event;
-      this.dispatchIfNeeded(slackActions.slackRTMPresenceChange(presence, user));
+      this.dispatchIfNeeded(slackActions.slackEvent(event));
     });
   }
 }

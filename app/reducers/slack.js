@@ -1,37 +1,9 @@
 // @flow
 import shortID from 'shortid';
-import actionTypes, { slackEventsActions } from '../actions/actionTypes';
-// import type { Action } from '../actions/common';
+import actionTypes from '../actions/actionTypes';
+import * as slackModels from '../models/slack';
 
-type tokenStateType = {
-  +value?: string,
-  +storing: boolean,
-  +validating: boolean,
-  +valid: boolean
-};
-
-export type userInfoType = {
-  user: string,
-  userID: string,
-  team: string,
-  teamID: string
-};
-
-export type slackEventStateType = {
-  id: string,
-  type: string,
-  eventInfo: mixed
-};
-
-// TODO(miguel) Move events to its own root property
-// under the subscriptions property
-export type slackStateType = {
-  +token: tokenStateType,
-  +userInfo?: userInfoType,
-  +events: slackEventStateType[]
-};
-
-const initialState: slackStateType = {
+const initialState: slackModels.stateType = {
   token: {
     storing: false,
     validating: false,
@@ -40,7 +12,7 @@ const initialState: slackStateType = {
   events: [],
 };
 
-export default function slack(state: slackStateType = initialState, action: any) {
+export default function slack(state: slackModels.stateType = initialState, action: any) {
   switch (action.type) {
     case actionTypes.SLACK_TOKEN_STORING:
       return { ...state, token: { ...state.token, storing: true } };
@@ -69,11 +41,10 @@ export default function slack(state: slackStateType = initialState, action: any)
     case actionTypes.SLACK_CLIENT_CREATED:
       return { ...state, client: action.client };
     // Reduce the events
-    case slackEventsActions.PRESENCE_CHANGE:
-    case slackEventsActions.MESSAGE:
+    case actionTypes.SLACK_EVENT:
       return {
         ...state,
-        events: [...state.events, { id: shortID.generate(), type: action.type, eventInfo: { ...action.eventInfo } }]
+        events: [...state.events, { id: shortID.generate(), eventInfo: { ...action.eventInfo } }]
       };
     default:
       return state;

@@ -2,17 +2,16 @@
 import React, { Component } from 'react';
 import { Timeline } from 'antd';
 import SlackClient from '../../lib/slackClient';
-import type { slackEventStateType } from '../../reducers/slack';
+import type { eventType } from '../../models/slack';
 
 type Props = {
   slackClient: ?SlackClient,
-  slackEvents: slackEventStateType[]
+  slackEvents: eventType[]
 };
 
 type State = {
   slackSyncInitialized: boolean
 };
-
 
 export default class SubscriptionsComponent extends Component<Props, State> {
   props: Props;
@@ -38,7 +37,7 @@ export default class SubscriptionsComponent extends Component<Props, State> {
         {
           this.props.slackEvents.reverse().map((event) => (
             <Timeline.Item key={event.id}>
-              <p>{ event.type }</p><p>{ JSON.stringify(event.eventInfo) }</p>
+              <p>{ event.eventInfo.type }</p><p>{ JSON.stringify(event.eventInfo) }</p>
             </Timeline.Item>
           ))
         }

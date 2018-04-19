@@ -14,13 +14,8 @@ const actions = [
   'SLACK_TOKEN_STORING',
   'SLACK_TOKEN_STORED',
   'SLACK_TOKEN_STORE_ERROR',
+  'SLACK_EVENT',
 ];
-
-// Events associated with Slack RTM API
-export const slackEventsActions = {
-  MESSAGE: 'SLACK_EVENT_MESSAGE',
-  PRESENCE_CHANGE: 'SLACK_PRESENCE_CHANGE',
-};
 
 const actionFormatter = (actionNames): { [string]: string } => {
   const formatted = {};

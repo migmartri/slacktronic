@@ -4,14 +4,14 @@ import { shell } from 'electron';
 import { Link } from 'react-router-dom';
 import { Steps, Form, Input, Button } from 'antd';
 import styles from './SlackConfig.scss';
-import type { slackStateType, userInfoType } from '../../reducers/slack'
+import * as slackModels from '../../models/slack';
 
 const { Step } = Steps;
 const FormItem = Form.Item;
 
 type Props = {
   onTokenCreate: (string) => void,
-  data: slackStateType
+  data: slackModels.stateType
 };
 
 type State = {
@@ -78,18 +78,12 @@ class SlackConfig extends Component<Props, State> {
     } return null;
   }
 
-  get userInfo(): ?userInfoType {
+  get userInfo(): ?slackModels.userInfoType {
     const { userInfo } = this.props.data;
     if (userInfo) {
       return userInfo;
-    } else {
-      return null;
     }
-  }
-  render() {
-    return(
-      this.userInfo ? this.completedPage() : this.onboardingFlow()
-    );
+    return null;
   }
 
   completedPage() {
@@ -103,8 +97,8 @@ class SlackConfig extends Component<Props, State> {
           <Link to="/">Return to app</Link>
         </p>
       </div>
-    )
-  };
+    );
+  }
 
   onboardingFlow() {
     return (
@@ -162,5 +156,12 @@ class SlackConfig extends Component<Props, State> {
       </div>
     );
   }
+
+  render() {
+    return (
+      this.userInfo ? this.completedPage() : this.onboardingFlow()
+    );
+  }
 }
+
 export default SlackConfig;

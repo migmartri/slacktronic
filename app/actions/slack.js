@@ -1,9 +1,10 @@
 // @flow
 import type { Dispatch, Action } from './common';
-import actionTypes, { slackEventsActions } from './actionTypes';
+import actionTypes from './actionTypes';
 import configStore from '../lib/configStore';
 import type SlackClient from '../lib/slackClient';
-import type { userInfoType } from '../reducers/slack';
+import type { userInfoType } from '../models/slack';
+
 
 // Token store
 const tokenStoring = (token: string): Action => ({
@@ -56,15 +57,10 @@ export const slackClientCreated = (client: SlackClient): Action => ({
   client
 });
 
-// Supported RTM API events actions
-export const slackRTMPresenceChange = (presence: string, user: string): Action => ({
-  type: slackEventsActions.PRESENCE_CHANGE,
-  eventInfo: { presence, user }
-});
-
-export const slackRTMMessage = (channel: string, user: string): Action => ({
-  type: slackEventsActions.MESSAGE,
-  eventInfo: { channel, user }
+// Slack RTM event
+export const slackEvent = (data: any): Action => ({
+  type: actionTypes.SLACK_EVENT,
+  eventInfo: data
 });
 
 // TODO(miguel) Add error handling
