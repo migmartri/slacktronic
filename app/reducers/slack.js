@@ -44,7 +44,7 @@ export default function slack(state: slackModels.stateType = initialState, actio
     case actionTypes.SLACK_EVENT:
       return {
         ...state,
-        events: [...state.events, { id: shortID.generate(), eventInfo: { ...action.eventInfo } }]
+        events: [...state.events, { ID: shortID.generate(), eventInfo: { ...action.eventInfo } }]
       };
     default:
       return state;

@@ -1,14 +1,33 @@
 // @flow
-import shortID from 'shortid';
 import actionTypes from '../actions/actionTypes';
 import * as subscriptionModel from '../models/subscription';
 
-const initialState = [];
+const initialState = {
+  byID: {}, allIDs: []
+};
 
-function subscriptions(state: subscriptionModel.subscriptionType[] = initialState, action: any) {
+type subscriptionsReduxStateType = {
+  byID: { [string]: subscriptionModel.subscriptionType },
+  allIDs: string[]
+};
+
+function subscriptions(state: subscriptionsReduxStateType = initialState, action: any) {
   switch (action.type) {
     case actionTypes.SUBSCRIPTION_CREATE:
-      return [...state, { id: shortID.generate(), ...action.data }];
+      return {
+        ...state,
+        byID: {
+          ...state.byID, [action.data.ID]: action.data
+        },
+        allIDs: [...state.allIDs, action.data.ID]
+      };
+    case actionTypes.SUBSCRIPTION_STATUS_CHANGE:
+      return {
+        ...state,
+        byID: {
+          ...state.byID, [action.ID]: { ...state.byID[action.ID], active: action.active }
+        },
+      };
     default:
       return state;
   }

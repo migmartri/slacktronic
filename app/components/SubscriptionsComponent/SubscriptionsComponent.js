@@ -41,7 +41,7 @@ export default class SubscriptionsComponent extends Component<Props, State> {
             <Timeline pending="Waiting for events">
               {
                 this.props.slackEvents.reverse().map((event) => (
-                  <Timeline.Item key={event.id}>
+                  <Timeline.Item key={event.ID}>
                     <p>{ event.eventInfo.type }</p>
                     <p>{ JSON.stringify(event.eventInfo) }</p>
                   </Timeline.Item>
@@ -53,7 +53,7 @@ export default class SubscriptionsComponent extends Component<Props, State> {
             <ul>
               {
                 this.props.subscriptions.map((sub) => (
-                  <li key={sub.id}>{ sub.slot }-{ sub.active} </li>
+                  <li key={sub.ID}>{ sub.slot }-{ sub.active ? 'ON' : 'OFF' } </li>
                 ))
               }
             </ul>

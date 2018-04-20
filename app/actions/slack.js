@@ -77,10 +77,11 @@ export const processSlackEvent = (event: any): ThunkAction => (
   (dispatch, getState) => {
     dispatch(slackEvent(event));
     // eslint-disable-next-line prefer-destructuring
-    const subscriptions: subscriptionType[] = getState().subscriptions;
+    const subsByID = getState().subscriptions.byID;
+    const subscriptions: subscriptionType[] = Object.keys(subsByID).map(k => subsByID[k]);
     subscriptions.forEach(sub => {
       const active = sub.assertion.assert((event));
-      dispatch(subscriptionActions.subscriptionStatusChange(sub.id, active));
+      dispatch(subscriptionActions.subscriptionStatusChange(sub.ID, active));
     });
   }
 );

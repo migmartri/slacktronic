@@ -33,6 +33,6 @@ export type subscriptionTypeAttrs = {
 };
 
 export type subscriptionType = {
-  id: string
+  ID: string
 } & subscriptionTypeAttrs;
 

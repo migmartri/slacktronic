@@ -1,6 +1,6 @@
 // @flow
 export type eventType = {
-  id: string,
+  ID: string,
   eventInfo: {
     type: string
   }

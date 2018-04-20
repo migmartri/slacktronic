@@ -9,6 +9,7 @@ class EventAssertion {
     this.name = name;
   }
 
+  // TODO(miguel) Properly compute the assertion
   assert = (event: { type: string }): boolean => {
     console.log(event);
     return true;
