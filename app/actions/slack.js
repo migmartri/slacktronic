@@ -1,10 +1,11 @@
 // @flow
-import type { Dispatch, Action } from './common';
+import type { Dispatch, Action, ThunkAction } from './common';
 import actionTypes from './actionTypes';
 import configStore from '../lib/configStore';
 import type SlackClient from '../lib/slackClient';
 import type { userInfoType } from '../models/slack';
-
+import type { subscriptionType } from '../models/subscription';
+import * as subscriptionActions from './subscriptions';
 
 // Token store
 const tokenStoring = (token: string): Action => ({
@@ -16,6 +17,13 @@ const tokenStored = (token: string): Action => ({
   type: actionTypes.SLACK_TOKEN_STORED,
   token
 });
+
+// TODO(miguel) Add error handling
+const storeToken = (token: string) => (dispatch: Dispatch): void => {
+  dispatch(tokenStoring(token));
+  configStore.set('slack', { token, validToken: true });
+  dispatch(tokenStored(token));
+};
 
 // Token Validation
 export const tokenValidating = (token: string): Action => ({
@@ -63,11 +71,18 @@ export const slackEvent = (data: any): Action => ({
   eventInfo: data
 });
 
-// TODO(miguel) Add error handling
-const storeToken = (token: string) => (dispatch: Dispatch): void => {
-  dispatch(tokenStoring(token));
-  configStore.set('slack', { token, validToken: true });
-  dispatch(tokenStored(token));
-};
+// Receives an Slack event and decides how it affects to
+// the list of subscriptions
+export const processSlackEvent = (event: any): ThunkAction => (
+  (dispatch, getState) => {
+    dispatch(slackEvent(event));
+    // eslint-disable-next-line prefer-destructuring
+    const subscriptions: subscriptionType[] = getState().subscriptions;
+    subscriptions.forEach(sub => {
+      const active = sub.assertion.assert((event));
+      dispatch(subscriptionActions.subscriptionStatusChange(sub.id, active));
+    });
+  }
+);
 
 export default storeToken;

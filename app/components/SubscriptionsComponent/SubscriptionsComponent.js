@@ -53,7 +53,7 @@ export default class SubscriptionsComponent extends Component<Props, State> {
             <ul>
               {
                 this.props.subscriptions.map((sub) => (
-                  <li key={sub.id}>{ sub.slot }-{ sub.status} </li>
+                  <li key={sub.id}>{ sub.slot }-{ sub.active} </li>
                 ))
               }
             </ul>

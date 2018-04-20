@@ -1,6 +1,6 @@
 // @flow
 import { RTMClient, WebClient } from '@slack/client';
-import type { Dispatch, Action } from '../actions/common';
+import type { Dispatch, Action, ThunkAction } from '../actions/common';
 import * as slackActions from '../actions/slack';
 import type { userInfoType } from '../models/slack';
 
@@ -55,7 +55,7 @@ class SlackClient {
     }
   }
 
-  dispatchIfNeeded(action: Action) {
+  dispatchIfNeeded(action: Action | ThunkAction) {
     return this.dispatch ? this.dispatch(action) : console.log(action);
   }
 
@@ -65,15 +65,15 @@ class SlackClient {
     rtmClient.start();
 
     rtmClient.on('message', (event) => {
-      this.dispatchIfNeeded(slackActions.slackEvent(event));
+      this.dispatchIfNeeded(slackActions.processSlackEvent(event));
     });
 
     // We subscribe to the current User
-    rtmClient.subscribePresence([this.userInfo.userID]);
+    // rtmClient.subscribePresence([this.userInfo.userID]);
 
-    rtmClient.on('presence_change', (event) => {
-      this.dispatchIfNeeded(slackActions.slackEvent(event));
-    });
+    // rtmClient.on('presence_change', (event) => {
+    //   this.dispatchIfNeeded(slackActions.slackEvent(event));
+    // });
   }
 }
 

@@ -15,7 +15,8 @@ const actions = [
   'SLACK_TOKEN_STORED',
   'SLACK_TOKEN_STORE_ERROR',
   'SLACK_EVENT',
-  'SUBSCRIPTION_CREATE'
+  'SUBSCRIPTION_CREATE',
+  'SUBSCRIPTION_STATUS_CHANGE'
 ];
 
 const actionFormatter = (actionNames): { [string]: string } => {

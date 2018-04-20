@@ -5,6 +5,7 @@ import SlackClient from '../../lib/slackClient';
 import configStore from '../../lib/configStore';
 import type { Dispatch } from '../../actions/common';
 import { createSubscription } from '../../actions/subscriptions';
+import EventAssertion from '../../models/eventAssertion';
 
 type Props = {
   children: React.Node,
@@ -38,8 +39,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     }
 
     // Initialize a set of hardcoded subscriptions
-    dispatch(createSubscription({ slot: 'A', status: 'OFF' }));
-    dispatch(createSubscription({ slot: 'B', status: 'OFF' }));
+    dispatch(createSubscription({ slot: 'A', active: false, assertion: new EventAssertion('directMessage') }));
+    dispatch(createSubscription({ slot: 'B', active: false, assertion: new EventAssertion('mention') }));
   }
 });
 
