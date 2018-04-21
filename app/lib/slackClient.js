@@ -69,11 +69,11 @@ class SlackClient {
     });
 
     // We subscribe to the current User
-    // rtmClient.subscribePresence([this.userInfo.userID]);
+    rtmClient.subscribePresence([this.userInfo.userID]);
 
-    // rtmClient.on('presence_change', (event) => {
-    //   this.dispatchIfNeeded(slackActions.slackEvent(event));
-    // });
+    rtmClient.on('presence_change', (event) => {
+      this.dispatchIfNeeded(slackActions.processSlackEvent(event));
+    });
   }
 }
 

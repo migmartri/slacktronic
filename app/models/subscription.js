@@ -1,5 +1,5 @@
 // @flow
-import EventAssertion from './eventAssertion';
+import type { AssertableSubscriptionType } from './SubscriptionTypes';
 
 type slotType = {
   ON: string, OFF: string
@@ -28,7 +28,7 @@ type slotIDType = $Keys<typeof SLOTS>;
 
 export type subscriptionTypeAttrs = {
   slot: slotIDType, // 'A, B, C, D'
-  assertion: EventAssertion,
+  assertion: AssertableSubscriptionType,
   active: boolean
 };
 
