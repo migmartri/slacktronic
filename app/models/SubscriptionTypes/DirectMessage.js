@@ -6,6 +6,8 @@ import AssertableSubscription from '.';
 class DirectMessage extends AssertableSubscription implements AssertableSubscriptionType {
   slackEventNames = ['message', 'im_marked'];
   currentUserID: string;
+  name = 'Direct message';
+  description = 'Notify me when I receive a direct message';
   // { DABC: 'read', DIII: 'unread }
   receivedMessagesChannels = {};
 

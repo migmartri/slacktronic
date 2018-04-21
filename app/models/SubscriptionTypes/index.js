@@ -4,6 +4,8 @@ export type slackEventType = { type: string, ...{[string]: string} };
 
 export interface AssertableSubscriptionType {
   slackEventNames: string[];
+  name: string;
+  description?: string;
   assertable(slackEventType): boolean;
   assert(slackEventType): boolean
 }
