@@ -18,6 +18,7 @@ class SlacktronicSerialClient {
   dispatch: Dispatch
   baudRate = 57600
   port: serialPortType
+  serialPortInstance: ?SerialPort
 
   static async arduinoConnectedPorts() {
     const ports = await SerialPort.list();
@@ -45,6 +46,12 @@ class SlacktronicSerialClient {
       client.port = firstPort;
     }
 
+    const portInstance = new SerialPort(client.port.comName, {
+      baudRate: 57600
+    });
+
+    // Store the proper port
+    client.serialPortInstance = portInstance;
     client.dispatchIfNeeded(serialActions.serialClientCreated(client));
 
     return client;

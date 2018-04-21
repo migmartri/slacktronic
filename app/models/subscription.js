@@ -9,7 +9,7 @@ type slotTypes = { [string]: slotType };
 
 // A SLOT represents the different actuators that can be
 // configured and will be referenced via serial communication
-const SLOTS: slotTypes = {
+const SLOT_MESSAGES: slotTypes = {
   A: {
     ON: 'A', OFF: 'a',
   },
@@ -24,7 +24,7 @@ const SLOTS: slotTypes = {
   }
 };
 
-type slotIDType = $Keys<typeof SLOTS>;
+type slotIDType = $Keys<typeof SLOT_MESSAGES>;
 
 export type subscriptionTypeAttrs = {
   slot: slotIDType, // 'A, B, C, D'
@@ -36,3 +36,4 @@ export type subscriptionType = {
   ID: string
 } & subscriptionTypeAttrs;
 
+export default SLOT_MESSAGES;

@@ -1,11 +1,12 @@
 // @flow
 import React, { Component } from 'react';
-import { Divider, Icon, Badge, Timeline, Row, Col, Card, Tag } from 'antd';
+import { Divider, Icon, Badge, Timeline, Row, Col, Card } from 'antd';
 import SlackClient from '../../lib/slackClient';
 import type { serialPortType } from '../../lib/serialClient';
 import type { eventType } from '../../models/slack';
 import type { subscriptionType } from '../../models/subscription';
 import styles from './subscriptions.scss';
+import SubscriptionContainer from '../../containers/SubscriptionContainer';
 
 type Props = {
   slackClient: ?SlackClient,
@@ -84,12 +85,7 @@ export default class SubscriptionsComponent extends Component<Props, State> {
               {
                 this.props.subscriptions.map((sub) => (
                   <Col span={12} key={sub.ID}>
-                    <Card title={`${sub.assertion.name} on slot ${sub.slot}`}>
-                      <p>{sub.assertion.description}</p>
-                      <Badge count={sub.active ? 1 : 0}>
-                        <Tag color={sub.active ? 'green' : 'blue'}>{sub.active ? 'ON' : 'OFF'}</Tag>
-                      </Badge>
-                    </Card>
+                    <SubscriptionContainer subscriptionID={sub.ID} />
                   </Col>
                 ))
               }
