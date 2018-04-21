@@ -75,17 +75,22 @@ export const slackEvent = (data: any): Action => ({
 // the list of subscriptions
 export const processSlackEvent = (event: any): ThunkAction => (
   (dispatch, getState) => {
-    dispatch(slackEvent(event));
+    let discardedEvent = true;
     // eslint-disable-next-line prefer-destructuring
     const subsByID = getState().subscriptions.byID;
     const subscriptions: subscriptionType[] = Object.keys(subsByID).map(k => subsByID[k]);
 
     subscriptions.forEach(sub => {
       const { assertable, assert } = sub.assertion;
-      if (assertable(event.type)) {
+      if (assertable(event)) {
+        discardedEvent = false;
         dispatch(subscriptionActions.subscriptionStatusChange(sub.ID, assert(event)));
       }
     });
+
+    if (!discardedEvent) {
+      dispatch(slackEvent(event));
+    }
   }
 );
 

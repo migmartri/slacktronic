@@ -1,16 +1,18 @@
 // @flow
 
+export type slackEventType = { type: string, ...{[string]: string} };
+
 export interface AssertableSubscriptionType {
   slackEventNames: string[];
-  assertable(slackEventName: string): boolean;
-  assert({ type: string, ...{[string]: string} }): boolean
+  assertable(slackEventType): boolean;
+  assert(slackEventType): boolean
 }
 
 class AssertableSubscription {
   slackEventNames: string[];
 
-  assertable = (slackEventName: string): boolean => (
-    !!this.slackEventNames && this.slackEventNames.includes(slackEventName)
+  assertable = (slackEvent: slackEventType): boolean => (
+    !!this.slackEventNames && this.slackEventNames.includes(slackEvent.type)
   )
 }
 

@@ -36,17 +36,16 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     // TODO(miguel) Have a general load info from local storage
     const token = configStore.get('slack.token');
     if (token) {
-      await SlackClient.create(token, dispatch);
+      const client = await SlackClient.create(token, dispatch);
+      // Initialize a set of hardcoded subscriptions
+      dispatch(createSubscription({
+        slot: 'A', active: false, assertion: new Away()
+      }));
+
+      dispatch(createSubscription({
+        slot: 'B', active: false, assertion: new DirectMessage(client.userInfo.userID)
+      }));
     }
-
-    // Initialize a set of hardcoded subscriptions
-    dispatch(createSubscription({
-      slot: 'A', active: false, assertion: new Away()
-    }));
-
-    dispatch(createSubscription({
-      slot: 'B', active: false, assertion: new DirectMessage()
-    }));
   }
 });
 
