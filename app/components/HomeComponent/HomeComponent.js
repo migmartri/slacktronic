@@ -6,7 +6,8 @@ import styles from './HomeComponent.scss';
 import SubscriptionsContainer from '../../containers/SubscriptionsContainer';
 
 type Props = {
-  slackConfigured: boolean
+  slackConfigured: boolean,
+  onLoad: () => void
 };
 
 class HomeComponent extends Component<Props> {
@@ -24,6 +25,10 @@ class HomeComponent extends Component<Props> {
         <p>In order to continue, you need to connect your Slack account first.</p>
       </Card>
     );
+  }
+
+  async componentDidMount() {
+    this.props.onLoad();
   }
 
   render() {

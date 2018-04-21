@@ -13,6 +13,8 @@ type subscriptionsReduxStateType = {
 
 function subscriptions(state: subscriptionsReduxStateType = initialState, action: any) {
   switch (action.type) {
+    case actionTypes.SUBSCRIPTIONS_CLEAR:
+      return initialState;
     case actionTypes.SUBSCRIPTION_CREATE:
       return {
         ...state,

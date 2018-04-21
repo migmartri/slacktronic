@@ -17,8 +17,7 @@ export default class Root extends Component<Props> {
     return (
       <LocaleProvider locale={enUS}>
         <Row>
-          <Col span={18} offset={3} className="container">
-            <h2>Slacktronic</h2>
+          <Col span={22} offset={1} className="container">
             <Provider store={this.props.store}>
               <ConnectedRouter history={this.props.history}>
                 <Routes />

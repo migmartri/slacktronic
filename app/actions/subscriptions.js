@@ -15,4 +15,8 @@ export const subscriptionStatusChange = (subID: string, active: boolean): Action
   active
 });
 
+export const clearSubscriptions = (): Action => ({
+  type: actionTypes.SUBSCRIPTIONS_CLEAR,
+});
+
 export default createSubscription;
