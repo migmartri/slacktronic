@@ -68,6 +68,10 @@ class SlackClient {
       this.dispatchIfNeeded(slackActions.processSlackEvent(event));
     });
 
+    rtmClient.on('im_marked', (event) => {
+      this.dispatchIfNeeded(slackActions.processSlackEvent(event));
+    });
+
     // We subscribe to the current User
     rtmClient.subscribePresence([this.userInfo.userID]);
 
