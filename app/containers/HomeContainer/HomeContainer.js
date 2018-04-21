@@ -2,6 +2,7 @@
 import { connect } from 'react-redux';
 import HomeComponent from '../../components/HomeComponent';
 import SlackClient from '../../lib/slackClient';
+import SerialClient from '../../lib/serialClient';
 import configStore from '../../lib/configStore';
 import type { Dispatch } from '../../actions/common';
 import { createSubscription, clearSubscriptions } from '../../actions/subscriptions';
@@ -31,6 +32,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
         slot: 'B', active: false, assertion: new DirectMessage(client.userInfo.userID)
       }));
     }
+
+    SerialClient.connect(dispatch);
   }
 });
 

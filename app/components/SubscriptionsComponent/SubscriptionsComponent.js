@@ -1,13 +1,15 @@
 // @flow
 import React, { Component } from 'react';
-import { Icon, Badge, Timeline, Row, Col, Card, Tag } from 'antd';
+import { Divider, Icon, Badge, Timeline, Row, Col, Card, Tag } from 'antd';
 import SlackClient from '../../lib/slackClient';
+import type { serialPortType } from '../../lib/serialClient';
 import type { eventType } from '../../models/slack';
 import type { subscriptionType } from '../../models/subscription';
 import styles from './subscriptions.scss';
 
 type Props = {
   slackClient: ?SlackClient,
+  serialPort: ?serialPortType,
   slackEvents: eventType[],
   subscriptions: subscriptionType[]
 };
@@ -42,9 +44,25 @@ export default class SubscriptionsComponent extends Component<Props, State> {
           <Badge status="success" >
             <Icon type="slack-square" />
           </Badge>
-          <span>Connected to user {userInfo.user} from team {userInfo.team}.</span>
+          <span>Connected to user {userInfo.user} from team {userInfo.team}</span>
         </div>
       );
+    }
+  }
+
+  serialConnectionInfo() {
+    if (this.props.serialPort) {
+      if (this.props.serialPort) {
+        const { manufacturer, comName } = this.props.serialPort;
+        return (
+          <div>
+            <Badge status="success" >
+              <Icon type="usb" />
+            </Badge>
+            <span>{manufacturer} connected to port {comName}</span>
+          </div>
+        );
+      }
     }
   }
 
@@ -52,10 +70,14 @@ export default class SubscriptionsComponent extends Component<Props, State> {
     return (
       <div>
         <Row className={styles.connectioninfo}>
-          <Col span={24}>
+          <Col span={12}>
             { this.slackConnectionInfo() }
           </Col>
+          <Col span={12} className={styles.serialinfo}>
+            { this.serialConnectionInfo() }
+          </Col>
         </Row>
+        <Divider />
         <Row gutter={16}>
           <Col span={18}>
             <Row gutter={16}>
