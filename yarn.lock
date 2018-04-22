@@ -2143,6 +2143,10 @@ cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
+circular-json-es6@^2.0.1:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/circular-json-es6/-/circular-json-es6-2.0.2.tgz#e4f4a093e49fb4b6aba1157365746112a78bd344"
+
 circular-json@^0.3.1:
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/circular-json/-/circular-json-0.3.3.tgz#815c99ea84f6809529d2f45791bdf82711352d66"
@@ -2896,6 +2900,12 @@ deep-diff@^0.3.5:
   version "0.3.8"
   resolved "https://registry.yarnpkg.com/deep-diff/-/deep-diff-0.3.8.tgz#c01de63efb0eec9798801d40c7e0dae25b582c84"
 
+deep-equal-ident@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/deep-equal-ident/-/deep-equal-ident-1.1.1.tgz#06f4b89e53710cd6cea4a7781c7a956642de8dc9"
+  dependencies:
+    lodash.isequal "^3.0"
+
 deep-equal@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/deep-equal/-/deep-equal-1.0.1.tgz#f5d260292b660e084eff4cdbc9f08ad3247448b5"
@@ -3520,6 +3530,19 @@ enzyme-adapter-utils@^1.3.0:
     lodash "^4.17.4"
     object.assign "^4.0.4"
     prop-types "^15.6.0"
+
+enzyme-matchers@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/enzyme-matchers/-/enzyme-matchers-6.0.0.tgz#b88a28abad42ec69dc1bac7c67152dba2e157950"
+  dependencies:
+    circular-json-es6 "^2.0.1"
+    deep-equal-ident "^1.1.1"
+
+enzyme-to-json@^3.3.0:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/enzyme-to-json/-/enzyme-to-json-3.3.3.tgz#ede45938fb309cd87ebd4386f60c754525515a07"
+  dependencies:
+    lodash "^4.17.4"
 
 enzyme-to-json@^3.3.1:
   version "3.3.1"
@@ -5805,6 +5828,12 @@ jest-docblock@^22.1.0:
   dependencies:
     detect-newline "^2.1.0"
 
+jest-environment-enzyme@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/jest-environment-enzyme/-/jest-environment-enzyme-6.0.0.tgz#469ceaa0a21579af86cb01255f0591a3a5d95f40"
+  dependencies:
+    jest-environment-jsdom "^22.4.1"
+
 jest-environment-jsdom@^22.1.4:
   version "22.1.4"
   resolved "https://registry.yarnpkg.com/jest-environment-jsdom/-/jest-environment-jsdom-22.1.4.tgz#704518ce8375f7ec5de048d1e9c4268b08a03e00"
@@ -5813,12 +5842,28 @@ jest-environment-jsdom@^22.1.4:
     jest-util "^22.1.4"
     jsdom "^11.5.1"
 
+jest-environment-jsdom@^22.4.1:
+  version "22.4.3"
+  resolved "https://registry.yarnpkg.com/jest-environment-jsdom/-/jest-environment-jsdom-22.4.3.tgz#d67daa4155e33516aecdd35afd82d4abf0fa8a1e"
+  dependencies:
+    jest-mock "^22.4.3"
+    jest-util "^22.4.3"
+    jsdom "^11.5.1"
+
 jest-environment-node@^22.1.4:
   version "22.1.4"
   resolved "https://registry.yarnpkg.com/jest-environment-node/-/jest-environment-node-22.1.4.tgz#0f2946e8f8686ce6c5d8fa280ce1cd8d58e869eb"
   dependencies:
     jest-mock "^22.1.0"
     jest-util "^22.1.4"
+
+jest-enzyme@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/jest-enzyme/-/jest-enzyme-6.0.0.tgz#518d4ecc5e32c8c1564b41b7bc83ea38667e8661"
+  dependencies:
+    enzyme-matchers "^6.0.0"
+    enzyme-to-json "^3.3.0"
+    jest-environment-enzyme "^6.0.0"
 
 jest-get-type@^22.1.0:
   version "22.1.0"
@@ -5875,9 +5920,23 @@ jest-message-util@^22.1.0:
     slash "^1.0.0"
     stack-utils "^1.0.1"
 
+jest-message-util@^22.4.3:
+  version "22.4.3"
+  resolved "https://registry.yarnpkg.com/jest-message-util/-/jest-message-util-22.4.3.tgz#cf3d38aafe4befddbfc455e57d65d5239e399eb7"
+  dependencies:
+    "@babel/code-frame" "^7.0.0-beta.35"
+    chalk "^2.0.1"
+    micromatch "^2.3.11"
+    slash "^1.0.0"
+    stack-utils "^1.0.1"
+
 jest-mock@^22.1.0:
   version "22.1.0"
   resolved "https://registry.yarnpkg.com/jest-mock/-/jest-mock-22.1.0.tgz#87ec21c0599325671c9a23ad0e05c86fb5879b61"
+
+jest-mock@^22.4.3:
+  version "22.4.3"
+  resolved "https://registry.yarnpkg.com/jest-mock/-/jest-mock-22.4.3.tgz#f63ba2f07a1511772cdc7979733397df770aabc7"
 
 jest-regex-util@^22.1.0:
   version "22.1.0"
@@ -5958,6 +6017,18 @@ jest-util@^22.1.4:
     jest-message-util "^22.1.0"
     jest-validate "^22.1.2"
     mkdirp "^0.5.1"
+
+jest-util@^22.4.3:
+  version "22.4.3"
+  resolved "https://registry.yarnpkg.com/jest-util/-/jest-util-22.4.3.tgz#c70fec8eec487c37b10b0809dc064a7ecf6aafac"
+  dependencies:
+    callsites "^2.0.0"
+    chalk "^2.0.1"
+    graceful-fs "^4.1.11"
+    is-ci "^1.0.10"
+    jest-message-util "^22.4.3"
+    mkdirp "^0.5.1"
+    source-map "^0.6.0"
 
 jest-validate@^22.1.2:
   version "22.1.2"
@@ -6326,6 +6397,14 @@ lodash._baseget@^3.0.0:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/lodash._baseget/-/lodash._baseget-3.7.2.tgz#1b6ae1d5facf3c25532350a13c1197cb8bb674f4"
 
+lodash._baseisequal@^3.0.0:
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/lodash._baseisequal/-/lodash._baseisequal-3.0.7.tgz#d8025f76339d29342767dcc887ce5cb95a5b51f1"
+  dependencies:
+    lodash.isarray "^3.0.0"
+    lodash.istypedarray "^3.0.0"
+    lodash.keys "^3.0.0"
+
 lodash._basetostring@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/lodash._basetostring/-/lodash._basetostring-3.0.1.tgz#d1861d877f824a52f669832dcaf3ee15566a07d5"
@@ -6333,6 +6412,10 @@ lodash._basetostring@^3.0.0:
 lodash._basevalues@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/lodash._basevalues/-/lodash._basevalues-3.0.0.tgz#5b775762802bde3d3297503e26300820fdf661b7"
+
+lodash._bindcallback@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/lodash._bindcallback/-/lodash._bindcallback-3.0.1.tgz#e531c27644cf8b57a99e17ed95b35c748789392e"
 
 lodash._getnative@^3.0.0:
   version "3.9.1"
@@ -6412,6 +6495,17 @@ lodash.isarguments@^3.0.0:
 lodash.isarray@^3.0.0:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/lodash.isarray/-/lodash.isarray-3.0.4.tgz#79e4eb88c36a8122af86f844aa9bcd851b5fbb55"
+
+lodash.isequal@^3.0:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-3.0.4.tgz#1c35eb3b6ef0cd1ff51743e3ea3cf7fdffdacb64"
+  dependencies:
+    lodash._baseisequal "^3.0.0"
+    lodash._bindcallback "^3.0.0"
+
+lodash.istypedarray@^3.0.0:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/lodash.istypedarray/-/lodash.istypedarray-3.0.6.tgz#c9a477498607501d8e8494d283b87c39281cef62"
 
 lodash.keys@^3.0.0, lodash.keys@^3.1.2:
   version "3.1.2"

@@ -7,6 +7,7 @@ import SLOT_MESSAGES from '../../models/subscription';
 
 type Props = {
   subscription: subscriptionType,
+  // eslint-disable-next-line react/no-unused-prop-types
   serialClient: ?SlacktronicSerialClient
 };
 
