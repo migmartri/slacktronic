@@ -4,7 +4,6 @@ language: node_js
 
 node_js:
   - 8
-  - 7
 
 cache:
   yarn: true
@@ -38,5 +37,8 @@ script:
   - node --version
   - yarn lint
   - yarn package
+  # Calling rebuild because for some reason the serialport module is not being
+  # compiled properly via electron-rebuild
+  # TODO(miguel): Remove npm rebuild when possible
+  - cd app && npm rebuild && cd ..
   - yarn test
-  - yarn test-e2e
