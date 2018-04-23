@@ -97,7 +97,7 @@ export default class SubscriptionsComponent extends Component<Props, State> {
                 {
                   this.props.slackEvents.reverse().map((event) => (
                     <Timeline.Item key={event.ID}>
-                      <p>{ event.eventInfo.type }</p>
+                      <p>{ event.type }</p>
                     </Timeline.Item>
                   ))
                 }

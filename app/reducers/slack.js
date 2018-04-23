@@ -1,18 +1,41 @@
 // @flow
-import shortID from 'shortid';
 import actionTypes from '../actions/actionTypes';
 import * as slackModels from '../models/slack';
 
-const initialState: slackModels.stateType = {
+export type slackReduxStateType = {
+  +token: slackModels.tokenStateType,
+  +userInfo?: slackModels.userInfoType,
+  +events: {
+    byID: { [string]: slackModels.eventType },
+    allIDs: string[]
+  }
+};
+
+const initialState: slackReduxStateType = {
   token: {
     storing: false,
     validating: false,
     valid: false,
   },
-  events: [],
+  events: { byID: {}, allIDs: [] }
 };
 
-export default function slack(state: slackModels.stateType = initialState, action: any) {
+const EVENTS_MAX_NUMBER = 10;
+
+// Returns the EVENTS_MAX_NUMBER limiting the number of events
+// that we store in the redux store
+const rotatedEvents = (state) => {
+  const eventIDs = [...state.events.allIDs];
+  const eventsByID = { ...state.events.byID };
+
+  if (eventIDs.length >= EVENTS_MAX_NUMBER) {
+    const toRemove = eventIDs.shift();
+    delete eventsByID[toRemove];
+  }
+  return { byID: eventsByID, allIDs: eventIDs };
+};
+
+export default function slack(state: slackReduxStateType = initialState, action: any) {
   switch (action.type) {
     case actionTypes.SLACK_TOKEN_STORING:
       return { ...state, token: { ...state.token, storing: true } };
@@ -44,7 +67,13 @@ export default function slack(state: slackModels.stateType = initialState, actio
     case actionTypes.SLACK_EVENT:
       return {
         ...state,
-        events: [...state.events, { ID: shortID.generate(), eventInfo: { ...action.eventInfo } }]
+        events: {
+          ...state.events,
+          byID: {
+            ...rotatedEvents(state).byID, [action.data.ID]: action.data
+          },
+          allIDs: [...rotatedEvents(state).allIDs, action.data.ID]
+        }
       };
     default:
       return state;
