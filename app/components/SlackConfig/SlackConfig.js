@@ -11,7 +11,7 @@ const FormItem = Form.Item;
 
 type Props = {
   onTokenCreate: (string) => void,
-  userInfo: slackModels.userInfoType
+  userInfo: ?slackModels.userInfoType
 };
 
 type State = {
@@ -153,7 +153,7 @@ class SlackConfig extends Component<Props, State> {
 
   render() {
     return (
-      this.userInfo ? this.completedPage() : this.onboardingFlow()
+      this.props.userInfo ? this.completedPage() : this.onboardingFlow()
     );
   }
 }
