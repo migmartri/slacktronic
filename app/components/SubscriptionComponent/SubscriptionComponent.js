@@ -44,10 +44,11 @@ export default class SubscriptionComponent extends Component<Props> {
     const sub = this.props.subscription;
     return (
       <div>
-        <Card title={`${sub.assertion.name} on slot ${sub.slot}`}>
+        <Card title={sub.assertion.name}>
           <p>{sub.assertion.description}</p>
+          <Tag>Slot: {sub.slot}</Tag>
           <Badge count={sub.active ? 1 : 0}>
-            <Tag color={sub.active ? 'green' : 'blue'}>{sub.active ? 'ON' : 'OFF'}</Tag>
+            <Tag color={sub.active ? 'green' : 'blue'}>Status: {sub.active ? 'ON' : 'OFF'}</Tag>
           </Badge>
         </Card>
       </div>

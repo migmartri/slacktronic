@@ -84,7 +84,7 @@ export default class SubscriptionsComponent extends Component<Props, State> {
             <Row gutter={16}>
               {
                 this.props.subscriptions.map((sub) => (
-                  <Col span={12} key={sub.ID}>
+                  <Col span={12} key={sub.ID} className={styles.subscription}>
                     <SubscriptionContainer subscriptionID={sub.ID} />
                   </Col>
                 ))

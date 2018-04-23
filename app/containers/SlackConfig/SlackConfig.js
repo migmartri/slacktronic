@@ -1,12 +1,13 @@
 // @flow
 import { connect } from 'react-redux';
+import { notification } from 'antd';
 import type { Dispatch } from '../../actions/common';
 import storeToken from '../../actions/slack';
 import SlackConfigComponent from '../../components/SlackConfig';
 import SlackClient from '../../lib/slackClient';
 
 const mapStateToProps = (state) => ({
-  data: state.slack.userInfo
+  userInfo: state.slack.userInfo
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -16,6 +17,11 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
     if (client.valid) {
       dispatch(storeToken(token));
+    } else {
+      notification.error({
+        message: 'Invalid token',
+        description: 'The provided access token does not seem to be valid.',
+      });
     }
 
     return false;
