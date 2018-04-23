@@ -52,12 +52,14 @@ class SlackConfig extends Component<Props, State> {
     this.setState({ [target.id]: target.value });
   }
 
-  handleStepSubmit = (): void => {
+  handleStepSubmit = (event: SyntheticEvent<HTMLButtonElement>): void => {
     this.setState({ currentStep: this.state.currentStep + 1 });
+    event.preventDefault();
   }
 
-  handleAccessTokenSubmit = (): void => {
+  handleAccessTokenSubmit = (event: SyntheticEvent<HTMLButtonElement>): void => {
     this.props.onTokenCreate(this.state.token);
+    event.preventDefault();
   }
 
   get authorizeUrl(): string {

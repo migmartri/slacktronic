@@ -17,6 +17,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     if (client.valid) {
       dispatch(storeToken(token));
     }
+
+    return false;
   }
 });
 
