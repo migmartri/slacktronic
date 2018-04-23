@@ -11,7 +11,7 @@ const FormItem = Form.Item;
 
 type Props = {
   onTokenCreate: (string) => void,
-  data: slackModels.stateType
+  userInfo: slackModels.userInfoType
 };
 
 type State = {
@@ -80,20 +80,12 @@ class SlackConfig extends Component<Props, State> {
     } return null;
   }
 
-  get userInfo(): ?slackModels.userInfoType {
-    const { userInfo } = this.props.data;
-    if (userInfo) {
-      return userInfo;
-    }
-    return null;
-  }
-
   completedPage() {
-    return this.userInfo && (
+    return this.props.userInfo && (
       <div>
         <p>
-          Congratulations {this.userInfo.user},
-          you have connected Slacktronic to the {this.userInfo.team} team!
+          Congratulations {this.props.userInfo.user},
+          you have connected Slacktronic to the {this.props.userInfo.team} team!
         </p>
         <p>
           <Link to="/">Return to app</Link>

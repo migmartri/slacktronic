@@ -1,4 +1,5 @@
 // @flow
+import shortID from 'shortid';
 import type { Dispatch, Action, ThunkAction } from './common';
 import actionTypes from './actionTypes';
 import configStore from '../lib/configStore';
@@ -68,7 +69,7 @@ export const slackClientCreated = (client: SlackClient): Action => ({
 // Slack RTM event
 export const slackEvent = (data: any): Action => ({
   type: actionTypes.SLACK_EVENT,
-  eventInfo: data
+  data: { ID: shortID.generate(), ...data }
 });
 
 // Receives an Slack event and decides how it affects to

@@ -6,7 +6,7 @@ const initialState = {
   byID: {}, allIDs: []
 };
 
-type subscriptionsReduxStateType = {
+export type subscriptionsReduxStateType = {
   byID: { [string]: subscriptionModel.subscriptionType },
   allIDs: string[]
 };

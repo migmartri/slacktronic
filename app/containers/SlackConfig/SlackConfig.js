@@ -6,7 +6,7 @@ import SlackConfigComponent from '../../components/SlackConfig';
 import SlackClient from '../../lib/slackClient';
 
 const mapStateToProps = (state) => ({
-  data: state.slack
+  data: state.slack.userInfo
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

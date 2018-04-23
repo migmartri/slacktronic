@@ -1,9 +1,7 @@
 // @flow
 export type eventType = {
   ID: string,
-  eventInfo: {
-    type: string
-  }
+  type: string
 };
 
 export type userInfoType = {
@@ -18,10 +16,4 @@ export type tokenStateType = {
   +storing: boolean,
   +validating: boolean,
   +valid: boolean
-};
-
-export type stateType = {
-  +token: tokenStateType,
-  +userInfo?: userInfoType,
-  +events: eventType[]
 };
