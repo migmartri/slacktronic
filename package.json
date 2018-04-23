@@ -108,7 +108,8 @@
       "^.+\\.js$": "babel-jest"
     },
     "setupFiles": [
-      "./internals/scripts/CheckBuiltsExist.js"
+      "./internals/scripts/CheckBuiltsExist.js",
+      "jest-plugin-context/setup"
     ]
   },
   "devDependencies": {
@@ -162,6 +163,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^22.1.4",
     "jest-enzyme": "^6.0.0",
+    "jest-plugin-context": "^2.9.0",
     "minimist": "^1.2.0",
     "node-sass": "^4.7.2",
     "npm-logical-tree": "^1.2.1",

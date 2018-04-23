@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { Badge, Card, Tag } from 'antd';
 import type { subscriptionType } from '../../models/subscription';
 import SlacktronicSerialClient from '../../lib/serialClient';
-import SLOT_MESSAGES from '../../models/subscription';
 
 type Props = {
   subscription: subscriptionType,
@@ -21,7 +20,8 @@ export default class SubscriptionComponent extends Component<Props> {
     const { serialPortInstance } = serialClient;
     const { slot, active } = subscription;
 
-    const message = SLOT_MESSAGES[slot][active ? 'ON' : 'OFF'];
+    // lowercase char means off, uppercase means on.
+    const message = active ? slot.toUpperCase() : slot.toLowerCase();
     console.log(`Sending message ${message} to slot ${slot}`);
 
 
