@@ -1,30 +1,16 @@
 // @flow
 import type { AssertableSubscriptionType } from './SubscriptionTypes';
 
-type slotType = {
-  ON: string, OFF: string
-};
+// Slots are represented by uppercase letters i.e A,B,C
+// They are mapped as a map so we can create a slotIDType using $keys
+const SLOTS: { [string]: string } = {};
 
-type slotTypes = { [string]: slotType };
+[...Array(26)].forEach((val, i) => {
+  const char = String.fromCharCode(i + 65);
+  SLOTS[char] = char;
+});
 
-// A SLOT represents the different actuators that can be
-// configured and will be referenced via serial communication
-const SLOT_MESSAGES: slotTypes = {
-  A: {
-    ON: 'A', OFF: 'a',
-  },
-  B: {
-    ON: 'B', OFF: 'b',
-  },
-  C: {
-    ON: 'C', OFF: 'c',
-  },
-  D: {
-    ON: 'D', OFF: 'd',
-  }
-};
-
-type slotIDType = $Keys<typeof SLOT_MESSAGES>;
+type slotIDType = $Keys<typeof SLOTS>;
 
 export type subscriptionTypeAttrs = {
   slot: slotIDType, // 'A, B, C, D'
@@ -35,5 +21,3 @@ export type subscriptionTypeAttrs = {
 export type subscriptionType = {
   ID: string
 } & subscriptionTypeAttrs;
-
-export default SLOT_MESSAGES;

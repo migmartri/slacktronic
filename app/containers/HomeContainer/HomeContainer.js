@@ -7,6 +7,7 @@ import configStore from '../../lib/configStore';
 import type { Dispatch } from '../../actions/common';
 import { createSubscription, clearSubscriptions } from '../../actions/subscriptions';
 import Away from '../../models/SubscriptionTypes/Away';
+import Mention from '../../models/SubscriptionTypes/Mention';
 import DirectMessage from '../../models/SubscriptionTypes/DirectMessage';
 
 const mapStateToProps = (state) => ({
@@ -30,6 +31,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
       dispatch(createSubscription({
         slot: 'B', active: false, assertion: new DirectMessage(client.userInfo.userID)
+      }));
+
+      dispatch(createSubscription({
+        slot: 'C', active: false, assertion: new Mention(client.userInfo.userID)
       }));
     }
 

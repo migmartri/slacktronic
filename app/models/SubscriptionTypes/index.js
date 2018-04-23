@@ -10,6 +10,7 @@ export interface AssertableSubscriptionType {
   assert(slackEventType): boolean
 }
 
+// Extend this class to re-use default assertable function
 class AssertableSubscription {
   slackEventNames: string[];
 
