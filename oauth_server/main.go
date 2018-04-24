@@ -18,19 +18,30 @@ var (
 	oauthClientSecret = flag.String("oauth-client-secret", "", "OAuth Client Secret")
 )
 
-func makeOauthHandler(config *oauth2.Config, fn func(*oauth2.Config, http.ResponseWriter, *http.Request)) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		fn(config, w, r)
+type oauthHandler struct {
+	config *oauth2.Config
+	H      func(*oauth2.Config, http.ResponseWriter, *http.Request) (int, error)
+}
+
+func (oh oauthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	status, err := oh.H(oh.config, w, r)
+	if err != nil {
+		switch status {
+		case http.StatusInternalServerError:
+			http.Error(w, http.StatusText(status), status)
+		default:
+			http.Error(w, http.StatusText(status), status)
+		}
 	}
 }
 
-func authHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.Request) {
+func authHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.Request) (int, error) {
 	url := oauthConfig.AuthCodeURL("TODO")
 	http.Redirect(w, r, url, http.StatusFound)
-	return
+	return http.StatusOK, nil
 }
 
-func redirectHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.Request) {
+func redirectHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.Request) (int, error) {
 	ctx := context.Background()
 
 	code := r.URL.Query().Get("code")
@@ -41,8 +52,10 @@ func redirectHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.
 	tok, err := oauthConfig.Exchange(ctx, code)
 	if err != nil {
 		log.Fatal(err)
+		return http.StatusUnauthorized, err
 	}
 	fmt.Fprintf(w, "Here is your token %s", tok.AccessToken)
+	return http.StatusOK, nil
 }
 
 func main() {
@@ -59,7 +72,8 @@ func main() {
 		Endpoint:     slack.Endpoint,
 	}
 
-	http.HandleFunc("/oauth/auth", makeOauthHandler(oauthConfig, authHandler))
-	http.HandleFunc("/oauth/redirect", makeOauthHandler(oauthConfig, redirectHandler))
+	http.Handle("/oauth/auth", oauthHandler{oauthConfig, authHandler})
+	http.Handle("/oauth/redirect", oauthHandler{oauthConfig, redirectHandler})
+	glog.Infof("serving http endpoint on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
