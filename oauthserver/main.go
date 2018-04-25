@@ -12,6 +12,7 @@ import (
 	"github.com/golang/glog"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/slack"
+	heroku "gopkg.in/jonahgeorge/force-ssl-heroku.v1"
 )
 
 var (
@@ -88,9 +89,11 @@ func main() {
 		Endpoint:     slack.Endpoint,
 	}
 
-	http.Handle("/oauth/auth", oauthHandler{oauthConfig, authHandler})
-	http.Handle("/oauth/redirect", oauthHandler{oauthConfig, redirectHandler})
-	http.HandleFunc("/healthz", healthHandler)
+	r := http.NewServeMux()
+
+	r.Handle("/oauth/auth", oauthHandler{oauthConfig, authHandler})
+	r.Handle("/oauth/redirect", oauthHandler{oauthConfig, redirectHandler})
+	r.HandleFunc("/healthz", healthHandler)
 	glog.Infof(fmt.Sprintf("serving http endpoint on %s", *listen))
-	log.Fatal(http.ListenAndServe(*listen, nil))
+	log.Fatal(http.ListenAndServe(*listen, heroku.ForceSsl(r)))
 }
