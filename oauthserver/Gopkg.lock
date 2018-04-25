@@ -46,15 +46,9 @@
   revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
   version = "v1.0.0"
 
-[[projects]]
-  name = "gopkg.in/jonahgeorge/force-ssl-heroku.v1"
-  packages = ["."]
-  revision = "38a34d322659dbe9d312bad0ee5f79aedc7b0bc3"
-  version = "v1.0.0"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f984edcfdcaa90d8bec8ab41342e0f5000f8edf5bb0a8ea00318b14d892aa839"
+  inputs-digest = "2df08bf97a8361b003b858ebb3e53aaec659d182ce14dd1e17054c64c99202b1"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -12,11 +12,11 @@ import (
 	"github.com/golang/glog"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/slack"
-	heroku "gopkg.in/jonahgeorge/force-ssl-heroku.v1"
 )
 
 var (
 	listen            = flag.String("listen", ":8080", "HTTP server listen address")
+	httpsOnly         = flag.Bool("httpsOnly", false, "Enforce redirection to https://")
 	oauthClientID     = flag.String("oauth-client-id", "", "OAuth Client ID")
 	oauthClientSecret = flag.String("oauth-client-secret", "", "OAuth Client Secret")
 )
@@ -24,6 +24,23 @@ var (
 type oauthHandler struct {
 	config *oauth2.Config
 	H      func(*oauth2.Config, http.ResponseWriter, *http.Request) (int, error)
+}
+
+// Redirects all requests to https://*
+// Useful when the app runs behind a load balancer in charge of the SSL termination
+func forceSSL(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if *httpsOnly {
+			if r.Header.Get("x-forwarded-proto") != "https" {
+				sslURL := "https://" + r.Host + r.RequestURI
+				http.Redirect(w, r, sslURL, http.StatusTemporaryRedirect)
+				return
+			}
+		}
+
+		next.ServeHTTP(w, r)
+	})
+
 }
 
 func (oh oauthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -95,5 +112,5 @@ func main() {
 	r.Handle("/oauth/redirect", oauthHandler{oauthConfig, redirectHandler})
 	r.HandleFunc("/healthz", healthHandler)
 	glog.Infof(fmt.Sprintf("serving http endpoint on %s", *listen))
-	log.Fatal(http.ListenAndServe(*listen, heroku.ForceSsl(r)))
+	log.Fatal(http.ListenAndServe(*listen, forceSSL(r)))
 }
