@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/golang/glog"
@@ -14,6 +15,7 @@ import (
 )
 
 var (
+	listen            = flag.String("listen", ":8080", "HTTP server listen address")
 	oauthClientID     = flag.String("oauth-client-id", "", "OAuth Client ID")
 	oauthClientSecret = flag.String("oauth-client-secret", "", "OAuth Client Secret")
 )
@@ -35,10 +37,14 @@ func (oh oauthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "ok")
+}
+
 func authHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.Request) (int, error) {
 	url := oauthConfig.AuthCodeURL("TODO")
 	http.Redirect(w, r, url, http.StatusFound)
-	return http.StatusOK, nil
+	return http.StatusTemporaryRedirect, nil
 }
 
 func redirectHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.Request) (int, error) {
@@ -51,18 +57,28 @@ func redirectHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.
 
 	tok, err := oauthConfig.Exchange(ctx, code)
 	if err != nil {
-		log.Fatal(err)
+		glog.Error(err)
 		return http.StatusUnauthorized, err
 	}
-	fmt.Fprintf(w, "Here is your token %s", tok.AccessToken)
+
+	fmt.Fprintf(w, "Hooray! here is your token. Now paste it back in Slacktronic\n\n%s", tok.AccessToken)
 	return http.StatusOK, nil
 }
 
 func main() {
 	flag.Parse()
 
+	// We read the values either from flags or env variables
+	if *oauthClientID == "" {
+		*oauthClientID = os.Getenv("OAUTH_CLIENT_ID")
+	}
+
+	if *oauthClientSecret == "" {
+		*oauthClientSecret = os.Getenv("OAUTH_CLIENT_SECRET")
+	}
+
 	if *oauthClientID == "" || *oauthClientSecret == "" {
-		glog.Exit("oauth-client-id and oauth-client-secret options are required")
+		glog.Exit("oauth-client-id (OAUTH_CLIENT_ID) and oauth-client-secret (OAUTH_CLIENT_SECRET) options are required")
 	}
 
 	oauthConfig := &oauth2.Config{
@@ -74,6 +90,7 @@ func main() {
 
 	http.Handle("/oauth/auth", oauthHandler{oauthConfig, authHandler})
 	http.Handle("/oauth/redirect", oauthHandler{oauthConfig, redirectHandler})
-	glog.Infof("serving http endpoint on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	http.HandleFunc("/healthz", healthHandler)
+	glog.Infof(fmt.Sprintf("serving http endpoint on %s", *listen))
+	log.Fatal(http.ListenAndServe(*listen, nil))
 }
