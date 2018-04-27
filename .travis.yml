@@ -47,6 +47,6 @@ matrix:
       go:
         - "1.10.x"
       script:
-        - go --version
+        - go version
         - make -C oauthserver test
         - make -C oauthserver build
