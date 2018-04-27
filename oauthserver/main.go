@@ -46,17 +46,16 @@ func forceSSL(next http.Handler) http.Handler {
 func (oh oauthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	status, err := oh.H(oh.config, w, r)
 	if err != nil {
-		switch status {
-		case http.StatusInternalServerError:
-			http.Error(w, http.StatusText(status), status)
-		default:
-			http.Error(w, http.StatusText(status), status)
-		}
+		http.Error(w, http.StatusText(status), status)
 	}
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "ok")
+}
+
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "https://github.com/migmartri/slacktronic", http.StatusFound)
 }
 
 func authHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.Request) (int, error) {
@@ -65,7 +64,7 @@ func authHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.Requ
 	return http.StatusTemporaryRedirect, nil
 }
 
-func redirectHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.Request) (int, error) {
+func authCallbackHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.Request) (int, error) {
 	ctx := context.Background()
 
 	code := r.URL.Query().Get("code")
@@ -109,8 +108,9 @@ func main() {
 	r := http.NewServeMux()
 
 	r.Handle("/oauth/auth", oauthHandler{oauthConfig, authHandler})
-	r.Handle("/oauth/redirect", oauthHandler{oauthConfig, redirectHandler})
+	r.Handle("/oauth/callback", oauthHandler{oauthConfig, authCallbackHandler})
 	r.HandleFunc("/healthz", healthHandler)
+	r.HandleFunc("^/$", indexHandler)
 	glog.Infof(fmt.Sprintf("serving http endpoint on %s", *listen))
 	log.Fatal(http.ListenAndServe(*listen, forceSSL(r)))
 }
