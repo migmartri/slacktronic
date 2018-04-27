@@ -110,7 +110,7 @@ func main() {
 	r.Handle("/oauth/auth", oauthHandler{oauthConfig, authHandler})
 	r.Handle("/oauth/callback", oauthHandler{oauthConfig, authCallbackHandler})
 	r.HandleFunc("/healthz", healthHandler)
-	r.HandleFunc("^/$", indexHandler)
+	r.HandleFunc("/", indexHandler)
 	glog.Infof(fmt.Sprintf("serving http endpoint on %s", *listen))
 	log.Fatal(http.ListenAndServe(*listen, forceSSL(r)))
 }
