@@ -35,7 +35,6 @@ matrix:
 
       script:
         - node --version
-        - go --version
         - yarn lint
         - yarn package
         # Calling rebuild because for some reason the serialport module is not being
