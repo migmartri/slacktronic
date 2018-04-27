@@ -6,7 +6,7 @@ node_js:
   - 8
 
 go:
-- "1.10.x"
+  - "1.10.x"
 
 cache:
   yarn: true
@@ -38,6 +38,7 @@ before_script:
 
 script:
   - node --version
+  - go --version
   - yarn lint
   - yarn package
   # Calling rebuild because for some reason the serialport module is not being
