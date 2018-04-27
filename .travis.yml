@@ -1,48 +1,52 @@
 sudo: true
 
-language: node_js
+matrix:
+  include:
+    - language: node_js
+      node_js:
+        - 8
+      cache:
+        yarn: true
+        directories:
+          - node_modules
+          - app/node_modules
 
-node_js:
-  - 8
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.8
+            - icnsutils
+            - graphicsmagick
+            - xz-utils
+            - xorriso
 
-go:
-  - "1.10.x"
+      install:
+        - export CXX="g++-4.8"
+        - yarn
+        - cd app && yarn && cd ..
+        - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
 
-cache:
-  yarn: true
-  directories:
-    - node_modules
-    - app/node_modules
+      before_script:
+        - export DISPLAY=:99.0
+        - sh -e /etc/init.d/xvfb start &
+        - sleep 3
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
-      - icnsutils
-      - graphicsmagick
-      - xz-utils
-      - xorriso
-
-install:
-  - export CXX="g++-4.8"
-  - yarn
-  - cd app && yarn && cd ..
-  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
-
-before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start &
-  - sleep 3
-
-script:
-  - node --version
-  - go --version
-  - yarn lint
-  - yarn package
-  # Calling rebuild because for some reason the serialport module is not being
-  # compiled properly via electron-rebuild
-  # TODO(miguel): Remove npm rebuild when possible
-  - cd app && npm rebuild && cd ..
-  - yarn test
+      script:
+        - node --version
+        - go --version
+        - yarn lint
+        - yarn package
+        # Calling rebuild because for some reason the serialport module is not being
+        # compiled properly via electron-rebuild
+        # TODO(miguel): Remove npm rebuild when possible
+        - cd app && npm rebuild && cd ..
+        - yarn test
+    - language: go
+      go:
+        - "1.10.x"
+      script:
+        - go --version
+        - make -C oauthserver test
+        - make -C oauthserver build
