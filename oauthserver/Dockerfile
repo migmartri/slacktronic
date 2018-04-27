@@ -1,7 +1,7 @@
 # Stage 1: Compile oauth server
 FROM golang:1.10 as build
 
-COPY oauthserver/ /go/src/github.com/migmartri/slacktronic/oauthserver
+COPY . /go/src/github.com/migmartri/slacktronic/oauthserver
 
 RUN cd /go/src/github.com/migmartri/slacktronic/oauthserver && go build
 
