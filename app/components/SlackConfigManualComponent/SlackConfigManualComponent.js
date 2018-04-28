@@ -1,17 +1,16 @@
 // @flow
 import React, { Component } from 'react';
 import { shell } from 'electron';
-import { Link } from 'react-router-dom';
 import { Steps, Form, Input, Button } from 'antd';
-import styles from './SlackConfig.scss';
-import * as slackModels from '../../models/slack';
+import styles from './SlackConfigManualComponent.scss';
 
 const { Step } = Steps;
 const FormItem = Form.Item;
 
 type Props = {
   onTokenCreate: (string) => void,
-  userInfo: ?slackModels.userInfoType
+  // eslint-disable-next-line react/no-unused-prop-types
+  onTokenDismiss: () => void
 };
 
 type State = {
@@ -28,8 +27,6 @@ const steps: { title: string }[] = [{
   title: 'Authorize application',
 }, {
   title: 'Get User token',
-}, {
-  title: 'Completed!',
 }];
 
 class SlackConfig extends Component<Props, State> {
@@ -78,20 +75,6 @@ class SlackConfig extends Component<Props, State> {
     } else if (this.state.code) {
       return 2;
     } return null;
-  }
-
-  completedPage() {
-    return this.props.userInfo && (
-      <div>
-        <p>
-          Congratulations {this.props.userInfo.user},
-          you have connected Slacktronic to the {this.props.userInfo.team} team!
-        </p>
-        <p>
-          <Link to="/">Return to app</Link>
-        </p>
-      </div>
-    );
   }
 
   onboardingFlow() {
@@ -153,7 +136,7 @@ class SlackConfig extends Component<Props, State> {
 
   render() {
     return (
-      this.props.userInfo ? this.completedPage() : this.onboardingFlow()
+      this.onboardingFlow()
     );
   }
 }
