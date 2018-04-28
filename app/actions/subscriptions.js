@@ -21,6 +21,7 @@ export const subscriptionStatusChange = (subID: string, active: boolean): ThunkA
     // TODO(miguel) Remove this duplicated state and use the result of the serial communication
     dispatch(changeSubscriptionState(subID, active));
     // Enqueue serial message
+    // $FlowFixMe
     const sub = getState().subscriptions.byID[subID];
     const message = active ? sub.slot.toUpperCase() : sub.slot.toLowerCase();
     dispatch(enqueueMessage(message, subID));

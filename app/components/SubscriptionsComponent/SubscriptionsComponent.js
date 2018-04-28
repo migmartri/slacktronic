@@ -7,6 +7,7 @@ import type { eventType } from '../../models/slack';
 import type { subscriptionType } from '../../models/subscription';
 import styles from './subscriptions.scss';
 import SubscriptionContainer from '../../containers/SubscriptionContainer';
+import MessagesTimelineContainer from '../../containers/MessagesTimelineContainer';
 
 type Props = {
   slackClient: ?SlackClient,
@@ -91,8 +92,13 @@ export default class SubscriptionsComponent extends Component<Props, State> {
               }
             </Row>
           </Col>
-          <Col span={6}>
-            <Card>
+          <Col span={6} className={styles.sidebar}>
+            <Card className={styles.timeline}>
+              <p>Serial messages</p>
+              <MessagesTimelineContainer />
+            </Card>
+            <Card className={styles.timeline}>
+              <p>Slack events</p>
               <Timeline pending="Waiting for events">
                 {
                   this.props.slackEvents.reverse().map((event) => (
