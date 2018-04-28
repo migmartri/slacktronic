@@ -12,17 +12,18 @@ type Props = {
 
 class HomeComponent extends Component<Props> {
   static defaultProps = {
-    slackConfigured: false
-  }
+    slackConfigured: false,
+  };
 
   static slackConfigLink() {
+    // /slack-config-manual will load a manual onboarding
     return (<Link to="/slack-config">Configure</Link>);
   }
 
   static slackConfigInfo() {
     return (
-      <Card className="{styles.card} configure-slack" title="1 - Configure Slack" extra={HomeComponent.slackConfigLink()}>
-        <p>In order to continue, you need to connect your Slack account first.</p>
+      <Card className="{styles.card} configure-slack" title="1 - Configure Slack" extra={this.slackConfigLink()}>
+        <p>In order to continue, first, you need to associate your Slack account.</p>
       </Card>
     );
   }
