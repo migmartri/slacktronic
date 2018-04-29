@@ -39,7 +39,7 @@ class TimelineComponent extends React.Component<Props> {
               <Badge
                 status={TimelineComponent.badgeClassName(m)}
               >
-              Char &quot;{ m.payload }&quot;
+              &quot;{ m.payload }&quot;
               </Badge>
               { m.errorMessage && <p> { m.errorMessage }</p> }
             </Timeline.Item>

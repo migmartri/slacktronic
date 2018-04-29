@@ -36,28 +36,49 @@ function* loadSerialClient() {
   if (serialClient === null) {
     throw new Error('Serial client not ready');
   }
+
+  const flushPort = () => (new Promise((resolve, reject) => (
+    serialClient.serialPortInstance.flush((err) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve();
+    })
+  )));
+
+  // Wait until the flush has been completed, it also helps to detect
+  // if the client is not ready
+  yield call(flushPort);
   return serialClient;
 }
 
 // Send the message
-function sendMessage(serialClient: SlacktronicSerialClient, payload: string) {
+function send(serialClient: SlacktronicSerialClient, payload: string) {
   const { serialPortInstance } = serialClient;
-  serialPortInstance.write(payload, (err) => {
-    if (err) {
-      throw new Error(`Error writing to port: ${err.message}`);
-    }
+  return new Promise((resolve, reject) => {
+    serialPortInstance.write(payload, (werr) => {
+      if (werr) {
+        return reject(werr);
+      }
+      serialPortInstance.drain((derr) => {
+        if (derr) {
+          return reject(derr);
+        }
+        // Add some time between successful messages
+        // TODO(miguel) Use ack and ready byte instead
+        setTimeout(() => resolve(), 400);
+      });
+    });
   });
 }
 
-function* createAndSendMessage(message: serialMessage) {
+function* sendMessage(message: serialMessage) {
   // Retry the communication
   for (let i = 0; i < 5; i += 1) {
     try {
       const serialClient = yield call(loadSerialClient);
-      yield call(sendMessage, serialClient, message.payload);
+      yield call(send, serialClient, message.payload);
       yield call(updateMessageStatus, message.ID, { status: MessageStatus.sent });
-      // Give some slack between messages
-      yield delay(200);
       return;
     } catch (err) {
       if (i < 4) {
@@ -86,7 +107,7 @@ function* watchSerialMessages() {
     // 4- Enqueue the message in the store
     const message = yield call(createMessage, subscriptionID, payload);
     // 4- Block until message is sent
-    yield call(createAndSendMessage, message);
+    yield call(sendMessage, message);
   }
 }
 
