@@ -19,7 +19,10 @@ const actions = [
   'SLACK_EVENT',
   'SUBSCRIPTION_CREATE',
   'SUBSCRIPTION_STATUS_CHANGE',
-  'SUBSCRIPTIONS_CLEAR'
+  'SUBSCRIPTIONS_CLEAR',
+  'SERIAL_MESSAGE_ENQUEUE',
+  'SERIAL_MESSAGE_CREATE',
+  'SERIAL_MESSAGE_UPDATE',
 ];
 
 const actionFormatter = (actionNames): { [string]: string } => {

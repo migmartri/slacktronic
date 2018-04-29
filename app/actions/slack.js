@@ -77,7 +77,7 @@ export const slackEvent = (data: any): Action => ({
 export const processSlackEvent = (event: any): ThunkAction => (
   (dispatch, getState) => {
     let discardedEvent = true;
-    // eslint-disable-next-line prefer-destructuring
+    // $FlowFixMe
     const subsByID = getState().subscriptions.byID;
     const subscriptions: subscriptionType[] = Object.keys(subsByID).map(k => subsByID[k]);
 
@@ -85,7 +85,7 @@ export const processSlackEvent = (event: any): ThunkAction => (
       const { assertable, assert } = sub.assertion;
       if (assertable(event)) {
         discardedEvent = false;
-        dispatch(subscriptionActions.subscriptionStatusChange(sub.ID, assert(event)));
+        dispatch(subscriptionActions.subscriptionStatusChange(sub, assert(event)));
       }
     });
 
