@@ -12,9 +12,7 @@ type serialReduxStateType = {
   client: ?SlacktronicSerialClient,
   messages: {
     byID: { [string]: serialMessage },
-    allIDs: string[],
-    // List of ids to be processed
-    queue: string[]
+    allIDs: string[]
   }
 };
 
@@ -24,7 +22,7 @@ function serial(state: serialReduxStateType = initialState, action: any) {
       return { ...state, client: null };
     case actionTypes.SERIAL_CLIENT_CREATED:
       return { ...state, client: action.client };
-    case actionTypes.SERIAL_MESSAGE_ENQUEUE:
+    case actionTypes.SERIAL_MESSAGE_CREATE:
       return {
         ...state,
         messages: {
@@ -33,8 +31,17 @@ function serial(state: serialReduxStateType = initialState, action: any) {
             ...state.messages.byID, [action.data.ID]: action.data
           },
           allIDs: [...state.messages.allIDs, action.data.ID],
-          queue: [...state.messages.queue, action.data.ID]
         }
+      };
+    case actionTypes.SERIAL_MESSAGE_UPDATE:
+      return {
+        ...state,
+        messages: {
+          ...state.messages,
+          byID: {
+            ...state.messages.byID, [action.ID]: { ...state.messages.byID[action.ID], ...action.data }
+          },
+        },
       };
     default:
       return state;

@@ -85,7 +85,7 @@ export const processSlackEvent = (event: any): ThunkAction => (
       const { assertable, assert } = sub.assertion;
       if (assertable(event)) {
         discardedEvent = false;
-        dispatch(subscriptionActions.subscriptionStatusChange(sub.ID, assert(event)));
+        dispatch(subscriptionActions.subscriptionStatusChange(sub, assert(event)));
       }
     });
 

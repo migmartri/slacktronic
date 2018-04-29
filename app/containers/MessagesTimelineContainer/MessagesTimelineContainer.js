@@ -26,7 +26,7 @@ class TimelineComponent extends React.Component<Props> {
         {
           this.props.messages.reverse().map((m) => (
             <Timeline.Item key={m.ID}>
-              <p>{m.message} - {m.status}</p>
+              <p>{m.payload} - {m.status}</p>
             </Timeline.Item>
           ))
         }

@@ -1,9 +1,7 @@
 // @flow
-import shortID from 'shortid';
 import type { Action } from './common';
 import actionTypes from './actionTypes';
 import type SlacktronicSerialClient from '../lib/serialClient';
-import MessageStatus from '../models/serialMessage';
 
 
 // Client creation
@@ -17,9 +15,8 @@ export const serialClientCreated = (client: SlacktronicSerialClient): Action => 
 });
 
 // Messages
-export const enqueueMessage = (message: string, subscriptionID: string): Action => ({
+export const enqueueMessage = (payload: string, subscriptionID: string): Action => ({
   type: actionTypes.SERIAL_MESSAGE_ENQUEUE,
-  data: {
-    ID: shortID.generate(), status: MessageStatus.pending, message, subscriptionID
-  }
+  subscriptionID,
+  payload
 });

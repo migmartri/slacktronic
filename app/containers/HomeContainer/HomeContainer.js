@@ -9,6 +9,7 @@ import { createSubscription, clearSubscriptions } from '../../actions/subscripti
 import Away from '../../models/SubscriptionTypes/Away';
 import Mention from '../../models/SubscriptionTypes/Mention';
 import DirectMessage from '../../models/SubscriptionTypes/DirectMessage';
+import { enqueueMessage } from '../../actions/serial';
 
 const mapStateToProps = (state) => ({
   slackConfigured: state.slack.token.valid
@@ -36,6 +37,11 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
       dispatch(createSubscription({
         slot: 'C', active: false, assertion: new Mention(client.userInfo.userID)
       }));
+
+      dispatch(enqueueMessage('POCUS', '12'));
+      dispatch(enqueueMessage('FOCUS', '12'));
+      dispatch(enqueueMessage('WAPS', '12'));
+      dispatch(enqueueMessage('MAN', '12'));
     }
 
     SerialClient.connect(dispatch);

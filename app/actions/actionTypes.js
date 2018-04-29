@@ -21,6 +21,8 @@ const actions = [
   'SUBSCRIPTION_STATUS_CHANGE',
   'SUBSCRIPTIONS_CLEAR',
   'SERIAL_MESSAGE_ENQUEUE',
+  'SERIAL_MESSAGE_CREATE',
+  'SERIAL_MESSAGE_UPDATE',
 ];
 
 const actionFormatter = (actionNames): { [string]: string } => {

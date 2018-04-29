@@ -11,7 +11,7 @@ type MessageStatusType = $Keys<typeof serialMessageStatus>;
 
 export type serialMessageAttrs = {
   status: MessageStatusType,
-  message: string,
+  payload: string,
   subscriptionID: string,
   errorMessage?: string
 };
