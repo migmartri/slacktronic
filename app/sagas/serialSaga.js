@@ -9,13 +9,8 @@ import type SlacktronicSerialClient from '../lib/serialClient';
 
 const getSerialClient = state => state.serial.client;
 
-function* updateMessageStatus(messageID: string, updates: object) {
-  yield put({
-    type: actionTypes.SERIAL_MESSAGE_UPDATE, ID: messageID, data: updates
-  });
-}
-
-function* sendMessage(subscriptionID: string, payload: string) {
+// Create message in the store
+function* createMessage(subscriptionID: string, payload: string) {
   const messageID = shortID.generate();
   const newMessage: serialMessage = {
     ID: messageID, status: MessageStatus.pending, payload, subscriptionID
@@ -25,23 +20,41 @@ function* sendMessage(subscriptionID: string, payload: string) {
     type: actionTypes.SERIAL_MESSAGE_CREATE, data: newMessage
   });
 
+  return newMessage;
+}
+
+// Update message in the store
+function* updateMessageStatus(messageID: string, updates: object) {
+  yield put({
+    type: actionTypes.SERIAL_MESSAGE_UPDATE, ID: messageID, data: updates
+  });
+}
+
+// Load serial client
+function* loadSerialClient() {
+  const serialClient: ?SlacktronicSerialClient = yield select(getSerialClient);
+  if (serialClient === null) {
+    throw new Error('Serial client not ready');
+  }
+  return serialClient;
+}
+
+
+function* sendMessage(message: serialMessage) {
   // Retry the communication
   for (let i = 0; i < 5; i += 1) {
     try {
-      const serialClient: ?SlacktronicSerialClient = yield select(getSerialClient);
-      if (serialClient === null) {
-        console.warn('Serial client not found, retrying...');
-        throw new Error('Serial client not ready');
-      }
+      const serialClient = yield call(loadSerialClient);
       return serialClient;
     } catch (err) {
       if (i < 4) {
+        console.warn(`${err.message}, retrying...`);
         yield delay(500);
       } else {
         // attempts failed after 5 attempts
         console.error(err);
         // Update the status of the message in the store
-        yield updateMessageStatus(messageID, { status: MessageStatus.error, errorMessage: err.message });
+        yield call(updateMessageStatus, message.ID, { status: MessageStatus.error, errorMessage: err.message });
       }
     }
   }
@@ -54,8 +67,10 @@ function* watchSerialMessages() {
     // 2- take from the channel
     const { subscriptionID, payload } = yield take(messagesChan);
 
-    // 3- Block until message is sent
-    yield call(sendMessage, subscriptionID, payload);
+    // 4- Enqueue the message in the store
+    const message = yield call(createMessage, subscriptionID, payload);
+    // 4- Block until message is sent
+    yield call(sendMessage, message);
   }
 }
 
