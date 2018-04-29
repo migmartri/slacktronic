@@ -1,6 +1,7 @@
 // @flow
 import actionTypes from '../actions/actionTypes';
 import * as slackModels from '../models/slack';
+import rotatedEntries from './helpers';
 
 export type slackReduxStateType = {
   +token: slackModels.tokenStateType,
@@ -18,21 +19,6 @@ const initialState: slackReduxStateType = {
     valid: false,
   },
   events: { byID: {}, allIDs: [] }
-};
-
-const EVENTS_MAX_NUMBER = 10;
-
-// Returns the EVENTS_MAX_NUMBER limiting the number of events
-// that we store in the redux store
-const rotatedEvents = (state) => {
-  const eventIDs = [...state.events.allIDs];
-  const eventsByID = { ...state.events.byID };
-
-  if (eventIDs.length >= EVENTS_MAX_NUMBER) {
-    const toRemove = eventIDs.shift();
-    delete eventsByID[toRemove];
-  }
-  return { byID: eventsByID, allIDs: eventIDs };
 };
 
 export default function slack(state: slackReduxStateType = initialState, action: any) {
@@ -70,9 +56,9 @@ export default function slack(state: slackReduxStateType = initialState, action:
         events: {
           ...state.events,
           byID: {
-            ...rotatedEvents(state).byID, [action.data.ID]: action.data
+            ...rotatedEntries(state.events).byID, [action.data.ID]: action.data
           },
-          allIDs: [...rotatedEvents(state).allIDs, action.data.ID]
+          allIDs: [...rotatedEntries(state.events).allIDs, action.data.ID]
         }
       };
     default:

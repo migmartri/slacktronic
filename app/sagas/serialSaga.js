@@ -39,13 +39,26 @@ function* loadSerialClient() {
   return serialClient;
 }
 
+// Send the message
+function sendMessage(serialClient: SlacktronicSerialClient, payload: string) {
+  const { serialPortInstance } = serialClient;
+  serialPortInstance.write(payload, (err) => {
+    if (err) {
+      throw new Error(`Error writing to port: ${err.message}`);
+    }
+  });
+}
 
-function* sendMessage(message: serialMessage) {
+function* createAndSendMessage(message: serialMessage) {
   // Retry the communication
   for (let i = 0; i < 5; i += 1) {
     try {
       const serialClient = yield call(loadSerialClient);
-      return serialClient;
+      yield call(sendMessage, serialClient, message.payload);
+      yield call(updateMessageStatus, message.ID, { status: MessageStatus.sent });
+      // Give some slack between messages
+      yield delay(200);
+      return;
     } catch (err) {
       if (i < 4) {
         console.warn(`${err.message}, retrying...`);
@@ -54,7 +67,10 @@ function* sendMessage(message: serialMessage) {
         // attempts failed after 5 attempts
         console.error(err);
         // Update the status of the message in the store
-        yield call(updateMessageStatus, message.ID, { status: MessageStatus.error, errorMessage: err.message });
+        yield call(
+          updateMessageStatus,
+          message.ID, { status: MessageStatus.error, errorMessage: err.message }
+        );
       }
     }
   }
@@ -70,7 +86,7 @@ function* watchSerialMessages() {
     // 4- Enqueue the message in the store
     const message = yield call(createMessage, subscriptionID, payload);
     // 4- Block until message is sent
-    yield call(sendMessage, message);
+    yield call(createAndSendMessage, message);
   }
 }
 

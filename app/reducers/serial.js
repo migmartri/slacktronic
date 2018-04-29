@@ -2,6 +2,7 @@
 import actionTypes from '../actions/actionTypes';
 import SlacktronicSerialClient from '../lib/serialClient';
 import type { serialMessage } from '../models/serialMessage';
+import rotatedEntries from './helpers';
 
 const initialState = {
   client: null,
@@ -28,9 +29,9 @@ function serial(state: serialReduxStateType = initialState, action: any) {
         messages: {
           ...state.messages,
           byID: {
-            ...state.messages.byID, [action.data.ID]: action.data
+            ...rotatedEntries(state.messages).byID, [action.data.ID]: action.data
           },
-          allIDs: [...state.messages.allIDs, action.data.ID],
+          allIDs: [...rotatedEntries(state.messages).allIDs, action.data.ID],
         }
       };
     case actionTypes.SERIAL_MESSAGE_UPDATE:
@@ -39,7 +40,8 @@ function serial(state: serialReduxStateType = initialState, action: any) {
         messages: {
           ...state.messages,
           byID: {
-            ...state.messages.byID, [action.ID]: { ...state.messages.byID[action.ID], ...action.data }
+            ...state.messages.byID,
+            [action.ID]: { ...state.messages.byID[action.ID], ...action.data }
           },
         },
       };
