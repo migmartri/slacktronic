@@ -22,6 +22,8 @@ matrix:
             - xz-utils
             - xorriso
 
+      before_install:
+        - cd client
       install:
         - export CXX="g++-4.8"
         - yarn
@@ -45,7 +47,9 @@ matrix:
     - language: go
       go:
         - "1.10.x"
+      before_install:
+        - cd oauthserver
       script:
         - go version
-        - make -C oauthserver test
-        - make -C oauthserver build
+        - make test
+        - make build

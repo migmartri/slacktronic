@@ -2,7 +2,6 @@
 
 const serialMessageStatus = {
   pending: 'pending',
-  sending: 'sending',
   sent: 'sent',
   error: 'error',
 };
