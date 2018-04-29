@@ -13,7 +13,6 @@ const sagaMiddleware = createSagaMiddleware();
 const enhancer = applyMiddleware(sagaMiddleware, thunk, router);
 
 function configureStore() {
-  // Start saga middleware
   const store = createStore(rootReducer, enhancer);
   sagaMiddleware.run(rootSaga);
   return store;

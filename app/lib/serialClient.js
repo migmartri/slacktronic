@@ -50,6 +50,14 @@ class SlacktronicSerialClient {
       baudRate: 57600
     });
 
+    portInstance.on('error', (err) => {
+      console.log('Error in serial client:', err.message);
+    });
+
+    portInstance.on('close', (err) => {
+      console.log('The serial port has been closed:', err.message);
+    });
+
     // Store the proper port
     client.serialPortInstance = portInstance;
     client.dispatchIfNeeded(serialActions.serialClientCreated(client));
