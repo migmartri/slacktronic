@@ -42,6 +42,7 @@ matrix:
         # compiled properly via electron-rebuild
         # TODO(miguel): Remove npm rebuild when possible
         - cd app && npm rebuild && cd ..
+        - yarn run build
         - yarn test
         - yarn package
     - language: go
