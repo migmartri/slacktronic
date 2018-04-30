@@ -1,9 +1,9 @@
 sudo: true
 
+os:
+  - linux
+  - osx
 matrix:
-  os:
-    - linux
-    - osx
   include:
     - language: node_js
       node_js:
