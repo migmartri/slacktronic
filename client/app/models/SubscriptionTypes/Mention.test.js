@@ -24,6 +24,10 @@ describe('Mention subscription type', () => {
       ));
     });
 
+    it('returns false if we receive a message without text a.k.a message_replied', () => {
+      expect(mentionInstance.assertable({ type: 'message' })).toBeFalsy();
+    });
+
     it('returns true if we receive a channel_marked event', () => {
       expect(mentionInstance.assertable({ type: 'channel_marked' })).toBeTruthy();
     });
