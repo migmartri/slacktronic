@@ -1,6 +1,9 @@
 sudo: true
 
 matrix:
+  os:
+    - linux
+    - osx
   include:
     - language: node_js
       node_js:
@@ -10,10 +13,6 @@ matrix:
         directories:
           - node_modules
           - app/node_modules
-
-      os:
-        - linux
-        - osx
       before_install:
         - cd client
       install:
