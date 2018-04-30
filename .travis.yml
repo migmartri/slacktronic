@@ -44,7 +44,7 @@ matrix:
         - cd app && npm rebuild && cd ..
         - yarn run build
         - yarn test
-        - yarn package
+        - yarn package-all # Linux and Mac for now
     - language: go
       go:
         - "1.10.x"
