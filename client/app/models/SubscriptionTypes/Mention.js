@@ -25,7 +25,7 @@ class Mention extends AssertableSubscription implements AssertableSubscriptionTy
       A mention includes the following pattern with the userID <@xxxxxx>
     */
     const strMatcher = `<@${this.currentUserID}>`;
-    if (event.type === 'message' && event.text.match(strMatcher)) {
+    if (event.type === 'message' && event.text && event.text.match(strMatcher)) {
       return true;
     }
     return event.type === 'channel_marked';
