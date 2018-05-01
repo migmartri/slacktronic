@@ -72,10 +72,17 @@ export const slackEvent = (data: any): Action => ({
   data: { ID: shortID.generate(), ...data }
 });
 
+export const processSlackEventEnqueue = (eventData: any): Action => ({
+  type: actionTypes.PROCESS_SLACK_EVENT_ENQUEUE,
+  eventData,
+});
+
 // Receives an Slack event and decides how it affects to
 // the list of subscriptions
 export const processSlackEvent = (event: any): ThunkAction => (
   (dispatch, getState) => {
+    dispatch(processSlackEventEnqueue(event));
+    // TODO(miguel) Remove action creator below and replace by trigger saga
     let discardedEvent = true;
     // $FlowFixMe
     const subsByID = getState().subscriptions.byID;
