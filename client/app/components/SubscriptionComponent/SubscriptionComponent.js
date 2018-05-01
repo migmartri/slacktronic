@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { Badge, Card, Tag, Icon, Row, Col } from 'antd';
+import { Badge, Card, Icon, Row, Col } from 'antd';
 import type { subscriptionType } from '../../models/subscription';
 import SlacktronicSerialClient from '../../lib/serialClient';
 import styles from './subscription.scss';
@@ -28,9 +28,9 @@ export default class SubscriptionComponent extends Component<Props> {
           <ul className={styles.summary}>
             <li>Trigger: {sub.assertion.name}</li>
             <li>Action: Serial message {sub.slot}</li>
-            <li>Status:
-              <Badge count={sub.active ? 1 : 0}>
-                <Tag color={sub.active ? 'green' : 'blue'}>{sub.active ? 'ON' : 'OFF'}</Tag>
+            <li>
+              <Badge dot count={sub.active ? 1 : 0}>
+                Status: {sub.active ? 'ON' : 'OFF'}
               </Badge>
             </li>
           </ul>
