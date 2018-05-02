@@ -3,7 +3,6 @@ import shortID from 'shortid';
 import type { Dispatch, Action, ThunkAction } from './common';
 import actionTypes from './actionTypes';
 import configStore from '../lib/configStore';
-import type SlackClient from '../lib/slackClient';
 import type { userInfoType } from '../models/slack';
 import type { subscriptionType } from '../models/subscription';
 import * as subscriptionActions from './subscriptions';
@@ -61,16 +60,6 @@ export const slackClientInitialize = (token: string): Action => ({
   token
 });
 
-// Client creation
-export const slackClientCreating = (): Action => ({
-  type: actionTypes.SLACK_CLIENT_CREATING
-});
-
-export const slackClientCreated = (client: SlackClient): Action => ({
-  type: actionTypes.SLACK_CLIENT_CREATED,
-  client
-});
-
 // Slack RTM event
 export const slackEvent = (data: any): Action => ({
   type: actionTypes.SLACK_EVENT,
@@ -83,7 +72,6 @@ export const slackEvent = (data: any): Action => ({
 export const processSlackEvent = (event: any): ThunkAction => (
   (dispatch, getState) => {
     // TODO(miguel) Remove action creator below and replace by trigger saga
-    let discardedEvent = true;
     // $FlowFixMe
     const subsByID = getState().subscriptions.byID;
     const subscriptions: subscriptionType[] = Object.keys(subsByID).map(k => subsByID[k]);
@@ -91,14 +79,9 @@ export const processSlackEvent = (event: any): ThunkAction => (
     subscriptions.forEach(sub => {
       const { shouldTrigger, triggerValue } = sub.assertion;
       if (shouldTrigger(event)) {
-        discardedEvent = false;
         dispatch(subscriptionActions.subscriptionStatusChange(sub, triggerValue(event)));
       }
     });
-
-    if (!discardedEvent) {
-      dispatch(slackEvent(event));
-    }
   }
 );
 

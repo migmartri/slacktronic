@@ -64,6 +64,7 @@ function* watchSlackEventsTriggers(client: SlackClient) {
     while (true) {
       const event = yield take(chan);
       yield put(slackActions.processSlackEvent(event));
+      yield put(slackActions.slackEvent(event));
     }
   } finally {
     if (yield cancelled()) {
@@ -99,7 +100,6 @@ function* clientInitializationFlow() {
   while (true) {
     const { token } = yield take(actionTypes.SLACK_CLIENT_INITIALIZE);
     const client = yield call(initializeAndValidateClient, token);
-    yield put(slackActions.slackClientCreated(client));
     return client;
   }
 }

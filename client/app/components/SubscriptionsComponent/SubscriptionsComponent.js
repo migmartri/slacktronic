@@ -1,16 +1,15 @@
 // @flow
 import React, { Component } from 'react';
 import { Divider, Icon, Badge, Timeline, Row, Col, Card } from 'antd';
-import SlackClient from '../../lib/slackClient';
 import type { serialPortType } from '../../lib/serialClient';
-import type { eventType } from '../../models/slack';
+import type { eventType, userInfoType } from '../../models/slack';
 import type { subscriptionType } from '../../models/subscription';
 import styles from './subscriptions.scss';
 import SubscriptionContainer from '../../containers/SubscriptionContainer';
 import MessagesTimelineContainer from '../../containers/MessagesTimelineContainer';
 
 type Props = {
-  slackClient: ?SlackClient,
+  slackUserInfo: ?userInfoType,
   serialPort: ?serialPortType,
   slackEvents: eventType[],
   subscriptions: subscriptionType[]
@@ -27,14 +26,14 @@ export default class SubscriptionsComponent extends Component<Props, State> {
   }
 
   slackConnectionInfo() {
-    if (this.props.slackClient) {
-      const { userInfo } = this.props.slackClient;
+    if (this.props.slackUserInfo) {
+      const { slackUserInfo } = this.props;
       return (
         <div>
           <Badge status="success" >
             <Icon type="slack-square" />
           </Badge>
-          <span>Connected to user {userInfo.user} from team {userInfo.team}</span>
+          <span>Connected to user {slackUserInfo.user} from team {slackUserInfo.team}</span>
         </div>
       );
     }
