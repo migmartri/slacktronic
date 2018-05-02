@@ -56,6 +56,11 @@ export const userInfoFetchError = (): Action => ({
   type: actionTypes.SLACK_USER_INFO_FETCH_KO
 });
 
+export const slackClientInitialize = (token: string): Action => ({
+  type: actionTypes.SLACK_CLIENT_INITIALIZE,
+  token
+});
+
 // Client creation
 export const slackClientCreating = (): Action => ({
   type: actionTypes.SLACK_CLIENT_CREATING
@@ -72,16 +77,11 @@ export const slackEvent = (data: any): Action => ({
   data: { ID: shortID.generate(), ...data }
 });
 
-export const processSlackEventEnqueue = (eventData: any): Action => ({
-  type: actionTypes.PROCESS_SLACK_EVENT_ENQUEUE,
-  eventData,
-});
-
 // Receives an Slack event and decides how it affects to
 // the list of subscriptions
+// TODO. Move inside the saga
 export const processSlackEvent = (event: any): ThunkAction => (
   (dispatch, getState) => {
-    dispatch(processSlackEventEnqueue(event));
     // TODO(miguel) Remove action creator below and replace by trigger saga
     let discardedEvent = true;
     // $FlowFixMe
@@ -89,10 +89,10 @@ export const processSlackEvent = (event: any): ThunkAction => (
     const subscriptions: subscriptionType[] = Object.keys(subsByID).map(k => subsByID[k]);
 
     subscriptions.forEach(sub => {
-      const { assertable, assert } = sub.assertion;
-      if (assertable(event)) {
+      const { shouldTrigger, triggerValue } = sub.assertion;
+      if (shouldTrigger(event)) {
         discardedEvent = false;
-        dispatch(subscriptionActions.subscriptionStatusChange(sub, assert(event)));
+        dispatch(subscriptionActions.subscriptionStatusChange(sub, triggerValue(event)));
       }
     });
 

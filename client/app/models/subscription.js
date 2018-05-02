@@ -1,5 +1,5 @@
 // @flow
-import type { AssertableSubscriptionType } from './SubscriptionTypes';
+import type { TriggerType } from '../integrations/triggers';
 
 // Slots are represented by uppercase letters i.e A,B,C
 // They are mapped as a map so we can create a slotIDType using $keys
@@ -14,7 +14,7 @@ type slotIDType = $Keys<typeof SLOTS>;
 
 export type subscriptionTypeAttrs = {
   slot: slotIDType, // 'A, B, C, D'
-  assertion: AssertableSubscriptionType,
+  assertion: TriggerType,
   active: boolean
 };
 

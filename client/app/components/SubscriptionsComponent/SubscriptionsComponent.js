@@ -26,18 +26,6 @@ export default class SubscriptionsComponent extends Component<Props, State> {
     slackEvents: []
   }
 
-  state = {
-    slackSyncInitialized: false,
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    // Initialize RTM only once
-    if (nextProps.slackClient && !this.state.slackSyncInitialized) {
-      nextProps.slackClient.initializeSlackSubscriptions();
-      this.setState({ slackSyncInitialized: true });
-    }
-  }
-
   slackConnectionInfo() {
     if (this.props.slackClient) {
       const { userInfo } = this.props.slackClient;

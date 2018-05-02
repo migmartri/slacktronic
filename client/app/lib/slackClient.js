@@ -58,31 +58,6 @@ class SlackClient {
   dispatchIfNeeded(action: Action | ThunkAction) {
     return this.dispatch ? this.dispatch(action) : console.log(action);
   }
-
-  // TODO(miguel) This will be based on some user settings
-  initializeSlackSubscriptions(): void {
-    const { rtmClient } = this;
-    rtmClient.start();
-
-    rtmClient.on('message', (event) => {
-      this.dispatchIfNeeded(slackActions.processSlackEvent(event));
-    });
-
-    rtmClient.on('im_marked', (event) => {
-      this.dispatchIfNeeded(slackActions.processSlackEvent(event));
-    });
-
-    rtmClient.on('channel_marked', (event) => {
-      this.dispatchIfNeeded(slackActions.processSlackEvent(event));
-    });
-
-    // We subscribe to the current User
-    rtmClient.subscribePresence([this.userInfo.userID]);
-
-    rtmClient.on('presence_change', (event) => {
-      this.dispatchIfNeeded(slackActions.processSlackEvent(event));
-    });
-  }
 }
 
 export default SlackClient;

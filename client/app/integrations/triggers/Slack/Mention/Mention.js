@@ -1,13 +1,16 @@
 // @flow
 
-import type { slackEventType, AssertableSubscriptionType } from '.';
-import AssertableSubscription from '.';
+import type { slackEventType } from '../base';
+import SlackTrigger from '../base';
+import type { TriggerType } from '../../';
 
-class DirectMessage extends AssertableSubscription implements AssertableSubscriptionType {
-  slackEventNames = ['message', 'im_marked'];
+// Mention works in a similar way than the Direct message, with the difference
+// that it checks for an @UserID pattern and it relies on the channel_marked event
+class Mention extends SlackTrigger implements TriggerType {
+  slackEventNames = ['message', 'channel_marked'];
   currentUserID: string;
-  name = 'Direct message';
-  description = 'Notify me when I receive a direct message';
+  name = 'Mention';
+  description = 'Notify me when I am mentioned';
   // { DABC: 'read', DIII: 'unread }
   receivedMessagesChannels = {};
 
@@ -18,17 +21,18 @@ class DirectMessage extends AssertableSubscription implements AssertableSubscrip
 
   // Override to check that it is a generic message
   // This subscription cares only about direct messages and im_read notifications
-  assertable = (event: slackEventType): boolean => {
-    /* A direct message in the RTM API means can be detected checking that the channel starts
-     with a D. We also check that the message is not from the currentUser
+  shouldTrigger = (event: slackEventType): boolean => {
+    /*
+      A mention includes the following pattern with the userID <@xxxxxx>
     */
-    if (event.type === 'message' && event.channel.match(/^D.*/) && event.user !== this.currentUserID) {
+    const strMatcher = `<@${this.currentUserID}>`;
+    if (event.type === 'message' && event.text && event.text.match(strMatcher)) {
       return true;
     }
-    return event.type === 'im_marked';
+    return event.type === 'channel_marked';
   }
 
-  assert = (event: { type: string, channel: string }): boolean => {
+  triggerValue = (event: { type: string, channel: string }): boolean => {
     const { channel } = event;
 
     // New message
@@ -47,4 +51,4 @@ class DirectMessage extends AssertableSubscription implements AssertableSubscrip
   }
 }
 
-export default DirectMessage;
+export default Mention;

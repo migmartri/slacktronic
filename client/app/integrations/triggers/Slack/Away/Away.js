@@ -1,7 +1,7 @@
 // @flow
 
 import type { TriggerType } from '../../';
-import { SlackTrigger } from '../';
+import SlackTrigger from '../base';
 
 class Away extends SlackTrigger implements TriggerType {
   slackEventNames = ['presence_change'];
