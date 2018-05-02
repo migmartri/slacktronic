@@ -15,7 +15,7 @@ const mapStateToProps = (state) => {
   }
 
   return {
-    slackClient: state.slack.client,
+    slackUserInfo: state.slack.userInfo,
     serialPort,
     slackEvents,
     subscriptions

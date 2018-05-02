@@ -5,7 +5,8 @@ import { createHashHistory } from 'history';
 import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
-import rootSaga from '../sagas';
+import actionsSaga from '../integrations/actions';
+import triggersSaga from '../integrations/triggers';
 
 const history = createHashHistory();
 
@@ -58,7 +59,8 @@ const configureStore = () => {
   const store = createStore(rootReducer, enhancer);
 
   // Start saga middleware
-  sagaMiddleware.run(rootSaga);
+  sagaMiddleware.run(actionsSaga);
+  sagaMiddleware.run(triggersSaga);
 
   if (module.hot) {
     module.hot.accept('../reducers', () =>

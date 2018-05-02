@@ -2,10 +2,10 @@ import { put, actionChannel, take, call, select } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 
 import shortID from 'shortid';
-import actionTypes from '../actions/actionTypes';
-import type { serialMessage } from '../models/serialMessage';
-import MessageStatus from '../models/serialMessage';
-import type SlacktronicSerialClient from '../lib/serialClient';
+import actionTypes from '../../../actions/actionTypes';
+import type { serialMessage } from '../../../models/serialMessage';
+import MessageStatus from '../../..//models/serialMessage';
+import type SlacktronicSerialClient from '../../../lib/serialClient';
 
 const getSerialClient = state => state.serial.client;
 

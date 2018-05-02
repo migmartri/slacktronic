@@ -45,10 +45,6 @@ export default function slack(state: slackReduxStateType = initialState, action:
       };
     case actionTypes.SLACK_USER_INFO_FETCH_OK:
       return { ...state, userInfo: action.userInfo };
-    case actionTypes.SLACK_CLIENT_CREATING:
-      return { ...state, client: null };
-    case actionTypes.SLACK_CLIENT_CREATED:
-      return { ...state, client: action.client };
     // Reduce the events
     case actionTypes.SLACK_EVENT:
       return {

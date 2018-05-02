@@ -11,9 +11,9 @@ import SlackClient from '../../lib/slackClient';
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   onTokenCreate: async (token: string) => {
     // Validate
-    const client = await SlackClient.create(token, dispatch);
+    const validToken = await SlackClient.validate(token);
 
-    if (client.valid) {
+    if (validToken) {
       notification.success({
         message: 'Slack account connected',
         description: 'Your Slack account is configured and ready to rock!',
