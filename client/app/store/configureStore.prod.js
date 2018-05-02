@@ -6,6 +6,7 @@ import { createBrowserHistory } from 'history';
 import { routerMiddleware } from 'react-router-redux';
 import rootReducer from '../reducers';
 import actionsSaga from '../integrations/actions/';
+import triggersSaga from '../integrations/triggers';
 
 const history = createBrowserHistory();
 const router = routerMiddleware(history);
@@ -15,6 +16,7 @@ const enhancer = applyMiddleware(sagaMiddleware, thunk, router);
 function configureStore() {
   const store = createStore(rootReducer, enhancer);
   sagaMiddleware.run(actionsSaga);
+  sagaMiddleware.run(triggersSaga);
   return store;
 }
 
