@@ -22,6 +22,8 @@ const actions = [
   'SERIAL_MESSAGE_ENQUEUE',
   'SERIAL_MESSAGE_CREATE',
   'SERIAL_MESSAGE_UPDATE',
+  'PROVIDER_INITIALIZE',
+  'PROVIDER_INITIALIZED',
 ];
 
 const actionFormatter = (actionNames): { [string]: string } => {

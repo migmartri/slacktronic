@@ -55,11 +55,6 @@ export const userInfoFetchError = (): Action => ({
   type: actionTypes.SLACK_USER_INFO_FETCH_KO
 });
 
-export const slackClientInitialize = (token: string): Action => ({
-  type: actionTypes.SLACK_CLIENT_INITIALIZE,
-  token
-});
-
 // Slack RTM event
 export const slackEvent = (data: any): Action => ({
   type: actionTypes.SLACK_EVENT,
