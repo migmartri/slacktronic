@@ -5,10 +5,7 @@ import { createHashHistory } from 'history';
 import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
-import serialComActionsSaga from '../integrations/serialCom/actions/';
-import slackTriggersSaga from '../integrations/slack/triggers';
-import slackProviderSaga from '../integrations/slack/providerSaga';
-import SerialComProviderSaga from '../integrations/serialCom/providerSaga';
+import rootSaga from '../rootSaga';
 
 const history = createHashHistory();
 
@@ -61,10 +58,7 @@ const configureStore = () => {
   const store = createStore(rootReducer, enhancer);
 
   // Start saga middleware
-  sagaMiddleware.run(serialComActionsSaga);
-  sagaMiddleware.run(slackTriggersSaga);
-  sagaMiddleware.run(slackProviderSaga);
-  sagaMiddleware.run(SerialComProviderSaga);
+  sagaMiddleware.run(rootSaga);
 
   if (module.hot) {
     module.hot.accept('../reducers', () =>
