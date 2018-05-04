@@ -74,11 +74,15 @@ function* watchSlackEventsTriggers(client: SlackClient) {
 }
 
 function* rootSlackSaga() {
-  const action = yield take(actionTypes.PROVIDER_INITIALIZED);
-  const { client } = action.data.options;
-  // TODO(miguel) This should be defined by the user and stored
-  yield call(initializeSubsriptions, client);
-  yield call(watchSlackEventsTriggers, client);
+  while (true) {
+    const action = yield take(actionTypes.PROVIDER_INITIALIZED);
+    const { name } = action.data;
+    if (name !== 'slack') continue;
+
+    const { client } = action.data.options;
+    yield call(initializeSubsriptions, client);
+    yield call(watchSlackEventsTriggers, client);
+  }
 }
 
 export default rootSlackSaga;

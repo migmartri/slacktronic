@@ -8,6 +8,7 @@ import rootReducer from '../reducers';
 import serialComActionsSaga from '../integrations/serialCom/actions/';
 import slackTriggersSaga from '../integrations/slack/triggers';
 import slackProviderSaga from '../integrations/slack/providerSaga';
+import SerialComProviderSaga from '../integrations/serialCom/providerSaga';
 
 const history = createBrowserHistory();
 const router = routerMiddleware(history);
@@ -19,6 +20,7 @@ function configureStore() {
   sagaMiddleware.run(serialComActionsSaga);
   sagaMiddleware.run(slackTriggersSaga);
   sagaMiddleware.run(slackProviderSaga);
+  sagaMiddleware.run(SerialComProviderSaga);
   return store;
 }
 
