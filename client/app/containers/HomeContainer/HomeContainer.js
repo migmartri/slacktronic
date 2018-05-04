@@ -4,6 +4,7 @@ import HomeComponent from '../../components/HomeComponent';
 import configStore from '../../lib/configStore';
 import type { Dispatch } from '../../actions/common';
 import * as providerActions from '../../actions/providers';
+import * as subscriptionActions from '../../actions/subscriptions';
 
 const mapStateToProps = (state) => ({
   slackConfigured: state.slack.token.valid
@@ -20,6 +21,17 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     }
 
     dispatch(providerActions.initialize('serialCom'));
+
+    const payload = {
+      trigger: {
+        providerName: 'slack', type: 'away'
+      },
+      action: {
+        providerName: 'serialCom', type: 'message'
+      }
+    };
+    
+    dispatch(subscriptionActions.craftSubscription(payload));
   }
 });
 

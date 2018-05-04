@@ -10,11 +10,17 @@ const SLOTS: { [string]: string } = {};
 
 type slotIDType = $Keys<typeof SLOTS>;
 
+type subscriptionTypeAttrsNew = {
+  triggerID: string,
+  actionID: string
+};
+
+// TODO, keep only one schema
 export type subscriptionTypeAttrs = {
   slot: slotIDType, // 'A, B, C, D'
   assertion: any,
   active: boolean
-};
+} | subscriptionTypeAttrsNew;
 
 export type subscriptionType = {
   ID: string

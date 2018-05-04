@@ -10,16 +10,12 @@ type ProviderStatusType = $Keys<typeof ProviderStatus>;
 export type providerOptions = { [string]: any };
 export type supportedProviderName = 'slack' | 'serialCom';
 
-export type providerAttrs = {
+export type providerType = {
   status: ProviderStatusType,
   name: supportedProviderName,
   options?: providerOptions,
   statusMessage?: string
 };
-
-export type providerType = {
-  ID: string
-} & providerAttrs;
 
 export default ProviderStatus;
 

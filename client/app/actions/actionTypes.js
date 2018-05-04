@@ -16,6 +16,7 @@ const actions = [
   'SLACK_TOKEN_STORED',
   'SLACK_TOKEN_STORE_ERROR',
   'SLACK_EVENT',
+  'SUBSCRIPTION_CRAFT',
   'SUBSCRIPTION_CREATE',
   'SUBSCRIPTION_STATUS_CHANGE',
   'SUBSCRIPTIONS_CLEAR',
@@ -24,6 +25,8 @@ const actions = [
   'SERIAL_MESSAGE_UPDATE',
   'PROVIDER_INITIALIZE',
   'PROVIDER_INITIALIZED',
+  'TRIGGER_CREATE',
+  'ACTION_CREATE',
 ];
 
 const actionFormatter = (actionNames): { [string]: string } => {

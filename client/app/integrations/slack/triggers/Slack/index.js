@@ -45,17 +45,17 @@ function* initializeSubsriptions(client: SlackClient) {
   // Initialize a set of hardcoded subscriptions
   yield put(subscriptionActions.clearSubscriptions());
 
-  yield put(subscriptionActions.createSubscription({
-    slot: 'A', active: false, assertion: new AwayTrigger()
-  }));
+  // yield put(subscriptionActions.createSubscription({
+  //   slot: 'A', active: false, assertion: new AwayTrigger()
+  // }));
 
-  yield put(subscriptionActions.createSubscription({
-    slot: 'B', active: false, assertion: new DMTrigger(client.userInfo.userID)
-  }));
+  // yield put(subscriptionActions.createSubscription({
+  //   slot: 'B', active: false, assertion: new DMTrigger(client.userInfo.userID)
+  // }));
 
-  yield put(subscriptionActions.createSubscription({
-    slot: 'C', active: false, assertion: new MentionTrigger(client.userInfo.userID)
-  }));
+  // yield put(subscriptionActions.createSubscription({
+  //   slot: 'C', active: false, assertion: new MentionTrigger(client.userInfo.userID)
+  // }));
 }
 
 function* watchSlackEventsTriggers(client: SlackClient) {

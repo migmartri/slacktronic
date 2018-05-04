@@ -1,26 +1,26 @@
 // @flow
 import actionTypes from '../actions/actionTypes';
-import type { providerType, supportedProviderName } from '../models/provider';
+import type { triggerType } from '../models/trigger';
 
 const initialState = {
-  byName: {}, allNames: []
+  byID: {}, allIDs: []
 };
 
 type reduxStateType = {
-  byName: { [supportedProviderName]: providerType },
-  allNames: string[]
+  byID: { [string]: triggerType },
+  allIDs: string[]
 };
 
 // The providers are singleton for now.
 function providers(state: reduxStateType = initialState, action: any) {
   switch (action.type) {
-    case actionTypes.PROVIDER_INITIALIZED:
+    case actionTypes.TRIGGER_CREATE:
       return {
         ...state,
-        byName: {
-          ...state.byName, [action.data.name]: action.data
+        byID: {
+          ...state.byID, [action.data.ID]: action.data
         },
-        allIDs: [...state.allNames, action.data.name]
+        allIDs: [...state.allIDs, action.data.ID]
       };
     default:
       return state;
