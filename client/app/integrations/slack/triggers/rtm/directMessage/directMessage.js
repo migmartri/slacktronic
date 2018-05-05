@@ -4,13 +4,14 @@ import type { slackEventType } from '../base';
 import SlackTrigger from '../base';
 import type { TriggerType } from '../../';
 
-// Mention works in a similar way than the Direct message, with the difference
-// that it checks for an @UserID pattern and it relies on the channel_marked event
-class Mention extends SlackTrigger implements TriggerType {
-  slackEventNames = ['message', 'channel_marked'];
+class DirectMessage extends SlackTrigger implements TriggerType {
+  static metadata = {
+    name: 'Direct message',
+    description: 'Notify me when I receive a direct message'
+  }
+
+  slackEventNames = ['message', 'im_marked'];
   currentUserID: string;
-  name = 'Mention';
-  description = 'Notify me when I am mentioned';
   // { DABC: 'read', DIII: 'unread }
   receivedMessagesChannels = {};
 
@@ -22,14 +23,13 @@ class Mention extends SlackTrigger implements TriggerType {
   // Override to check that it is a generic message
   // This subscription cares only about direct messages and im_read notifications
   shouldTrigger = (event: slackEventType): boolean => {
-    /*
-      A mention includes the following pattern with the userID <@xxxxxx>
+    /* A direct message in the RTM API means can be detected checking that the channel starts
+     with a D. We also check that the message is not from the currentUser
     */
-    const strMatcher = `<@${this.currentUserID}>`;
-    if (event.type === 'message' && event.text && event.text.match(strMatcher)) {
+    if (event.type === 'message' && event.channel.match(/^D.*/) && event.user !== this.currentUserID) {
       return true;
     }
-    return event.type === 'channel_marked';
+    return event.type === 'im_marked';
   }
 
   triggerValue = (event: { type: string, channel: string }): boolean => {
@@ -51,4 +51,4 @@ class Mention extends SlackTrigger implements TriggerType {
   }
 }
 
-export default Mention;
+export default DirectMessage;

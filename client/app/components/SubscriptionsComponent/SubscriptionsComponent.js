@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { Divider, Icon, Badge, Timeline, Row, Col, Card } from 'antd';
-import type { serialPortType } from '../../lib/serialClient';
+import type { serialPortType } from '../../integrations/serialCom/client';
 import type { eventType, userInfoType } from '../../models/slack';
 import type { subscriptionType } from '../../models/subscription';
 import styles from './subscriptions.scss';

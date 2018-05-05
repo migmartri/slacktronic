@@ -1,37 +1,55 @@
 // @flow
-import React, { Component } from 'react';
-import { Badge, Card, Icon, Row, Col } from 'antd';
+import * as React from 'react';
+import { TimeAgo } from 'react-time-ago';
+import TimeAgoJS from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en';
+import { Card, Icon, Row, Col } from 'antd';
 import type { subscriptionType } from '../../models/subscription';
-import SlacktronicSerialClient from '../../lib/serialClient';
+import type { actionType } from '../../models/action';
+import type { triggerType } from '../../models/trigger';
 import styles from './subscription.scss';
+import SUPPORTED_TRIGGERS from '../../integrations/slack/triggers/rtm';
+
+TimeAgoJS.locale(en);
 
 type Props = {
   subscription: subscriptionType,
   // eslint-disable-next-line react/no-unused-prop-types
-  serialClient: ?SlacktronicSerialClient
+  action: actionType,
+  trigger: triggerType
 };
 
-export default class SubscriptionComponent extends Component<Props> {
+export default class SubscriptionComponent extends React.Component<Props> {
   props: Props;
+
+  get lastPerformInfo(): React.Node {
+    const { lastPerform } = this.props.trigger;
+    if (!lastPerform) return 'No triggered yet';
+
+    const lastTriggeredAt = lastPerform.triggeredAt;
+    const enabled = lastPerform.enabled ? 'ON' : 'OFF';
+
+    return <span>{enabled} <TimeAgo>{lastTriggeredAt}</TimeAgo></span>;
+  }
 
   render() {
     const sub = this.props.subscription;
+    const TriggerTypeClass = SUPPORTED_TRIGGERS[this.props.trigger.type];
+    const { metadata } = TriggerTypeClass;
     return (
       <div>
         <Card>
-          <p>{sub.assertion.description}</p>
+          <p>{metadata.description}</p>
           <Row className={styles.icons}>
             <Col span={8}><Icon type="slack" /></Col>
             <Col span={8}><Icon type="arrow-right" /></Col>
             <Col span={8}><Icon type="usb" /></Col>
           </Row>
           <ul className={styles.summary}>
-            <li>Trigger: {sub.assertion.name}</li>
-            <li>Action: Serial message {sub.slot}</li>
+            <li>Trigger: {metadata.name} ({ this.lastPerformInfo })</li>
+            <li>Action: Serial Message</li>
             <li>
-              <Badge dot count={sub.active ? 1 : 0}>
-                Status: {sub.active ? 'ON' : 'OFF'}
-              </Badge>
+              Enabled: {sub.enabled ? 'Yes' : 'No'}
             </li>
           </ul>
         </Card>
