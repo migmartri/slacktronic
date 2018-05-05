@@ -38,7 +38,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
     payload = {
       trigger: {
-        providerName: 'slack', type: 'directMessage'
+        providerName: 'slack', type: 'dm'
       },
       action: {
         providerName: 'serialCom', type: 'message'

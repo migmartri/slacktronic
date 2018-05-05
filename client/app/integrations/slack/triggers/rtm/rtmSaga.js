@@ -4,6 +4,7 @@ import { eventChannel, END } from 'redux-saga';
 import actionTypes from '../../../../actions/actionTypes';
 import * as slackActions from '../../../../actions/slack';
 import SlackClient from '../../../../lib/slackClient';
+import SUPPORTED_TRIGGERS from './index';
 
 const debug = require('debug')('slacktronic@triggers.slack.rtm.saga');
 
@@ -61,6 +62,8 @@ function slackEventsChannel(client: SlackClient) {
 function processSlackEvents(event) {
   registeredTriggers.forEach(t => {
     debug('Processing event %j on trigger %j', event, t);
+    const triggerType = SUPPORTED_TRIGGERS[t.type];
+    debug('Loading triggerType %o', triggerType);
   });
 }
 

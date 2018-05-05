@@ -1,6 +1,6 @@
 // @flow
 import context from 'jest-plugin-context';
-import Mention from './Mention';
+import Mention from './mention';
 
 describe('Mention subscription type', () => {
   const userID = 'myUserID';
