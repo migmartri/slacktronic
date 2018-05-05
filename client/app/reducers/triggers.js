@@ -26,8 +26,9 @@ function providers(state: reduxStateType = initialState, action: any) {
       return {
         ...state,
         byID: {
-          ...state.byID, [action.data.ID]: {
-            ...state.byID[action.data.ID], 
+          ...state.byID,
+          [action.data.ID]: {
+            ...state.byID[action.data.ID],
             lastPerform: action.data.lastPerform
           }
         }

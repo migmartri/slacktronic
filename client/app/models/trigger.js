@@ -1,11 +1,11 @@
 // @flow
 
 export type options = { [string]: any };
-  
+
 export type triggerPerformType = {
   triggeredAt: Date,
   enabled: boolean
-}
+};
 
 export type triggerAttrs = {
   providerName: string,
