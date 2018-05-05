@@ -1,5 +1,5 @@
 import { take, call, put } from 'redux-saga/effects';
-import SlackClient from '../../lib/slackClient';
+import SlackClient from './client';
 import actionTypes from '../../actions/actionTypes';
 import * as providersActions from '../../actions/providers';
 

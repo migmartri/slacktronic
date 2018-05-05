@@ -4,7 +4,7 @@ import { eventChannel, END } from 'redux-saga';
 import actionTypes from '../../../../actions/actionTypes';
 import * as slackActions from '../../../../actions/slack';
 import * as triggersActions from '../../../../actions/triggers';
-import SlackClient from '../../../../lib/slackClient';
+import SlackClient from '../../client';
 import SUPPORTED_TRIGGERS from './index';
 
 const debug = require('debug')('slacktronic@triggers.slack.rtm.saga');

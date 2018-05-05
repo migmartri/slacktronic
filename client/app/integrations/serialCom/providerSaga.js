@@ -1,6 +1,6 @@
 import { take, call, put } from 'redux-saga/effects';
 import SerialPort from 'serialport';
-import SlacktronicSerialClient from '../../lib/serialClient';
+import SlacktronicSerialClient from './client';
 import actionTypes from '../../actions/actionTypes';
 import * as providersActions from '../../actions/providers';
 

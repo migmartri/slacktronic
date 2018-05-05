@@ -1,6 +1,6 @@
 // @flow
 import { RTMClient, WebClient } from '@slack/client';
-import type { userInfoType } from '../models/slack';
+import type { userInfoType } from '../../models/slack';
 
 // TODO(miguel) Remove client info
 class SlackClient {

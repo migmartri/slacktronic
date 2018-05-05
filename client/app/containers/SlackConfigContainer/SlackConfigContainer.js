@@ -6,7 +6,7 @@ import type { Dispatch } from '../../actions/common';
 import storeToken from '../../actions/slack';
 import ConfigSimpleComponent from '../../components/SlackConfigSimpleComponent';
 import ConfigManualComponent from '../../components/SlackConfigManualComponent';
-import SlackClient from '../../lib/slackClient';
+import SlackClient from '../../integrations/slack/client';
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   onTokenCreate: async (token: string) => {
