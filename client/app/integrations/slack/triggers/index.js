@@ -1,5 +1,5 @@
 import { all } from 'redux-saga/effects';
-import slackEventsTriggerSaga from './Slack';
+import slackRTMSaga from './rtm/rtmSaga';
 
 export interface TriggerType {
   name: string;
@@ -10,6 +10,6 @@ export interface TriggerType {
 
 export default function* triggersSaga() {
   yield all([
-    slackEventsTriggerSaga()
+    slackRTMSaga()
   ]);
 }

@@ -14,4 +14,11 @@ export const initialized = (data: providerType): Action => ({
   data
 });
 
+export const initializationError = (name: supportedProviderName, err: Error): Action => ({
+  type: actionTypes.PROVIDER_INITIALIZATION_ERROR,
+  data: {
+    name, err
+  }
+});
+
 export default initialize;

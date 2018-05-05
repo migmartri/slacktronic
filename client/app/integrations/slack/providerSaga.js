@@ -35,15 +35,18 @@ function* clientInitializationFlow() {
 
     if (name !== 'slack') continue;
 
-    console.log('initializing the slack provider');
-    const client = yield call(initializeAndValidateClient, token);
-    const data = {
-      options: { client },
-      status: 'ready',
-      name: 'slack',
-    };
+    try {
+      const client = yield call(initializeAndValidateClient, token);
+      const data = {
+        options: { client },
+        status: 'ready',
+        name: 'slack',
+      };
 
-    yield put(providersActions.initialized(data));
+      yield put(providersActions.initialized(data));
+    } catch (err) {
+      yield put(providersActions.initializationError(name, err));
+    }
   }
 }
 

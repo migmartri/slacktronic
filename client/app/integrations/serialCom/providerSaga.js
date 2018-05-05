@@ -57,15 +57,18 @@ function* clientInitializationFlow() {
     const { name } = providerAction;
     if (name !== 'serialCom') continue;
 
-    console.log('initializing the SerialCom provider');
-    const client = yield call(initializeAndValidateClient);
-    const data = {
-      options: { client },
-      status: 'ready',
-      name: 'serialCom',
-    };
+    try {
+      const client = yield call(initializeAndValidateClient);
+      const data = {
+        options: { client },
+        status: 'ready',
+        name: 'serialCom',
+      };
 
-    yield put(providersActions.initialized(data));
+      yield put(providersActions.initialized(data));
+    } catch (err) {
+      yield put(providersActions.initializationError(name, err));
+    }
   }
 }
 

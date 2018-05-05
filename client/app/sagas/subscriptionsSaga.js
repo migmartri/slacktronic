@@ -3,23 +3,26 @@ import { take, all, fork, put } from 'redux-saga/effects';
 import actionTypes from '../actions/actionTypes';
 import { createSubscription } from './../actions/subscriptions';
 
-// const debug = require('debug')('slacktronic@subscriptionSaga')
-
 function* watchSubscriptionCreation() {
   while (true) {
     const payload = yield take(actionTypes.SUBSCRIPTION_CRAFT);
 
-    const trigger = yield put({
+    const { trigger, action, enabled } = payload.data;
+    const triggerInstance = yield put({
       type: actionTypes.TRIGGER_CREATE,
-      data: { ID: shortID.generate(), ...payload.data.trigger }
+      data: { ID: shortID.generate(), ...trigger }
     });
 
-    const action = yield put({
+    const actionInstance = yield put({
       type: actionTypes.ACTION_CREATE,
-      data: { ID: shortID.generate(), ...payload.data.action }
+      data: { ID: shortID.generate(), ...action }
     });
 
-    yield put(createSubscription({ triggerID: trigger.data.ID, actionID: action.data.ID }));
+    yield put(createSubscription({
+      triggerID: triggerInstance.data.ID,
+      actionID: actionInstance.data.ID,
+      enabled
+    }));
   }
 }
 

@@ -14,25 +14,40 @@ type Props = {
 export default class SubscriptionComponent extends Component<Props> {
   props: Props;
 
+  // render() {
+  //   const sub = this.props.subscription;
+  //   return (
+  //     <div>
+  //       <Card>
+  //         <p>{sub.assertion.description}</p>
+  //         <Row className={styles.icons}>
+  //           <Col span={8}><Icon type="slack" /></Col>
+  //           <Col span={8}><Icon type="arrow-right" /></Col>
+  //           <Col span={8}><Icon type="usb" /></Col>
+  //         </Row>
+  //         <ul className={styles.summary}>
+  //           <li>Trigger: {sub.assertion.name}</li>
+  //           <li>Action: Serial message {sub.slot}</li>
+  //           <li>
+  //             <Badge dot count={sub.active ? 1 : 0}>
+  //               Status: {sub.active ? 'ON' : 'OFF'}
+  //             </Badge>
+  //           </li>
+  //         </ul>
+  //       </Card>
+  //     </div>
+  //   );
+  // }
   render() {
     const sub = this.props.subscription;
     return (
       <div>
         <Card>
-          <p>{sub.assertion.description}</p>
-          <Row className={styles.icons}>
-            <Col span={8}><Icon type="slack" /></Col>
-            <Col span={8}><Icon type="arrow-right" /></Col>
-            <Col span={8}><Icon type="usb" /></Col>
-          </Row>
           <ul className={styles.summary}>
-            <li>Trigger: {sub.assertion.name}</li>
-            <li>Action: Serial message {sub.slot}</li>
-            <li>
-              <Badge dot count={sub.active ? 1 : 0}>
-                Status: {sub.active ? 'ON' : 'OFF'}
-              </Badge>
-            </li>
+            <li>ID: {sub.ID}</li>
+            <li>Trigger: {sub.triggerID}</li>
+            <li>Action: { sub.actionID }</li>
+            <li>Enabled: { sub.enabled ? 'true' : 'false' }</li>
           </ul>
         </Card>
       </div>

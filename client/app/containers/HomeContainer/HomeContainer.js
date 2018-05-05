@@ -22,15 +22,30 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
     dispatch(providerActions.initialize('serialCom'));
 
-    const payload = {
+    dispatch(subscriptionActions.clearSubscriptions());
+
+    let payload = {
       trigger: {
         providerName: 'slack', type: 'away'
       },
       action: {
         providerName: 'serialCom', type: 'message'
-      }
+      },
+      enabled: true
     };
-    
+
+    dispatch(subscriptionActions.craftSubscription(payload));
+
+    payload = {
+      trigger: {
+        providerName: 'slack', type: 'directMessage'
+      },
+      action: {
+        providerName: 'serialCom', type: 'message'
+      },
+      enabled: true
+    };
+
     dispatch(subscriptionActions.craftSubscription(payload));
   }
 });

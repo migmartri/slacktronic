@@ -9,7 +9,8 @@ import type { triggerAttrs } from '../models/trigger';
 
 type craftSubPayload = {
   trigger: triggerAttrs,
-   action: actionAttrs
+  action: actionAttrs,
+  enabled: boolean
 };
 
 // Creates a subscription and its relationships, trigger and action

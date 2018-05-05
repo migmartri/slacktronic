@@ -1,6 +1,6 @@
 import { fork } from 'redux-saga/effects';
 import serialComActionsSaga from './integrations/serialCom/actions/';
-import slackTriggersSaga from './integrations/slack/triggers';
+import slackTriggerSaga from './integrations/slack/triggers';
 import slackProviderSaga from './integrations/slack/providerSaga';
 import serialComProviderSaga from './integrations/serialCom/providerSaga';
 import subscriptionsSaga from './sagas/subscriptionsSaga';
@@ -12,7 +12,7 @@ const sagas = [
   // Actions
   serialComActionsSaga,
   // Triggers
-  slackTriggersSaga,
+  slackTriggerSaga,
   // Misc
   subscriptionsSaga
 ];

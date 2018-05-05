@@ -12,7 +12,8 @@ type slotIDType = $Keys<typeof SLOTS>;
 
 type subscriptionTypeAttrsNew = {
   triggerID: string,
-  actionID: string
+  actionID: string,
+  enabled: boolean
 };
 
 // TODO, keep only one schema
