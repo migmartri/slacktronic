@@ -4,8 +4,6 @@ import type { Dispatch, Action, ThunkAction } from './common';
 import actionTypes from './actionTypes';
 import configStore from '../lib/configStore';
 import type { userInfoType } from '../models/slack';
-import type { subscriptionType } from '../models/subscription';
-import * as subscriptionActions from './subscriptions';
 
 // Token store
 const tokenStoring = (token: string): Action => ({
@@ -60,24 +58,5 @@ export const slackEvent = (data: any): Action => ({
   type: actionTypes.SLACK_EVENT,
   data: { ID: shortID.generate(), ...data }
 });
-
-// Receives an Slack event and decides how it affects to
-// the list of subscriptions
-// TODO. Move inside the saga
-export const processSlackEvent = (event: any): ThunkAction => (
-  (dispatch, getState) => {
-    // TODO(miguel) Remove action creator below and replace by trigger saga
-    // $FlowFixMe
-    const subsByID = getState().subscriptions.byID;
-    const subscriptions: subscriptionType[] = Object.keys(subsByID).map(k => subsByID[k]);
-
-    subscriptions.forEach(sub => {
-      const { shouldTrigger, triggerValue } = sub.assertion;
-      if (shouldTrigger(event)) {
-        dispatch(subscriptionActions.subscriptionStatusChange(sub, triggerValue(event)));
-      }
-    });
-  }
-);
 
 export default storeToken;

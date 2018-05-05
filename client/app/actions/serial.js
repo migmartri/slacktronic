@@ -13,10 +13,3 @@ export const serialClientCreated = (client: SlacktronicSerialClient): Action => 
   type: actionTypes.SERIAL_CLIENT_CREATED,
   client
 });
-
-// Messages
-export const enqueueMessage = (payload: string, subscriptionID: string): Action => ({
-  type: actionTypes.SERIAL_MESSAGE_ENQUEUE,
-  subscriptionID,
-  payload
-});

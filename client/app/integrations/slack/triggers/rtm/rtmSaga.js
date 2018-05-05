@@ -45,7 +45,7 @@ function slackEventsChannel(client: SlackClient) {
 
 // TODO(miguel) Initialize Trigger classes in watchSlackTrigger generator
 // and remove client from here.
-function* processSlackEvents(event, client: SlackClient) {
+function* processSlackEvent(event, client: SlackClient) {
   yield all(registeredTriggers.map(t => call(processTrigger, event, client, t)));
 }
 
@@ -79,7 +79,7 @@ function* watchSlackEventsTriggers(client: SlackClient) {
     while (true) {
       const event = yield take(chan);
       debug('Events received from channel %o', event);
-      yield fork(processSlackEvents, event, client);
+      yield fork(processSlackEvent, event, client);
       yield put(slackActions.slackEvent(event));
     }
   } finally {
@@ -97,7 +97,7 @@ function watchSlackTriggersCreation(action) {
   if (providerName !== PROVIDER_NAME) return;
   debug('Received trigger creation', action);
   registeredTriggers.push(action.data);
-  debug('Triggers registed %o', registeredTriggers);
+  debug('Triggers registered %o', registeredTriggers);
 }
 
 function* watchProviderInitialized() {

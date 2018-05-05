@@ -1,4 +1,4 @@
-import { put, actionChannel, take, call, select } from 'redux-saga/effects';
+import { put, all, actionChannel, take, call, takeEvery } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 
 import shortID from 'shortid';
@@ -7,13 +7,16 @@ import type { serialMessage } from '../../../../models/serialMessage';
 import MessageStatus from '../../../../models/serialMessage';
 import type SlacktronicSerialClient from '../../../../lib/serialClient';
 
-const getSerialClient = state => state.serial.client;
+const PROVIDER_NAME = 'serialCom';
+const debug = require('debug')('slacktronic@actions.serialCom.sendMessage.saga');
+
+let serialClient;
 
 // Create message in the store
-function* createMessage(subscriptionID: string, payload: string) {
+function* createMessage(payload: string) {
   const messageID = shortID.generate();
   const newMessage: serialMessage = {
-    ID: messageID, status: MessageStatus.pending, payload, subscriptionID
+    ID: messageID, status: MessageStatus.pending, payload
   };
 
   yield put({
@@ -31,8 +34,7 @@ function* updateMessageStatus(messageID: string, updates: object) {
 }
 
 // Load serial client
-function* loadSerialClient() {
-  const serialClient: ?SlacktronicSerialClient = yield select(getSerialClient);
+function* validateClient() {
   if (serialClient === null) {
     throw new Error('Serial client not ready');
   }
@@ -53,7 +55,7 @@ function* loadSerialClient() {
 }
 
 // Send the message
-function send(serialClient: SlacktronicSerialClient, payload: string) {
+function send(payload: string) {
   const { serialPortInstance } = serialClient;
   return new Promise((resolve, reject) => {
     serialPortInstance.write(payload, (werr) => {
@@ -76,8 +78,8 @@ function* sendMessage(message: serialMessage) {
   // Retry the communication
   for (let i = 0; i < 5; i += 1) {
     try {
-      const serialClient = yield call(loadSerialClient);
-      yield call(send, serialClient, message.payload);
+      yield call(validateClient);
+      yield call(send, message.payload);
       yield call(updateMessageStatus, message.ID, { status: MessageStatus.sent });
       return;
     } catch (err) {
@@ -97,18 +99,62 @@ function* sendMessage(message: serialMessage) {
   }
 }
 
-function* watchSerialMessages() {
-  // 1- Create a channel for jobs enqueues
-  const messagesChan = yield actionChannel(actionTypes.SERIAL_MESSAGE_ENQUEUE);
-  while (true) {
-    // 2- take from the channel
-    const { subscriptionID, payload } = yield take(messagesChan);
+function processReceivedActionPerform(action) {
+  debug('ActionPerform received %o', action);
+  const referencedSerialAction = registeredActions.find((a) => a.ID === action.data.ID);
+  if (!referencedSerialAction) return;
+  debug('SerialCom action found %o', referencedSerialAction);
 
-    // 4- Enqueue the message in the store
-    const message = yield call(createMessage, subscriptionID, payload);
-    // 4- Block until message is sent
-    yield call(sendMessage, message);
+  const { enabled } = action.data;
+  const { char } = referencedSerialAction.options;
+  const message = enabled ? char.toUpperCase() : char;
+  debug('Enabled %s, character %s, message %s', enabled, char, message);
+}
+
+// function* watchSerialMessages() {
+//   // 1- Create a channel for jobs enqueues
+//   const messagesChan = yield actionChannel('TODO');
+//   while (true) {
+//     // 2- take from the channel
+//     const { payload } = yield take(messagesChan);
+// 
+//     // 4- Enqueue the message in the store
+//     const message = yield call(createMessage, payload);
+//     // 4- Block until message is sent
+//     yield call(sendMessage, message);
+//   }
+// }
+
+const registeredActions = [];
+function watchSerialComActionsCreation(action) {
+  const { providerName } = action.data;
+
+  if (providerName !== PROVIDER_NAME) return;
+  debug('Received action creation', action);
+  registeredActions.push(action.data);
+  debug('Actions registered %o', registeredActions);
+}
+
+function* watchProviderInitialized() {
+  while (true) {
+    const action = yield take(actionTypes.PROVIDER_INITIALIZED);
+    debug('Provider initialize received %o', action);
+    const { name } = action.data;
+    if (name !== PROVIDER_NAME) continue;
+    debug('Provider initialize accepted %o', action);
+
+    const { client } = action.data.options;
+    serialClient = client;
+    debug('SerialClient registered', client);
   }
 }
 
-export default watchSerialMessages;
+function* rootSlackSaga() {
+  yield all([
+    call(watchProviderInitialized),
+    takeEvery(actionTypes.ACTION_CREATE, watchSerialComActionsCreation),
+    takeEvery(actionTypes.ACTION_PERFORM, processReceivedActionPerform)
+  ]);
+}
+
+export default rootSlackSaga;

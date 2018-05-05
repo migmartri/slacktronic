@@ -34,11 +34,14 @@ function* watchSubscriptionCreation() {
   }
 }
 
-function* processTrigger(triggerID: string, subscription) {
+function* processTrigger(trigger, subscription) {
+  const triggerID = trigger.ID;
+  const { enabled } = trigger.lastPerform;
+
   debug('Checking subscription %o on trigger %o', subscription, triggerID);
   if (triggerID === subscription.triggerID) {
     debug('Subscription %o contains trigger, dispatching action %o', subscription, subscription.actionID);
-    yield put(actionsActions.perform(subscription.actionID, 'TODO'));
+    yield put(actionsActions.perform(subscription.actionID, enabled));
   }
 }
 
@@ -46,7 +49,7 @@ function* watchTriggeredTriggers() {
   while (true) {
     const trigger = yield take(actionTypes.TRIGGER_TRIGGERED);
     debug('Trigger received %o', trigger);
-    yield all(registeredSubscriptions.map(sub => call(processTrigger, trigger.data.ID, sub.data)));
+    yield all(registeredSubscriptions.map(sub => call(processTrigger, trigger.data, sub.data)));
   }
 }
 

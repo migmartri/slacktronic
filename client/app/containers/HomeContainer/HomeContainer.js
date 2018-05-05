@@ -31,7 +31,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
         providerName: 'slack', type: 'away'
       },
       action: {
-        providerName: 'serialCom', type: 'message'
+        providerName: 'serialCom', type: 'message', options: { char: 'a' }
       },
       enabled: true
     };
@@ -43,7 +43,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
         providerName: 'slack', type: 'dm'
       },
       action: {
-        providerName: 'serialCom', type: 'message'
+        providerName: 'serialCom', type: 'message', options: { char: 'b' }
       },
       enabled: true
     };
@@ -55,7 +55,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
         providerName: 'slack', type: 'mention'
       },
       action: {
-        providerName: 'serialCom', type: 'message'
+        providerName: 'serialCom', type: 'message', options: { char: 'c' }
       },
       enabled: true
     };
