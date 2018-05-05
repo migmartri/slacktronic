@@ -5,10 +5,8 @@ import TimeAgoJS from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import { Card, Icon, Row, Col } from 'antd';
 import type { subscriptionType } from '../../models/subscription';
-import SlacktronicSerialClient from '../../lib/serialClient';
 import type { actionType } from '../../models/action';
 import type { triggerType } from '../../models/trigger';
-import type { providerType } from '../../models/provider';
 import styles from './subscription.scss';
 import SUPPORTED_TRIGGERS from '../../integrations/slack/triggers/rtm';
 
@@ -17,10 +15,8 @@ TimeAgoJS.locale(en);
 type Props = {
   subscription: subscriptionType,
   // eslint-disable-next-line react/no-unused-prop-types
-  serialClient: ?SlacktronicSerialClient,
   action: actionType,
-  trigger: triggerType,
-  providers: providerType[]
+  trigger: triggerType
 };
 
 export default class SubscriptionComponent extends React.Component<Props> {

@@ -3,7 +3,6 @@ import SerialPort from 'serialport';
 import SlacktronicSerialClient from '../../lib/serialClient';
 import actionTypes from '../../actions/actionTypes';
 import * as providersActions from '../../actions/providers';
-import * as serialActions from '../../actions/serial';
 
 function* arduinoConnectedPorts() {
   const ports = yield call(SerialPort.list);
@@ -20,7 +19,6 @@ function* arduinoConnectedPorts() {
 
 function* initializeAndValidateClient() {
   const client = new SlacktronicSerialClient();
-  yield put(serialActions.serialClientCreating());
 
   const arduinoPorts = yield call(arduinoConnectedPorts);
   if (arduinoPorts.length) {
@@ -46,7 +44,6 @@ function* initializeAndValidateClient() {
   // Store the proper port
   client.serialPortInstance = portInstance;
   // TODO(only use one dispatch)
-  yield put(serialActions.serialClientCreated(client));
 
   return client;
 }

@@ -12,7 +12,6 @@ const mapStateToProps = (state, ownProps) => {
     providers,
     action: state.actions.byID[subscription.actionID],
     trigger: state.triggers.byID[subscription.triggerID],
-    serialClient: state.serial.client
   };
 };
 

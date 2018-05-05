@@ -6,9 +6,13 @@ import type { Dispatch } from '../../actions/common';
 import * as providerActions from '../../actions/providers';
 import * as subscriptionActions from '../../actions/subscriptions';
 
-const mapStateToProps = (state) => ({
-  slackConfigured: state.slack.token.valid
-});
+const mapStateToProps = (state) => {
+  const providersByName = state.providers.byName;
+  const { slack: slackProvider } = providersByName;
+  return {
+    slackConfigured: slackProvider && slackProvider.status === 'ready'
+  };
+};
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   onLoad: async () => {
