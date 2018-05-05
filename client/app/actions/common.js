@@ -4,4 +4,3 @@ export type Action = {
 };
 
 export type Dispatch = (action: Action) => void;
-type GetState = () => mixed;
