@@ -103,10 +103,10 @@ function watchSlackTriggersCreation(action) {
 function* watchProviderInitialized() {
   while (true) {
     const action = yield take(actionTypes.PROVIDER_INITIALIZED);
-    debug('Provider initialize received', action);
+    debug('Provider initialize received %o', action);
     const { name } = action.data;
     if (name !== PROVIDER_NAME) continue;
-    debug('Provider initialize accepted', action);
+    debug('Provider initialize accepted %o', action);
 
     const { client } = action.data.options;
     yield call(watchSlackEventsTriggers, client);

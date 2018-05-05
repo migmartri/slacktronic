@@ -22,6 +22,16 @@ function providers(state: reduxStateType = initialState, action: any) {
         },
         allIDs: [...state.allIDs, action.data.ID]
       };
+    case actionTypes.TRIGGER_TRIGGERED:
+      return {
+        ...state,
+        byID: {
+          ...state.byID, [action.data.ID]: {
+            ...state.byID[action.data.ID], 
+            lastPerform: action.data.lastPerform
+          }
+        }
+      };
     default:
       return state;
   }

@@ -41,11 +41,12 @@ function* processTrigger(triggerID: string, subscription) {
     yield put(actionsActions.perform(subscription.actionID, 'TODO'));
   }
 }
+
 function* watchTriggeredTriggers() {
   while (true) {
     const trigger = yield take(actionTypes.TRIGGER_TRIGGERED);
     debug('Trigger received %o', trigger);
-    yield all(registeredSubscriptions.map(sub => call(processTrigger, trigger.ID, sub.data)));
+    yield all(registeredSubscriptions.map(sub => call(processTrigger, trigger.data.ID, sub.data)));
   }
 }
 
