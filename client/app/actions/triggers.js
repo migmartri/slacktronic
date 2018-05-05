@@ -2,9 +2,9 @@
 import type { Action } from './common';
 import actionTypes from './actionTypes';
 
-export const triggered = (id: string, enabled: boolean): Action => ({
+export const triggered = (ID: string, enabled: boolean): Action => ({
   type: actionTypes.TRIGGER_TRIGGERED,
-  id,
+  ID,
   enabled
 });
 

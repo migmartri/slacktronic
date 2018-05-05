@@ -29,6 +29,7 @@ const actions = [
   'TRIGGER_CREATE',
   'TRIGGER_TRIGGERED',
   'ACTION_CREATE',
+  'ACTION_PERFORM',
 ];
 
 const actionFormatter = (actionNames): { [string]: string } => {
