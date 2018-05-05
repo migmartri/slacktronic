@@ -7,10 +7,13 @@ import type { TriggerType } from '../../';
 // Mention works in a similar way than the Direct message, with the difference
 // that it checks for an @UserID pattern and it relies on the channel_marked event
 class Mention extends SlackTrigger implements TriggerType {
+  static metadata = {
+    name: 'Mention',
+    description: 'Notify me when I am mentioned'
+  }
+
   slackEventNames = ['message', 'channel_marked'];
   currentUserID: string;
-  name = 'Mention';
-  description = 'Notify me when I am mentioned';
   // { DABC: 'read', DIII: 'unread }
   receivedMessagesChannels = {};
 

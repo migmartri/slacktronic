@@ -5,6 +5,7 @@ import SubscriptionsComponent from '../../components/SubscriptionsComponent';
 const mapStateToProps = (state) => {
   const subsByID = state.subscriptions.byID;
   const subscriptions = Object.keys(subsByID).map(k => subsByID[k]);
+
   const eventsByID = state.slack.events.byID;
   const slackEvents = Object.keys(eventsByID).map(k => eventsByID[k]);
 
@@ -18,7 +19,7 @@ const mapStateToProps = (state) => {
     slackUserInfo: state.slack.userInfo,
     serialPort,
     slackEvents,
-    subscriptions
+    subscriptions,
   };
 };
 

@@ -5,10 +5,13 @@ import SlackTrigger from '../base';
 import type { TriggerType } from '../../';
 
 class DirectMessage extends SlackTrigger implements TriggerType {
+  static metadata = {
+    name: 'Direct message',
+    description: 'Notify me when I receive a direct message'
+  }
+
   slackEventNames = ['message', 'im_marked'];
   currentUserID: string;
-  name = 'Direct message';
-  description = 'Notify me when I receive a direct message';
   // { DABC: 'read', DIII: 'unread }
   receivedMessagesChannels = {};
 
