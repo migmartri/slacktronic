@@ -1,6 +1,5 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
 import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
@@ -14,9 +13,6 @@ const configureStore = () => {
   // Redux Configuration
   const middleware = [];
   const enhancers = [];
-
-  // Thunk Middleware
-  middleware.push(thunk);
 
   // Saga middleware
   middleware.push(sagaMiddleware);
