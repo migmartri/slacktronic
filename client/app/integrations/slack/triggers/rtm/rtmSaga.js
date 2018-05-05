@@ -3,6 +3,7 @@ import { eventChannel, END } from 'redux-saga';
 
 import actionTypes from '../../../../actions/actionTypes';
 import * as slackActions from '../../../../actions/slack';
+import * as triggersActions from '../../../../actions/triggers';
 import SlackClient from '../../../../lib/slackClient';
 import SUPPORTED_TRIGGERS from './index';
 
@@ -59,12 +60,31 @@ function slackEventsChannel(client: SlackClient) {
 //   // }));
 // }
 
-function processSlackEvents(event) {
-  registeredTriggers.forEach(t => {
-    debug('Processing event %j on trigger %j', event, t);
-    const triggerType = SUPPORTED_TRIGGERS[t.type];
-    debug('Loading triggerType %o', triggerType);
-  });
+// TODO(miguel) Initialize Trigger classes in watchSlackTrigger generator
+// and remove client from here.
+function* processSlackEvents(event, client: SlackClient) {
+  yield all(registeredTriggers.map(t => call(processTrigger, event, client, t)));
+}
+
+function* processTrigger(event, client, t) {
+  const TriggerTypeClass = SUPPORTED_TRIGGERS[t.type];
+  if (!TriggerTypeClass) {
+    debug('Trigger type not found, skipping');
+    return;
+  }
+
+  let trigger;
+  if (t.type === 'mention' || t.type === 'dm') {
+    trigger = new TriggerTypeClass(client.userInfo.userID);
+  } else {
+    trigger = new TriggerTypeClass();
+  }
+
+  debug('Processing event %o on trigger %o', event, trigger);
+  if (trigger.shouldTrigger(event)) {
+    yield put(triggersActions.triggered(t.ID, trigger.triggerValue(event)));
+    debug('Triggering %o', trigger);
+  }
 }
 
 function* watchSlackEventsTriggers(client: SlackClient) {
@@ -76,7 +96,7 @@ function* watchSlackEventsTriggers(client: SlackClient) {
     while (true) {
       const event = yield take(chan);
       debug('Events received from channel %o', event);
-      yield fork(processSlackEvents, event);
+      yield fork(processSlackEvents, event, client);
       yield put(slackActions.slackEvent(event));
     }
   } finally {

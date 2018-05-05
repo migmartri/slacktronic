@@ -24,6 +24,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
     dispatch(subscriptionActions.clearSubscriptions());
 
+    // TODO(miguel) This will be loaded from store and will
+    // include required config settings
     let payload = {
       trigger: {
         providerName: 'slack', type: 'away'
@@ -39,6 +41,18 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     payload = {
       trigger: {
         providerName: 'slack', type: 'dm'
+      },
+      action: {
+        providerName: 'serialCom', type: 'message'
+      },
+      enabled: true
+    };
+
+    dispatch(subscriptionActions.craftSubscription(payload));
+
+    payload = {
+      trigger: {
+        providerName: 'slack', type: 'mention'
       },
       action: {
         providerName: 'serialCom', type: 'message'
