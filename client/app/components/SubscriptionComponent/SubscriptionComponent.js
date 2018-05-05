@@ -46,10 +46,10 @@ export default class SubscriptionComponent extends React.Component<Props> {
             <Col span={8}><Icon type="usb" /></Col>
           </Row>
           <ul className={styles.summary}>
-            <li>Trigger: {TriggerTypeClass.name} ({ this.lastPerformInfo })</li>
+            <li>Trigger: {metadata.name} ({ this.lastPerformInfo })</li>
             <li>Action: Serial Message</li>
             <li>
-              Enabled: {sub.enabled ? 'ON' : 'OFF'}
+              Enabled: {sub.enabled ? 'Yes' : 'No'}
             </li>
           </ul>
         </Card>
