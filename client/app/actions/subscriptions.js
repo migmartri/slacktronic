@@ -2,7 +2,7 @@
 import shortID from 'shortid';
 import type { Action } from './common';
 import actionTypes from './actionTypes';
-import type { subscriptionTypeAttrs, subscriptionType } from '../models/subscription';
+import type { subscriptionTypeAttrs, } from '../models/subscription';
 import type { actionAttrs } from '../models/action';
 import type { triggerAttrs } from '../models/trigger';
 

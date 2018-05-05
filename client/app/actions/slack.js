@@ -1,6 +1,6 @@
 // @flow
 import shortID from 'shortid';
-import type { Dispatch, Action, ThunkAction } from './common';
+import type { Dispatch, Action } from './common';
 import actionTypes from './actionTypes';
 import configStore from '../lib/configStore';
 import type { userInfoType } from '../models/slack';
