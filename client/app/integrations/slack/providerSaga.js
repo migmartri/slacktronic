@@ -2,6 +2,7 @@ import { take, call, put } from 'redux-saga/effects';
 import SlackClient from './client';
 import actionTypes from '../../actions/actionTypes';
 import * as providersActions from '../../actions/providers';
+import { AVAILABLE_PROVIDERS } from '../';
 
 function* initializeAndValidateClient(token: string) {
   try {
@@ -26,14 +27,14 @@ function* clientInitializationFlow() {
     const { name } = providerAction;
     const { token } = providerAction.options;
 
-    if (name !== 'slack') continue;
+    if (name !== AVAILABLE_PROVIDERS.slack) continue;
 
     try {
       const client = yield call(initializeAndValidateClient, token);
       const data = {
         options: { client },
         status: 'ready',
-        name: 'slack',
+        name: AVAILABLE_PROVIDERS.slack,
       };
 
       yield put(providersActions.initialized(data));

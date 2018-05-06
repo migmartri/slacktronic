@@ -5,11 +5,10 @@ import actionTypes from '../../../../actions/actionTypes';
 import * as slackActions from '../../../../actions/slack';
 import * as triggersActions from '../../../../actions/triggers';
 import SlackClient from '../../client';
-import SUPPORTED_TRIGGERS from './index';
+import { AVAILABLE_SLACK_TRIGGERS } from '../index';
+import { AVAILABLE_PROVIDERS } from '../../../index';
 
 const debug = require('debug')('slacktronic@triggers.slack.rtm.saga');
-
-const PROVIDER_NAME = 'slack';
 
 function slackEventsChannel(client: SlackClient) {
   const { rtmClient } = client;
@@ -50,7 +49,7 @@ function* processSlackEvent(event, client: SlackClient) {
 }
 
 function* processTrigger(event, client, t) {
-  const TriggerTypeClass = SUPPORTED_TRIGGERS[t.type];
+  const TriggerTypeClass = AVAILABLE_SLACK_TRIGGERS[t.type];
   if (!TriggerTypeClass) {
     debug('Trigger type not found, skipping');
     return;
@@ -94,7 +93,7 @@ const registeredTriggers = [];
 function watchSlackTriggersCreation(action) {
   const { providerName } = action.data;
 
-  if (providerName !== PROVIDER_NAME) return;
+  if (providerName !== AVAILABLE_PROVIDERS.slack) return;
   debug('Received trigger creation', action);
   registeredTriggers.push(action.data);
   debug('Triggers registered %o', registeredTriggers);
@@ -105,7 +104,7 @@ function* watchProviderInitialized() {
     const action = yield take(actionTypes.PROVIDER_INITIALIZED);
     debug('Provider initialize received %o', action);
     const { name } = action.data;
-    if (name !== PROVIDER_NAME) continue;
+    if (name !== AVAILABLE_PROVIDERS.slack) continue;
     debug('Provider initialize accepted %o', action);
 
     const { client } = action.data.options;

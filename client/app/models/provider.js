@@ -1,5 +1,7 @@
 // @flow
 
+import type { availableProviderNamesType } from '../integrations';
+
 const ProviderStatus = {
   ready: 'ready',
   error: 'error',
@@ -8,11 +10,10 @@ const ProviderStatus = {
 type ProviderStatusType = $Keys<typeof ProviderStatus>;
 
 export type providerOptions = { [string]: any };
-export type supportedProviderName = 'slack' | 'serialCom';
 
 export type providerType = {
   status: ProviderStatusType,
-  name: supportedProviderName,
+  name: availableProviderNamesType,
   options?: providerOptions,
   statusMessage?: string
 };

@@ -5,10 +5,10 @@ import shortID from 'shortid';
 import actionTypes from '../../../../actions/actionTypes';
 import type { serialMessage } from '../../../../models/serialMessage';
 import MessageStatus from '../../../../models/serialMessage';
+import { AVAILABLE_PROVIDERS } from '../../../index';
 
-const debug = require('debug')('slacktronic@actions.serialCom.sendMessage.saga');
+const debug = require('debug')('slacktronic@actions.serialCom.message.saga');
 
-const PROVIDER_NAME = 'serialCom';
 const registeredActions = [];
 let serialClient: SlacktronicSerialClient;
 
@@ -125,7 +125,7 @@ function* processReceivedActionPerform(action) {
 function watchSerialComActionsCreation(action) {
   const { providerName } = action.data;
 
-  if (providerName !== PROVIDER_NAME) return;
+  if (providerName !== AVAILABLE_PROVIDERS.serialCom) return;
   debug('Received action creation', action);
   registeredActions.push(action.data);
   debug('Actions registered %o', registeredActions);
@@ -136,7 +136,7 @@ function* watchProviderInitialized() {
     const action = yield take(actionTypes.PROVIDER_INITIALIZED);
     debug('Provider initialize received %o', action);
     const { name } = action.data;
-    if (name !== PROVIDER_NAME) continue;
+    if (name !== AVAILABLE_PROVIDERS.serialCom) continue;
     debug('Provider initialize accepted %o', action);
 
     const { client } = action.data.options;

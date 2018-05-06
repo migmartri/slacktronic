@@ -8,7 +8,7 @@ import type { subscriptionType } from '../../models/subscription';
 import type { actionType } from '../../models/action';
 import type { triggerType } from '../../models/trigger';
 import styles from './subscription.scss';
-import SUPPORTED_TRIGGERS from '../../integrations/slack/triggers/rtm';
+import { AVAILABLE_TRIGGERS } from '../../integrations';
 
 TimeAgoJS.locale(en);
 
@@ -34,7 +34,8 @@ export default class SubscriptionComponent extends React.Component<Props> {
 
   render() {
     const sub = this.props.subscription;
-    const TriggerTypeClass = SUPPORTED_TRIGGERS[this.props.trigger.type];
+    const providerTriggers = AVAILABLE_TRIGGERS[this.props.trigger.providerName];
+    const TriggerTypeClass = providerTriggers[this.props.trigger.type];
     const { metadata } = TriggerTypeClass;
     return (
       <div>

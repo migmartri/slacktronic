@@ -5,6 +5,7 @@ import configStore from '../../lib/configStore';
 import type { Dispatch } from '../../actions/common';
 import * as providerActions from '../../actions/providers';
 import * as subscriptionActions from '../../actions/subscriptions';
+import { AVAILABLE_PROVIDERS } from '../../integrations';
 
 const mapStateToProps = (state) => {
   const providersByName = state.providers.byName;
@@ -21,10 +22,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     // TODO(miguel) Have a general load info from local storage
     const token = configStore.get('slack.token');
     if (token) {
-      dispatch(providerActions.initialize('slack', { token }));
+      dispatch(providerActions.initialize(AVAILABLE_PROVIDERS.slack, { token }));
     }
 
-    dispatch(providerActions.initialize('serialCom'));
+    dispatch(providerActions.initialize(AVAILABLE_PROVIDERS.serialCom));
 
     dispatch(subscriptionActions.clearSubscriptions());
 
@@ -32,10 +33,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     // include required config settings
     let payload = {
       trigger: {
-        providerName: 'slack', type: 'away'
+        providerName: AVAILABLE_PROVIDERS.slack, type: 'away'
       },
       action: {
-        providerName: 'serialCom', type: 'message', options: { char: 'a' }
+        providerName: AVAILABLE_PROVIDERS.serialCom, type: 'message', options: { char: 'a' }
       },
       enabled: true
     };
@@ -44,10 +45,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
     payload = {
       trigger: {
-        providerName: 'slack', type: 'dm'
+        providerName: AVAILABLE_PROVIDERS.slack, type: 'dm'
       },
       action: {
-        providerName: 'serialCom', type: 'message', options: { char: 'b' }
+        providerName: AVAILABLE_PROVIDERS.serialCom, type: 'message', options: { char: 'b' }
       },
       enabled: true
     };
@@ -56,10 +57,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
     payload = {
       trigger: {
-        providerName: 'slack', type: 'mention'
+        providerName: AVAILABLE_PROVIDERS.slack, type: 'mention'
       },
       action: {
-        providerName: 'serialCom', type: 'message', options: { char: 'c' }
+        providerName: AVAILABLE_PROVIDERS.serialCom, type: 'message', options: { char: 'c' }
       },
       enabled: true
     };

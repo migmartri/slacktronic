@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { Divider, Icon, Badge, Timeline, Row, Col, Card } from 'antd';
+import { Link } from 'react-router-dom';
 import type { serialPortType } from '../../integrations/serialCom/client';
 import type { eventType, userInfoType } from '../../models/slack';
 import type { subscriptionType } from '../../models/subscription';
@@ -69,6 +70,7 @@ export default class SubscriptionsComponent extends Component<Props, State> {
         <Divider />
         <Row gutter={16}>
           <Col span={18}>
+            <Link to="/subscriptions/new">Add Subscription</Link>
             <Row gutter={16}>
               {
                 this.props.subscriptions.map((sub) => (
