@@ -2,9 +2,11 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 
@@ -59,19 +61,24 @@ func TestIndexHandler(t *testing.T) {
 }
 
 func TestAuthHandler(t *testing.T) {
-	expectedLocation := "https://slack.com/oauth/authorize?client_id=myClient&response_type=code&scope=client&state=TODO"
 
 	req := httptest.NewRequest("GET", buildURL("/"), nil)
-	res := httptest.NewRecorder()
+	recorder := httptest.NewRecorder()
 
 	oHandler := oauthHandler{oauthConfig, authHandler}
-	oHandler.ServeHTTP(res, req)
+	oHandler.ServeHTTP(recorder, req)
 
-	if res.Code != http.StatusFound {
-		t.Errorf("Response code was %v; want %v", res.Code, http.StatusFound)
+	// Used to extract the cookie
+	fakeReq := &http.Request{Header: http.Header{"Cookie": recorder.HeaderMap["Set-Cookie"]}}
+	stateCookie, _ := fakeReq.Cookie(cookieOauthStateName)
+
+	if recorder.Code != http.StatusFound {
+		t.Errorf("Response code was %v; want %v", recorder.Code, http.StatusFound)
 	}
 
-	location := res.HeaderMap.Get("location")
+	location := recorder.HeaderMap.Get("location")
+	location, _ = url.PathUnescape(location)
+	expectedLocation := fmt.Sprintf("https://slack.com/oauth/authorize?client_id=myClient&response_type=code&scope=client&state=%s", stateCookie.Value)
 	if expectedLocation != location {
 		t.Errorf("Location was '%s'; want '%s'", location, expectedLocation)
 	}
@@ -79,13 +86,27 @@ func TestAuthHandler(t *testing.T) {
 func TestAuthCallback(t *testing.T) {
 	t.Run("it return StatusUnauthorized if code is not returned", func(t *testing.T) {
 		req := httptest.NewRequest("GET", buildURL("/oauth/callback"), nil)
-		res := httptest.NewRecorder()
+		recorder := httptest.NewRecorder()
 
 		oHandler := oauthHandler{oauthConfig, authCallbackHandler}
-		oHandler.ServeHTTP(res, req)
+		oHandler.ServeHTTP(recorder, req)
 
-		if res.Code != http.StatusUnauthorized {
-			t.Errorf("Response code was %v; want %v", res.Code, http.StatusUnauthorized)
+		if recorder.Code != http.StatusUnauthorized {
+			t.Errorf("Response code was %v; want %v", recorder.Code, http.StatusUnauthorized)
+		}
+	})
+
+	t.Run("it return StatusUnauthorized if status does not match", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
+		http.SetCookie(recorder, &http.Cookie{Name: cookieOauthStateName, Value: "foobar"})
+		req := httptest.NewRequest("GET", buildURL("/oauth/callback?code=myCode&state=WRONG"), nil)
+		req.Header = http.Header{"Cookie": recorder.HeaderMap["Set-Cookie"]}
+
+		oHandler := oauthHandler{oauthConfig, authCallbackHandler}
+		oHandler.ServeHTTP(recorder, req)
+
+		if recorder.Code != http.StatusUnauthorized {
+			t.Errorf("Response code was %v; want %v", recorder.Code, http.StatusUnauthorized)
 		}
 	})
 
@@ -111,28 +132,28 @@ func TestAuthCallback(t *testing.T) {
 
 		defer ts.Close()
 
-		req, err := http.NewRequest("GET", buildURL("/oauth/callback?code=myCode"), nil)
-		if err != nil {
-			t.Fatal(err)
-		}
+		recorder := httptest.NewRecorder()
+		http.SetCookie(recorder, &http.Cookie{Name: cookieOauthStateName, Value: "foobar"})
 
-		res := httptest.NewRecorder()
+		req := httptest.NewRequest("GET", buildURL("/oauth/callback?code=myCode&state=foobar"), nil)
+		req.Header = http.Header{"Cookie": recorder.HeaderMap["Set-Cookie"]}
+
 		oauthConfig.Endpoint = oauth2.Endpoint{
 			AuthURL:  ts.URL + "/auth",
 			TokenURL: ts.URL + "/token",
 		}
 
 		oHandler := oauthHandler{oauthConfig, authCallbackHandler}
-		oHandler.ServeHTTP(res, req)
+		oHandler.ServeHTTP(recorder, req)
 
-		if res.Code != http.StatusOK {
-			t.Errorf("Response code was %v; want %v", res.Code, http.StatusOK)
+		if recorder.Code != http.StatusOK {
+			t.Errorf("Response code was %v; want %v", recorder.Code, http.StatusOK)
 		}
 
 		expected := "THEAccessToken"
 
-		if !strings.Contains(res.Body.String(), expected) {
-			t.Errorf("Response body was '%s'; wanted to include '%s'", res.Body, expected)
+		if !strings.Contains(recorder.Body.String(), expected) {
+			t.Errorf("Response body was '%s'; wanted to include '%s'", recorder.Body, expected)
 		}
 	})
 
