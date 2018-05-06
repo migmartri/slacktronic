@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { notification } from 'antd';
 import type { Dispatch } from '../../actions/common';
-import storeToken from '../../actions/slack';
+import configStore from '../../lib/configStore';
 import ConfigSimpleComponent from '../../components/SlackConfigSimpleComponent';
 import ConfigManualComponent from '../../components/SlackConfigManualComponent';
 import SlackClient from '../../integrations/slack/client';
@@ -18,7 +18,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
         message: 'Slack account connected',
         description: 'Your Slack account is configured and ready to rock!',
       });
-      dispatch(storeToken(token));
+      configStore.set('slack', { token, validToken: true });
       dispatch(push('/'));
     } else {
       notification.error({
