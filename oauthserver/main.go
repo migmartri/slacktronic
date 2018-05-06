@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -43,6 +46,8 @@ func forceSSL(next http.Handler) http.Handler {
 
 }
 
+const cookieOauthStateName string = "oauthState"
+
 func (oh oauthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	status, err := oh.H(oh.config, w, r)
 	if err != nil {
@@ -59,13 +64,29 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func authHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.Request) (int, error) {
-	url := oauthConfig.AuthCodeURL("TODO")
+	b := make([]byte, 16)
+	rand.Read(b)
+	state := base64.URLEncoding.EncodeToString(b)
+	http.SetCookie(w, &http.Cookie{Name: cookieOauthStateName, Value: state})
+
+	url := oauthConfig.AuthCodeURL(state)
 	http.Redirect(w, r, url, http.StatusFound)
 	return http.StatusTemporaryRedirect, nil
 }
 
 func authCallbackHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *http.Request) (int, error) {
 	ctx := context.Background()
+
+	cookieState, err := r.Cookie(cookieOauthStateName)
+	if err != nil {
+		glog.Error(err)
+		return http.StatusUnauthorized, err
+	}
+
+	if r.URL.Query().Get("state") != cookieState.Value {
+		glog.Error("The oauth state retrieved does not match, possible XSS")
+		return http.StatusUnauthorized, errors.New("Oauth state does not match")
+	}
 
 	code := r.URL.Query().Get("code")
 	// Use the custom HTTP client when requesting a token.
@@ -76,6 +97,9 @@ func authCallbackHandler(oauthConfig *oauth2.Config, w http.ResponseWriter, r *h
 	if err != nil {
 		glog.Error(err)
 		return http.StatusUnauthorized, err
+	}
+	if !tok.Valid() {
+		return http.StatusUnauthorized, errors.New("retrieved invalid Token")
 	}
 
 	fmt.Fprintf(w, "Hooray! here is your token. Now paste it back in Slacktronic\n\n%s", tok.AccessToken)
