@@ -4,15 +4,6 @@ import away from './rtm/away';
 import mention from './rtm/mention';
 import dm from './rtm/directMessage';
 
-export interface TriggerType {
-  static metadata: {
-    name: string;
-    description?: string
-  };
-  shouldTrigger(any): boolean;
-  triggerValue(any): boolean
-}
-
 export const AVAILABLE_SLACK_TRIGGERS = {
   away, mention, dm
 };

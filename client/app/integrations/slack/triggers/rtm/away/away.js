@@ -1,6 +1,6 @@
 // @flow
 
-import type { TriggerType } from '../../';
+import type { TriggerType } from '../../../../';
 import SlackTrigger from '../base';
 
 class Away extends SlackTrigger implements TriggerType {

@@ -2,7 +2,7 @@
 
 import type { slackEventType } from '../base';
 import SlackTrigger from '../base';
-import type { TriggerType } from '../../';
+import type { TriggerType } from '../../../../';
 
 class DirectMessage extends SlackTrigger implements TriggerType {
   static metadata = {

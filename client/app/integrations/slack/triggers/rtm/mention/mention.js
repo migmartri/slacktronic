@@ -2,7 +2,7 @@
 
 import type { slackEventType } from '../base';
 import SlackTrigger from '../base';
-import type { TriggerType } from '../../';
+import type { TriggerType } from '../../../../';
 
 // Mention works in a similar way than the Direct message, with the difference
 // that it checks for an @UserID pattern and it relies on the channel_marked event
