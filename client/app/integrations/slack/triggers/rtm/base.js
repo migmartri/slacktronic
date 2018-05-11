@@ -16,7 +16,8 @@ type metadataType = {
 
 class SlackTrigger {
   slackEventNames: string[];
-  static options: triggerOptionsType = [];
+  // Assigning typed static options does not work.
+  static options = [];
   static metadata: metadataType;
 
   shouldTrigger = (slackEvent: slackEventType): boolean => (
