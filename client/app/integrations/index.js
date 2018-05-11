@@ -1,3 +1,4 @@
+// @flow
 import { AVAILABLE_SLACK_TRIGGERS } from './slack/triggers';
 import { AVAILABLE_SERIALCOM_ACTIONS } from './serialCom/actions';
 
@@ -17,19 +18,17 @@ export const AVAILABLE_ACTIONS = {
 };
 
 
-type metadataType = {
-  name: string;
-  description?: string
-};
+// type metadataType = {
+//   name: string;
+//   description?: string
+// };
 
 export interface TriggerType {
-  static metadata: metadataType,
   shouldTrigger(any): boolean;
   triggerValue(any): boolean
 }
 
 export interface ActionType {
-  static metadata: metadataType
 }
 
 export default AVAILABLE_PROVIDERS;

@@ -16,7 +16,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  onLoad: async () => {
+  onLoad: () => {
     // Load token from store
     // Validate and store in redux the slack info
     // TODO(miguel) Have a general load info from local storage

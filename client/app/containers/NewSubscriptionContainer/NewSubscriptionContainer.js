@@ -2,14 +2,18 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Form, Button, Select } from 'antd';
+import * as providerActions from '../../actions/providers';
+import configStore from '../../lib/configStore';
 import { AVAILABLE_TRIGGERS, AVAILABLE_ACTIONS } from '../../integrations';
 import type { actionAttrs } from '../../models/action';
 import type { triggerAttrs } from '../../models/trigger';
+import SlackClient from '../../integrations/slack/client';
 
 const FormItem = Form.Item;
 const { Option, OptGroup } = Select;
 
 type Props = {
+  slackClient: ?SlackClient
 };
 
 type State = {
@@ -35,7 +39,7 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     enabled: true
   }
 
-  handleTriggerSubmit = (event: SyntheticEvent<HTMLButtonElement>): void => {
+  handleSubscriptionSubmit = (event: SyntheticEvent<HTMLButtonElement>): void => {
     console.warn(event);
     event.preventDefault();
   }
@@ -43,8 +47,10 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   // ProviderTrigger has the format <trigger|action>@<providerName>@<triggerName>
   handleTriggerOrActionChange = (providerTrigger: string): void => {
     const [propType, providerName, type] = providerTrigger.split('@', 3);
+    const values = propType === 'trigger' ? AVAILABLE_TRIGGERS : AVAILABLE_ACTIONS;
+    const klass = values[providerName][type];
     this.setState({
-      [propType]: { providerName, type }
+      [propType]: { providerName, type, klass }
     });
   }
 
@@ -67,15 +73,40 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
             ))
           }
         </Select>
+        { /* Options */ }
+        { propName === 'trigger' && this.triggerOptions() }
       </FormItem>
+    );
+  }
+
+  triggerOptions(): React.Node {
+    const { klass: triggerKlass } = this.state.trigger;
+    if (!triggerKlass || !triggerKlass.options) return;
+    const { options: availableOptions } = triggerKlass;
+
+    return (
+      availableOptions.map(opt => {
+        const values = opt.values(this.props.slackClient);
+        return (
+          <FormItem label={opt.ID} required={opt.required}>
+            <Select defaultValue={values[0]} onChange={this.handleTriggerOrActionChange}>
+              {
+                values.map(optVal => (
+                  <Option key={optVal} value={optVal}>{optVal}</Option>
+               ))
+              }
+            </Select>
+          </FormItem>
+        );
+      })
     );
   }
 
   render() {
     return (
-      <Form onSubmit={this.handleTriggerSubmit}>
+      <Form onSubmit={this.handleSubscriptionSubmit}>
         { this.triggerForm('trigger', AVAILABLE_TRIGGERS) }
-        { this.triggerForm('action', AVAILABLE_ACTIONS) }
+        { this.triggerForm('action', AVAILABLE_ACTIONS)  }
         <FormItem>
           <Button type="primary" htmlType="submit" >Next</Button>
         </FormItem>
@@ -84,5 +115,24 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   }
 }
 
+// TODO, remove
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  const token = configStore.get('slack.token');
+
+  if (token) {
+    dispatch(providerActions.initialize('slack', { token }));
+  }
+  return {};
+};
+
+const mapStateToProps = (state) => {
+  const providersByName = state.providers.byName;
+  const { slack: slackProvider } = providersByName;
+  if (!slackProvider) return { slackClient: null };
+  return {
+    slackClient: slackProvider.options.client
+  };
+};
+
 // TODO, connect component
-export default connect(null)(NewSubscriptionComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(NewSubscriptionComponent);

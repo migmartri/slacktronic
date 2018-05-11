@@ -1,8 +1,9 @@
 // @flow
 
-import type { slackEventType } from '../base';
+import type { slackEventType, triggerOptionsType } from '../base';
 import SlackTrigger from '../base';
 import type { TriggerType } from '../../../../';
+import SlackClient from '../../../client';
 
 // Mention works in a similar way than the Direct message, with the difference
 // that it checks for an @UserID pattern and it relies on the channel_marked event
@@ -11,6 +12,14 @@ class Mention extends SlackTrigger implements TriggerType {
     name: 'Mention',
     description: 'Notify me when I am mentioned'
   }
+
+  static fetchUsers = (client: SlackClient) => {
+    return [client.userInfo.userID];
+  }
+
+  static options = [
+    { ID: 'currentUserID', required: true, values: Mention.fetchUsers }
+  ];
 
   slackEventNames = ['message', 'channel_marked'];
   currentUserID: string;
