@@ -1,6 +1,6 @@
 // @flow
 
-import type { slackEventType, triggerOptionsType } from '../base';
+import type { slackEventType } from '../base';
 import SlackTrigger from '../base';
 import type { TriggerType } from '../../../../';
 import SlackClient from '../../../client';
@@ -17,16 +17,8 @@ class Mention extends SlackTrigger implements TriggerType {
     return [client.userInfo.userID];
   }
 
-  static fetchUsers = (client: SlackClient) => {
-   client.webClient.channels.list().then((res) => {
-      res.channels.forEach(c => console.log(c.name));
-    }).catch(console.error);
-    return [123]
-  }
-
   static options = [
     { ID: 'currentUserID', required: true, values: Mention.fetchCurrentUser }
-    { ID: 'anUser', required: true, values: Mention.fetchUsers }
   ];
 
   slackEventNames = ['message', 'channel_marked'];

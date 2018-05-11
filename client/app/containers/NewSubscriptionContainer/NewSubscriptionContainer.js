@@ -17,8 +17,8 @@ type Props = {
 };
 
 type State = {
-  trigger: triggerAttrs,
-  action: actionAttrs,
+  trigger: triggerAttrs & { allOptionsAndValues: [] },
+  action: actionAttrs & { allOptionsAndValues: [] },
   enabled: boolean
 };
 
@@ -30,13 +30,15 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   state = {
     trigger: {
       providerName: '',
-      type: ''
+      type: '',
+      allOptionsAndValues: []
     },
     action: {
       providerName: '',
-      type: ''
+      type: '',
+      allOptionsAndValues: []
     },
-    enabled: true
+    enabled: true,
   }
 
   handleSubscriptionSubmit = (event: SyntheticEvent<HTMLButtonElement>): void => {
@@ -45,7 +47,7 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   }
 
   // ProviderTrigger has the format <trigger|action>@<providerName>@<triggerName>
-  handleTriggerOrActionChange = (providerTrigger: string): void => {
+  handleTriggerOrActionChange = async (providerTrigger: string): void => {
     const [propType, providerName, type] = providerTrigger.split('@', 3);
     const values = propType === 'trigger' ? AVAILABLE_TRIGGERS : AVAILABLE_ACTIONS;
 
@@ -53,18 +55,31 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     const klass = values[providerName][type];
     const options = {};
 
-    klass.options.forEach(opt => {
-      const optionValues = opt.values(this.props.slackClient);
+    // Fetches all the options
+    const allOptionsAndValues = await this.loadOptionValues(klass.options);
+    allOptionsAndValues.forEach(optAndVal => {
       // eslint-disable-next-line prefer-destructuring
-      options[opt.ID] = optionValues[0];
+      options[optAndVal.opt.ID] = optAndVal.optionValues[0];
     });
 
     this.setState({
       [propType]: {
-        options, providerName, type, klass
+        options, providerName, type, allOptionsAndValues
       }
     });
   }
+
+  loadOptionValues = async (options) => {
+    const allOptionsAndValues = [];
+    // Regular for allows to use await
+    for (let i = 0; i < options.length; i += 1) {
+      const opt = options[i];
+      // eslint-disable-next-line no-await-in-loop
+      const optionValues = await opt.values(this.props.slackClient);
+      allOptionsAndValues.push({ opt, optionValues });
+    };
+    return allOptionsAndValues;
+  };
 
   // OptionValue has the format <trigger|action>@<optionID>@<optionValue>
   handleTriggerOrActionOption = (option: string): void => {
@@ -103,19 +118,18 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   }
 
   triggerOptions(): React.Node {
-    const { klass: triggerKlass } = this.state.trigger;
-    if (!triggerKlass || !triggerKlass.options) return;
-    const { options: availableOptions } = triggerKlass;
+    const { allOptionsAndValues } = this.state.trigger;
+    if (!allOptionsAndValues) return;
 
     return (
-      availableOptions.map(opt => {
-        const values = opt.values(this.props.slackClient);
+      allOptionsAndValues.map(optAndVal => {
+        const { opt, optionValues } = optAndVal;
         const value = this.state.trigger.options[opt.ID];
         return (
           <FormItem key={opt.ID} label={opt.ID} required={opt.required}>
             <Select value={value} onChange={this.handleTriggerOrActionOption}>
               {
-                values.map(optVal => (
+                optionValues.map(optVal => (
                   <Option key={optVal} value={`trigger@${opt.ID}@${optVal}`}>{optVal}</Option>
                ))
               }
