@@ -129,21 +129,22 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     if (!allOptionsAndValues) return;
 
     return (
-      allOptionsAndValues.map(optAndVal => {
-        const { opt, optionValues } = optAndVal;
-        const value = this.state.trigger.options[opt.ID];
-        return (
-          <FormItem key={opt.ID} label={opt.ID} required={opt.required}>
-            <Select value={value} onChange={this.handleTriggerOrActionOption}>
-              {
-                optionValues.map(optVal => (
-                  <Option key={optVal} value={`trigger@${opt.ID}@${optVal}`}>{optVal}</Option>
-               ))
-              }
-            </Select>
-          </FormItem>
-        );
-      })
+      allOptionsAndValues.filter(optAndVal => optAndVal.opt.controlType === 'select')
+        .map(optAndVal => {
+          const { opt, optionValues } = optAndVal;
+          const value = this.state.trigger.options[opt.ID];
+          return (
+            <FormItem key={opt.ID} label={opt.ID} required={opt.required}>
+              <Select value={value} onChange={this.handleTriggerOrActionOption}>
+                {
+                  optionValues.map(optVal => (
+                    <Option key={optVal} value={`trigger@${opt.ID}@${optVal}`}>{optVal}</Option>
+                ))
+                }
+              </Select>
+            </FormItem>
+          );
+        })
     );
   }
 

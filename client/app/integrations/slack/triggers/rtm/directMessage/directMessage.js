@@ -21,7 +21,12 @@ class DirectMessage extends SlackTrigger implements TriggerType {
   receivedMessagesChannels = {};
 
   static options = [
-    { ID: 'currentUserID', required: true, values: DirectMessage.fetchCurrentUser }
+    {
+      ID: 'currentUserID',
+      required: true,
+      values: DirectMessage.fetchCurrentUser,
+      controlType: 'hidden'
+    }
   ];
 
 

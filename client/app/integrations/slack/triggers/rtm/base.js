@@ -5,8 +5,10 @@ import SlackClient from '../../client';
 export type slackEventType = { type: string, ...{[string]: string} };
 export type valuesFuncType = (client: SlackClient) => string[];
 
+type controlType = 'select' | 'input' | 'hidden';
+
 export type triggerOptionsType = {
-  ID: string, required: boolean, values: valuesFuncType
+  ID: string, required: boolean, values: valuesFuncType, controlType: controlType
 }[];
 
 type metadataType = {

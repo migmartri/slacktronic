@@ -18,7 +18,12 @@ class Mention extends SlackTrigger implements TriggerType {
   )
 
   static options = [
-    { ID: 'currentUserID', required: true, values: Mention.fetchCurrentUser }
+    {
+      ID: 'currentUserID',
+      required: true,
+      values: Mention.fetchCurrentUser,
+      controlType: 'hidden'
+    }
   ];
 
   slackEventNames = ['message', 'channel_marked'];
