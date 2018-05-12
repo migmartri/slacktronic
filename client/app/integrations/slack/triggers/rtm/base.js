@@ -10,11 +10,11 @@ export type triggerOptionsType = {
 }[];
 
 type metadataType = {
-  name: string;
+  name: string,
   description?: string
 };
 
-export type optionsValuesType = { [string]: string }
+export type optionsValuesType = { [string]: string };
 
 class SlackTrigger {
   slackEventNames: string[];

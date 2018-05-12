@@ -8,12 +8,15 @@ import { AVAILABLE_TRIGGERS, AVAILABLE_ACTIONS } from '../../integrations';
 import type { actionAttrs } from '../../models/action';
 import type { triggerAttrs } from '../../models/trigger';
 import SlackClient from '../../integrations/slack/client';
+import * as subscriptionActions from '../../actions/subscriptions';
+import type { craftSubPayload } from '../../actions/subscriptions';
 
 const FormItem = Form.Item;
 const { Option, OptGroup } = Select;
 
 type Props = {
-  slackClient: ?SlackClient
+  slackClient: ?SlackClient,
+  onSubCreation: (payload: craftSubPayload) => void
 };
 
 type State = {
@@ -42,8 +45,11 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   }
 
   handleSubscriptionSubmit = (event: SyntheticEvent<HTMLButtonElement>): void => {
-    console.warn(event);
     event.preventDefault();
+    const { trigger, action, enabled } = this.state;
+    // TODO(add validation error)
+    if (trigger.type === '' || action.type === '') return;
+    this.props.onSubCreation({ trigger, action, enabled });
   }
 
   // ProviderTrigger has the format <trigger|action>@<providerName>@<triggerName>
@@ -77,7 +83,8 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
       // eslint-disable-next-line no-await-in-loop
       const optionValues = await opt.values(this.props.slackClient);
       allOptionsAndValues.push({ opt, optionValues });
-    };
+    }
+
     return allOptionsAndValues;
   };
 
@@ -161,7 +168,12 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   if (token) {
     dispatch(providerActions.initialize('slack', { token }));
   }
-  return {};
+
+  return {
+    onSubCreation: (payload: craftSubPayload): void => {
+      dispatch(subscriptionActions.craftSubscription(payload));
+    }
+  };
 };
 
 const mapStateToProps = (state) => {

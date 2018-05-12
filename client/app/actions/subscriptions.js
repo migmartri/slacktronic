@@ -6,7 +6,7 @@ import type { subscriptionTypeAttrs, } from '../models/subscription';
 import type { actionAttrs } from '../models/action';
 import type { triggerAttrs } from '../models/trigger';
 
-type craftSubPayload = {
+export type craftSubPayload = {
   trigger: triggerAttrs,
   action: actionAttrs,
   enabled: boolean

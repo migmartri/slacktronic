@@ -44,23 +44,18 @@ function slackEventsChannel(client: SlackClient) {
 
 // TODO(miguel) Initialize Trigger classes in watchSlackTrigger generator
 // and remove client from here.
-function* processSlackEvent(event, client: SlackClient) {
-  yield all(registeredTriggers.map(t => call(processTrigger, event, client, t)));
+function* processSlackEvent(event) {
+  yield all(registeredTriggers.map(t => call(processTrigger, event, t)));
 }
 
-function* processTrigger(event, client, t) {
+function* processTrigger(event, t) {
   const TriggerTypeClass = AVAILABLE_SLACK_TRIGGERS[t.type];
   if (!TriggerTypeClass) {
     debug('Trigger type not found, skipping');
     return;
   }
 
-  let trigger;
-  if (t.type === 'mention' || t.type === 'dm') {
-    trigger = new TriggerTypeClass(client.userInfo.userID);
-  } else {
-    trigger = new TriggerTypeClass();
-  }
+  const trigger = new TriggerTypeClass(t.options);
 
   debug('Processing event %o on trigger %o', event, trigger);
   if (trigger.shouldTrigger(event)) {
@@ -78,7 +73,7 @@ function* watchSlackEventsTriggers(client: SlackClient) {
     while (true) {
       const event = yield take(chan);
       debug('Events received from channel %o', event);
-      yield fork(processSlackEvent, event, client);
+      yield fork(processSlackEvent, event);
       yield put(slackActions.slackEvent(event));
     }
   } finally {
