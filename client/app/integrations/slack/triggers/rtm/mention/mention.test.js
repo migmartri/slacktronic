@@ -6,7 +6,18 @@ describe('Mention subscription type', () => {
   const userID = 'myUserID';
   let mentionInstance;
   beforeEach(() => {
-    mentionInstance = new Mention(userID);
+    mentionInstance = new Mention({ currentUserID: userID });
+  });
+
+  describe('#constructor', () => {
+    it('requires currentUserID', () => {
+      expect(() => new Mention({})).toThrow(new Error('currentUserID is required'));
+    });
+
+    it('returns an instance of the class', () => {
+      expect(mentionInstance).toBeInstanceOf(Mention);
+      expect(mentionInstance.currentUserID).toEqual('myUserID');
+    });
   });
 
   describe('#shouldTrigger', () => {

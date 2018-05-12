@@ -47,7 +47,7 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   }
 
   // ProviderTrigger has the format <trigger|action>@<providerName>@<triggerName>
-  handleTriggerOrActionChange = async (providerTrigger: string): void => {
+  handleTriggerOrActionChange = async (providerTrigger: string) => {
     const [propType, providerName, type] = providerTrigger.split('@', 3);
     const values = propType === 'trigger' ? AVAILABLE_TRIGGERS : AVAILABLE_ACTIONS;
 
