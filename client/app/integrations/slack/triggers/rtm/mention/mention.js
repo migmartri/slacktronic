@@ -1,6 +1,7 @@
 // @flow
 
-import type { slackEventType, optionsValuesType, valuesEntries } from '../base';
+import type { slackEventType } from '../base';
+import type { optionsValuesType, valuesEntries } from '../../../../base';
 import SlackTrigger from '../base';
 import type { TriggerType } from '../../../../';
 import SlackClient from '../../../client';
