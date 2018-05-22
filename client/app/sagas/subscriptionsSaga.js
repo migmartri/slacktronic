@@ -1,4 +1,5 @@
 import shortID from 'shortid';
+import { push } from 'react-router-redux';
 import { take, all, call, put } from 'redux-saga/effects';
 import actionTypes from '../actions/actionTypes';
 import { createSubscription } from './../actions/subscriptions';
@@ -30,7 +31,10 @@ function* watchSubscriptionCreation() {
     }));
 
     registeredSubscriptions.push(sub);
+
     debug('Subscriptions registed %o', registeredSubscriptions);
+    // Redirect to homepage
+    yield put(push('/'));
   }
 }
 

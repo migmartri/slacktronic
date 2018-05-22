@@ -33,11 +33,13 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   state = {
     trigger: {
       providerName: '',
+      options: {},
       type: '',
       allOptionsAndValues: []
     },
     action: {
       providerName: '',
+      options: {},
       type: '',
       allOptionsAndValues: []
     },
@@ -119,26 +121,27 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
           }
         </Select>
         { /* Options */ }
-        { propName === 'trigger' && this.triggerOptions() }
+        { propName === 'trigger' && this.triggerOrActionOptions(propName, this.state.trigger) }
+        { propName === 'action' && this.triggerOrActionOptions(propName, this.state.action) }
       </FormItem>
     );
   }
 
-  triggerOptions(): React.Node {
-    const { allOptionsAndValues } = this.state.trigger;
+  triggerOrActionOptions(type, triggerOrAction): React.Node {
+    const { allOptionsAndValues, options } = triggerOrAction;
     if (!allOptionsAndValues) return;
 
     return (
       allOptionsAndValues.filter(optAndVal => optAndVal.opt.controlType === 'select')
         .map(optAndVal => {
           const { opt, optionValues } = optAndVal;
-          const current = this.state.trigger.options[opt.ID];
+          const current = options[opt.ID];
           return (
             <FormItem key={opt.ID} label={opt.ID} required={opt.required}>
-              <Select defaultValue={`trigger@${opt.ID}@${current}`} onChange={this.handleTriggerOrActionOption}>
+              <Select defaultValue={`${type}@${opt.ID}@${current}`} onChange={this.handleTriggerOrActionOption}>
                 {
                   optionValues.map(optVal => (
-                    <Option key={optVal.value} value={`trigger@${opt.ID}@${optVal.value}`}>{optVal.label}</Option>
+                    <Option key={optVal.value} value={`${type}@${opt.ID}@${optVal.value}`}>{optVal.label}</Option>
                 ))
                 }
               </Select>
@@ -151,7 +154,6 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   render() {
     return (
       <Form onSubmit={this.handleSubscriptionSubmit}>
-        { JSON.stringify(this.state) }
         { this.triggerForm('trigger', AVAILABLE_TRIGGERS) }
         { this.triggerForm('action', AVAILABLE_ACTIONS) }
         <FormItem>

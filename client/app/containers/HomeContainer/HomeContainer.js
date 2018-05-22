@@ -4,7 +4,6 @@ import HomeComponent from '../../components/HomeComponent';
 import configStore from '../../lib/configStore';
 import type { Dispatch } from '../../actions/common';
 import * as providerActions from '../../actions/providers';
-import * as subscriptionActions from '../../actions/subscriptions';
 import { AVAILABLE_PROVIDERS } from '../../integrations';
 
 const mapStateToProps = (state) => {
@@ -27,45 +26,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
     dispatch(providerActions.initialize(AVAILABLE_PROVIDERS.serialCom));
 
-    dispatch(subscriptionActions.clearSubscriptions());
-
-    // TODO(miguel) This will be loaded from store and will
-    // include required config settings
-    let payload = {
-      trigger: {
-        providerName: AVAILABLE_PROVIDERS.slack, type: 'away'
-      },
-      action: {
-        providerName: AVAILABLE_PROVIDERS.serialCom, type: 'message', options: { char: 'a' }
-      },
-      enabled: true
-    };
-
-    dispatch(subscriptionActions.craftSubscription(payload));
-
-    payload = {
-      trigger: {
-        providerName: AVAILABLE_PROVIDERS.slack, type: 'dm'
-      },
-      action: {
-        providerName: AVAILABLE_PROVIDERS.serialCom, type: 'message', options: { char: 'b' }
-      },
-      enabled: true
-    };
-
-    dispatch(subscriptionActions.craftSubscription(payload));
-
-    payload = {
-      trigger: {
-        providerName: AVAILABLE_PROVIDERS.slack, type: 'mention'
-      },
-      action: {
-        providerName: AVAILABLE_PROVIDERS.serialCom, type: 'message', options: { char: 'c' }
-      },
-      enabled: true
-    };
-
-    dispatch(subscriptionActions.craftSubscription(payload));
+    // dispatch(subscriptionActions.clearSubscriptions());
   }
 });
 

@@ -6,7 +6,8 @@ import TriggerOrAction from '../../../base';
 
 class Message extends TriggerOrAction implements ActionType {
   static availableChars = (): valuesEntries => {
-    return [{ value: 'a', label: 'A' }];
+    const lowerCases = [...Array(26)].map((val, i) => String.fromCharCode(i + 97));
+    return lowerCases.map(char => ({ value: char, label: `Send character "${char.toUpperCase()}" if ON and "${char}" if OFF ` }));
   };
 
   static options = [

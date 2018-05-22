@@ -12,7 +12,6 @@ export default () => (
       <Route path="/slack-config-manual" component={SlackConfigContainer()} />
       <Route path="/slack-config" component={SlackConfigContainer({ easyOnboarding: true })} />
       <Route path="/subscriptions/new" component={NewSubscriptionContainer} />
-      <Route path="/" component={NewSubscriptionContainer} />
       <Route path="/" component={Home} />
     </Switch>
   </App>

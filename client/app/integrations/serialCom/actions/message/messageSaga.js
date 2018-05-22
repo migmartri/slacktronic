@@ -113,9 +113,9 @@ function* processReceivedActionPerform(action) {
   debug('SerialCom action found %o', referencedSerialAction);
 
   const { enabled } = action.data;
-  const { char } = referencedSerialAction.options;
+  let { payload } = referencedSerialAction.options;
 
-  const payload = enabled ? char.toUpperCase() : char;
+  payload = enabled ? payload.toUpperCase() : payload;
   // Store the message in the store
   const message = yield call(createMessage, payload);
   // Block until message is sent
@@ -128,7 +128,6 @@ function watchSerialComActionsCreation(action) {
   if (providerName !== AVAILABLE_PROVIDERS.serialCom) return;
   debug('Received action creation', action);
   registeredActions.push(action.data);
-  debug('Actions registered %o', registeredActions);
 }
 
 function* watchProviderInitialized() {
