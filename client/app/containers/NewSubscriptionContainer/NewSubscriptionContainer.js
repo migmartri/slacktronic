@@ -20,8 +20,9 @@ type Props = {
 };
 
 type State = {
-  trigger: triggerAttrs & { allOptionsAndValues: [] },
-  action: actionAttrs & { allOptionsAndValues: [] },
+  allOptionsAndValues: { [string]: Object[] },
+  trigger: triggerAttrs,
+  action: actionAttrs,
   enabled: boolean
 };
 
@@ -31,17 +32,19 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   // Required since we interpolate the key
   /* eslint-disable react/no-unused-state */
   state = {
+    allOptionsAndValues: {
+      trigger: [],
+      action: []
+    },
     trigger: {
       providerName: '',
       options: {},
       type: '',
-      allOptionsAndValues: []
     },
     action: {
       providerName: '',
       options: {},
       type: '',
-      allOptionsAndValues: []
     },
     enabled: true,
   }
@@ -71,8 +74,9 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     });
 
     this.setState({
+      allOptionsAndValues: { [propType]: allOptionsAndValues },
       [propType]: {
-        options, providerName, type, allOptionsAndValues
+        options, providerName, type
       }
     });
   }
@@ -121,14 +125,14 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
           }
         </Select>
         { /* Options */ }
-        { propName === 'trigger' && this.triggerOrActionOptions(propName, this.state.trigger) }
-        { propName === 'action' && this.triggerOrActionOptions(propName, this.state.action) }
+        { propName === 'trigger' && this.triggerOrActionOptions(propName, this.state.trigger, this.state.allOptionsAndValues[propName]) }
+        { propName === 'action' && this.triggerOrActionOptions(propName, this.state.action, this.state.allOptionsAndValues[propName]) }
       </FormItem>
     );
   }
 
-  triggerOrActionOptions(type, triggerOrAction): React.Node {
-    const { allOptionsAndValues, options } = triggerOrAction;
+  triggerOrActionOptions(type, triggerOrAction, allOptionsAndValues): React.Node {
+    const { options } = triggerOrAction;
     if (!allOptionsAndValues) return;
 
     return (

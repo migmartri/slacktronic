@@ -11,7 +11,7 @@ export type triggerAttrs = {
   providerName: string,
   type: string,
   options?: options,
-  lastPerform?: triggerPerformType
+  lastPerform?: ?triggerPerformType
 };
 
 export type triggerType = {

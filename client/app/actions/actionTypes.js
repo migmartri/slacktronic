@@ -16,6 +16,9 @@ const actions = [
   'ACTION_CREATE',
   'ACTION_PERFORM',
   'SLACK_EVENT',
+  'STORE_SNAPSHOT_SAVE',
+  'STORE_SNAPSHOT_RETRIEVE',
+  'STORE_SNAPSHOT_RETRIEVED'
 ];
 
 const actionFormatter = (actionNames): { [string]: string } => {

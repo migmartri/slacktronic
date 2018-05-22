@@ -4,6 +4,7 @@ import HomeComponent from '../../components/HomeComponent';
 import configStore from '../../lib/configStore';
 import type { Dispatch } from '../../actions/common';
 import * as providerActions from '../../actions/providers';
+import actionTypes from '../../actions/actionTypes';
 import { AVAILABLE_PROVIDERS } from '../../integrations';
 
 const mapStateToProps = (state) => {
@@ -25,6 +26,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     }
 
     dispatch(providerActions.initialize(AVAILABLE_PROVIDERS.serialCom));
+    dispatch({ type: actionTypes.STORE_SNAPSHOT_RETRIEVE });
 
     // dispatch(subscriptionActions.clearSubscriptions());
   }
