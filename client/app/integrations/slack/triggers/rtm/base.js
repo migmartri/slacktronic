@@ -3,7 +3,12 @@
 import SlackClient from '../../client';
 
 export type slackEventType = { type: string, ...{[string]: string} };
-export type valuesFuncType = (client: SlackClient) => string[];
+export type valuesEntries = {
+  label: string,
+  value: string
+}[];
+
+export type valuesFuncType = (client: SlackClient) => valuesEntries;
 
 type controlType = 'select' | 'input' | 'hidden';
 

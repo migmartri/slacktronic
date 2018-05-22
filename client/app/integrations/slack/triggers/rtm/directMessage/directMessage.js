@@ -1,6 +1,6 @@
 // @flow
 
-import type { slackEventType, optionsValuesType } from '../base';
+import type { slackEventType, optionsValuesType, valuesEntries } from '../base';
 import SlackTrigger from '../base';
 import type { TriggerType } from '../../../../';
 import SlackClient from '../../../client';
@@ -11,9 +11,10 @@ class DirectMessage extends SlackTrigger implements TriggerType {
     description: 'Notify me when I receive a direct message'
   }
 
-  static fetchCurrentUser = (client: SlackClient) => (
-    [client.userInfo.userID]
-  )
+  static fetchCurrentUser = (client: SlackClient): valuesEntries => {
+    const { userID, user } = client.userInfo;
+    return [{ value: userID, label: user }];
+  };
 
   slackEventNames = ['message', 'im_marked'];
   currentUserID: string;

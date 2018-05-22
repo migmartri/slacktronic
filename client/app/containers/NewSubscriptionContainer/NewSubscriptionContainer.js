@@ -65,7 +65,7 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     const allOptionsAndValues = await this.loadOptionValues(klass.options);
     allOptionsAndValues.forEach(optAndVal => {
       // eslint-disable-next-line prefer-destructuring
-      options[optAndVal.opt.ID] = optAndVal.optionValues[0];
+      options[optAndVal.opt.ID] = optAndVal.optionValues[0].value;
     });
 
     this.setState({
@@ -132,13 +132,13 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
       allOptionsAndValues.filter(optAndVal => optAndVal.opt.controlType === 'select')
         .map(optAndVal => {
           const { opt, optionValues } = optAndVal;
-          const value = this.state.trigger.options[opt.ID];
+          const current = this.state.trigger.options[opt.ID];
           return (
             <FormItem key={opt.ID} label={opt.ID} required={opt.required}>
-              <Select value={value} onChange={this.handleTriggerOrActionOption}>
+              <Select defaultValue={`trigger@${opt.ID}@${current}`} onChange={this.handleTriggerOrActionOption}>
                 {
                   optionValues.map(optVal => (
-                    <Option key={optVal} value={`trigger@${opt.ID}@${optVal}`}>{optVal}</Option>
+                    <Option key={optVal.value} value={`trigger@${opt.ID}@${optVal.value}`}>{optVal.label}</Option>
                 ))
                 }
               </Select>
