@@ -6,6 +6,7 @@ import { createSubscription } from './../actions/subscriptions';
 import * as actionsActions from '../actions/actions';
 
 const debug = require('debug')('slacktronic@subscriptions.saga');
+
 const registeredSubscriptions = [];
 
 function* watchDiskStoreLoaded() {
@@ -13,17 +14,24 @@ function* watchDiskStoreLoaded() {
     const payload = yield take(actionTypes.STORE_SNAPSHOT_RETRIEVED);
     const { subscriptions, actions, triggers } = payload.data;
     debug('Disk store loaded, creating subscriptions %o', payload);
-    
+
     if (!subscriptions) {
       debug('There are not subscriptions to load');
       return;
     }
 
-    for (let i = 0; i < subscriptions.allIDs.length; i += 1) {
-      const subID = subscriptions.allIDs[i];
+    const subscriptionIDS = Object.keys(subscriptions.byID)
+    // Iterating on subscriptions keys to prevent inconsistency when relying in IDS of arrays
+    for (let i = 0; i < subscriptionIDS.length; i += 1) {
+      const subID = subscriptionIDS[i];
       const subscription = subscriptions.byID[subID];
       const action = actions.byID[subscription.actionID];
       const trigger = triggers.byID[subscription.triggerID];
+
+      if (!subscription || !action || !trigger) {
+        debug('Subscription or action or trigger not found', subscription, action, trigger);
+        return;
+      }
 
       debug('Dispatching the creation of action %o, trigger %o, subscription %o', action, trigger, subscription);
 
@@ -38,7 +46,7 @@ function* watchDiskStoreLoaded() {
       const sub = yield put(createSubscription({ ...subscription }));
       if (!sub) return;
 
-      registeredSubscriptions.push(sub);
+      registeredSubscriptions.push(sub.data);
       debug('Subscriptions registered %o', registeredSubscriptions);
     }
   }
@@ -67,8 +75,7 @@ function* watchSubscriptionCreation() {
     }));
 
     if (!sub) return;
-
-    registeredSubscriptions.push(sub);
+    registeredSubscriptions.push(sub.data);
 
     debug('Subscriptions registered %o', registeredSubscriptions);
     // Store in disk
@@ -97,7 +104,7 @@ function* watchTriggeredTriggers() {
   while (true) {
     const trigger = yield take(actionTypes.TRIGGER_TRIGGERED);
     debug('Trigger received %o', trigger);
-    yield all(registeredSubscriptions.map(sub => fork(processTrigger, trigger.data, sub.data)));
+    yield all(registeredSubscriptions.map(sub => fork(processTrigger, trigger.data, sub)));
   }
 }
 
