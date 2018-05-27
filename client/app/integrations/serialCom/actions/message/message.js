@@ -21,7 +21,7 @@ class Message extends TriggerOrAction implements ActionType {
 
   static metadata = {
     name: 'Serial port message',
-    description: 'Send a message evia the serial port',
+    description: 'Send a message via the serial port',
   }
 
   payload: string;

@@ -5,7 +5,7 @@ export type valuesEntries = {
   value: string
 }[];
 
-export type valuesFuncType = (any) => valuesEntries;
+export type valuesFuncType = (...args?: any) => valuesEntries;
 
 type controlType = 'select' | 'input' | 'hidden';
 
