@@ -69,7 +69,7 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     const allOptionsAndValues = await this.loadOptionValues(klass.options);
     allOptionsAndValues.forEach(optAndVal => {
       // eslint-disable-next-line prefer-destructuring
-      options[optAndVal.opt.ID] = optAndVal.optionValues[0].value;
+      options[optAndVal.opt.ID] = optAndVal.optionValues[0];
     });
 
     this.setState({
@@ -96,10 +96,17 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   // OptionValue has the format <trigger|action>@<optionID>@<optionValue>
   handleTriggerOrActionOption = (option: string): void => {
     const [propType, optionID, optionValue] = option.split('@', 3);
+    // Find the option associated with the selection to add it including the label
+    const allOptions = this.state.allOptionsAndValues[propType];
+    const currentOptionAndValues = allOptions.find(optAndVal => optAndVal.opt.ID === optionID);
+    if (!currentOptionAndValues) return;
+    
+    const opt = currentOptionAndValues.optionValues.find(valAndLabel => valAndLabel.value === optionValue);
+
     this.setState({
       [propType]: {
         ...this.state[propType],
-        options: { ...this.state[propType].options, [optionID]: optionValue },
+        options: { ...this.state[propType].options, [optionID]: opt },
       }
     });
   }
@@ -138,7 +145,7 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
       allOptionsAndValues.filter(optAndVal => optAndVal.opt.controlType === 'select')
         .map(optAndVal => {
           const { opt, optionValues } = optAndVal;
-          const current = options[opt.ID];
+          const current = options[opt.ID].value;
           return (
             <FormItem key={opt.ID} label={opt.ID} required={opt.required}>
               <Select defaultValue={`${type}@${opt.ID}@${current}`} onChange={this.handleTriggerOrActionOption}>
