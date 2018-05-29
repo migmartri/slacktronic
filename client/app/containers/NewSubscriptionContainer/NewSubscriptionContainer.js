@@ -168,20 +168,13 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   }
 }
 
-// TODO, remove
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  const token = configStore.get('slack.token');
-
-  if (token) {
-    dispatch(providerActions.initialize('slack', { token }));
-  }
-
-  return {
+const mapDispatchToProps = (dispatch: Dispatch) => (
+  {
     onSubCreation: (payload: craftSubPayload): void => {
       dispatch(subscriptionActions.craftSubscription(payload));
     }
-  };
-};
+  }
+);
 
 const mapStateToProps = (state) => {
   const providersByName = state.providers.byName;

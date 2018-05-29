@@ -94,6 +94,20 @@ function watchSlackTriggersCreation(action) {
   debug('Triggers registered %o', registeredTriggers);
 }
 
+function watchSlackTriggersDeletion(action) {
+  debug('Received trigger deletion', action);
+  const { ID: triggerID } = action.data;
+
+  const indexToDelete = registeredTriggers.findIndex(t => (
+    t.ID === triggerID
+  ));
+
+  if (indexToDelete !== -1) {
+    registeredTriggers.splice(indexToDelete, 1);
+    debug('registeredTriggers updated after deletion %o', registeredTriggers);
+  }
+}
+
 function* watchProviderInitialized() {
   while (true) {
     const action = yield take(actionTypes.PROVIDER_INITIALIZED);
@@ -110,7 +124,8 @@ function* watchProviderInitialized() {
 function* rootSlackSaga() {
   yield all([
     call(watchProviderInitialized),
-    takeEvery(actionTypes.TRIGGER_CREATE, watchSlackTriggersCreation)
+    takeEvery(actionTypes.TRIGGER_CREATE, watchSlackTriggersCreation),
+    takeEvery(actionTypes.TRIGGER_DELETE, watchSlackTriggersDeletion)
   ]);
 }
 

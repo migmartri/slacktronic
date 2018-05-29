@@ -3,7 +3,7 @@ import * as React from 'react';
 import { TimeAgo } from 'react-time-ago';
 import TimeAgoJS from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
-import { Card, Divider } from 'antd';
+import { Icon, Card, Divider } from 'antd';
 import type { subscriptionType } from '../../models/subscription';
 import type { actionType } from '../../models/action';
 import type { triggerType } from '../../models/trigger';
@@ -15,9 +15,9 @@ TimeAgoJS.locale(en);
 
 type Props = {
   subscription: subscriptionType,
-  // eslint-disable-next-line react/no-unused-prop-types
   action: actionType,
-  trigger: triggerType
+  trigger: triggerType,
+  onDelete: (subscriptionType) => void
 };
 
 export default class SubscriptionComponent extends React.Component<Props> {
@@ -33,6 +33,10 @@ export default class SubscriptionComponent extends React.Component<Props> {
     return <span>{enabled} <TimeAgo>{lastTriggeredAt}</TimeAgo></span>;
   }
 
+  deleteSubscription = () => {
+    this.props.onDelete(this.props.subscription);
+  }
+
   get triggerKlass(): TriggerOrAction.constructor {
     const { trigger } = this.props;
     const providerTriggers = AVAILABLE_TRIGGERS[trigger.providerName];
@@ -46,13 +50,14 @@ export default class SubscriptionComponent extends React.Component<Props> {
   }
 
   render() {
-    const sub = this.props.subscription;
     const { metadata: triggerMetadata } = this.triggerKlass;
     const { metadata: actionMetadata } = this.actionKlass;
     return (
       <div>
         <Card>
-          {triggerMetadata.description}
+          <div className={styles.actions}>
+            <a onClick={this.deleteSubscription} onKeyPress={this.deleteSubscription} tabIndex="0" role="link"><Icon type="delete" /></a>
+          </div>
           <Divider orientation="left">Trigger</Divider>
           <p>
             {triggerMetadata.description} ({ this.lastPerformInfo })
@@ -62,8 +67,6 @@ export default class SubscriptionComponent extends React.Component<Props> {
             {actionMetadata.description}
             <br />{ JSON.stringify(this.props.action.options) }
           </p>
-          <Divider />
-          Subscription enabled: {sub.enabled ? 'Yes' : 'No'}
         </Card>
       </div>
     );

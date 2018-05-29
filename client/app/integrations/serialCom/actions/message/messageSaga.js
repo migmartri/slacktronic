@@ -130,6 +130,20 @@ function watchSerialComActionsCreation(action) {
   registeredActions.push(action.data);
 }
 
+function watchSerialComActionsDeletion(action) {
+  debug('Received action deletion', action);
+  const { ID: actionID } = action.data;
+
+  const indexToDelete = registeredActions.findIndex(t => (
+    t.ID === actionID
+  ));
+
+  if (indexToDelete !== -1) {
+    registeredActions.splice(indexToDelete, 1);
+    debug('registeredActions updated after deletion %o', registeredActions);
+  }
+}
+
 function* watchProviderInitialized() {
   while (true) {
     const action = yield take(actionTypes.PROVIDER_INITIALIZED);
@@ -148,6 +162,7 @@ function* rootSlackSaga() {
   yield all([
     call(watchProviderInitialized),
     takeEvery(actionTypes.ACTION_CREATE, watchSerialComActionsCreation),
+    takeEvery(actionTypes.ACTION_DELETE, watchSerialComActionsDeletion),
     takeEvery(actionTypes.ACTION_PERFORM, processReceivedActionPerform)
   ]);
 }
