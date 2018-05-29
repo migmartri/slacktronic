@@ -56,7 +56,15 @@ export default class SubscriptionComponent extends React.Component<Props> {
       <div>
         <Card>
           <div className={styles.actions}>
-            <a onClick={this.deleteSubscription} onKeyPress={this.deleteSubscription} tabIndex="0" role="link"><Icon type="delete" /></a>
+            <a
+              onClick={this.deleteSubscription}
+              onKeyPress={this.deleteSubscription}
+              tabIndex="0"
+              role="link"
+              title="Delete subscription"
+            >
+              <Icon type="delete" />
+            </a>
           </div>
           <Divider orientation="left">Trigger</Divider>
           <p>

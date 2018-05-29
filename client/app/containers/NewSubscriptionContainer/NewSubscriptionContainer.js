@@ -1,9 +1,8 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { Form, Button, Select } from 'antd';
-import * as providerActions from '../../actions/providers';
-import configStore from '../../lib/configStore';
 import { AVAILABLE_TRIGGERS, AVAILABLE_ACTIONS } from '../../integrations';
 import type { actionAttrs } from '../../models/action';
 import type { triggerAttrs } from '../../models/trigger';
@@ -160,9 +159,8 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
       <Form onSubmit={this.handleSubscriptionSubmit}>
         { this.triggerForm('trigger', AVAILABLE_TRIGGERS) }
         { this.triggerForm('action', AVAILABLE_ACTIONS) }
-        <FormItem>
-          <Button type="primary" htmlType="submit" >Next</Button>
-        </FormItem>
+        <Button type="primary" htmlType="submit" >Save</Button>
+        <Link to="/home" style={{ marginLeft: 8 }}><Button>Cancel</Button></Link>
       </Form>
     );
   }

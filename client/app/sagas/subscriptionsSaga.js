@@ -1,5 +1,6 @@
 import shortID from 'shortid';
 import { push } from 'react-router-redux';
+import { notification } from 'antd';
 import { take, all, call, put, fork } from 'redux-saga/effects';
 import actionTypes from '../actions/actionTypes';
 import { createSubscription } from './../actions/subscriptions';
@@ -84,6 +85,10 @@ function* watchSubscriptionCreation() {
       keys: ['subscriptions', 'actions', 'triggers']
     });
 
+    notification.success({
+      message: 'Subscription created'
+    });
+
     // Redirect to homepage
     yield put(push('/'));
   }
@@ -110,6 +115,16 @@ function* watchSubscriptionDeletion() {
       yield put({
         type: actionTypes.TRIGGER_DELETE,
         data: { ID: sub.triggerID }
+      });
+
+      // Store in disk
+      yield put({
+        type: actionTypes.STORE_SNAPSHOT_SAVE,
+        keys: ['subscriptions', 'actions', 'triggers']
+      });
+
+      notification.success({
+        message: 'Subscription deleted'
       });
     }
   }

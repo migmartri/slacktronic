@@ -33,6 +33,15 @@ function providers(state: reduxStateType = initialState, action: any) {
           }
         }
       };
+    case actionTypes.TRIGGER_DELETE:
+      const allTriggers = Object.assign({}, state.byID);
+      delete allTriggers[action.data.ID];
+
+      return {
+        ...state,
+        byID: allTriggers,
+        allIDs: state.allIDs.filter(ID => action.data.ID !== ID)
+      };
     default:
       return state;
   }

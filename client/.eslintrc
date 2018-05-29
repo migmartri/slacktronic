@@ -12,6 +12,7 @@
   },
   "rules": {
     "arrow-parens": ["off"],
+    "no-case-declarations": ["off"],
     "compat/compat": "error",
     "consistent-return": "off",
     "comma-dangle": "off",

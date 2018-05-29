@@ -4,7 +4,7 @@ import type { serialMessage } from '../models/serialMessage';
 import rotatedEntries from './helpers';
 
 const initialState = {
-  messages: { byID: {}, allIDs: [], queue: [] }
+  messages: { byID: {}, allIDs: [] }
 };
 
 type serialReduxStateType = {
