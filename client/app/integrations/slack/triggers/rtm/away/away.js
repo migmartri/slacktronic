@@ -1,7 +1,7 @@
 // @flow
 
 import type { TriggerType } from '../../../../';
-import type { optionsValuesType } from '../base';
+import type { optionsValuesType } from '../../../../base';
 import SlackTrigger from '../base';
 
 class Away extends SlackTrigger implements TriggerType {

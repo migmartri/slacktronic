@@ -100,8 +100,9 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     const allOptions = this.state.allOptionsAndValues[propType];
     const currentOptionAndValues = allOptions.find(optAndVal => optAndVal.opt.ID === optionID);
     if (!currentOptionAndValues) return;
-    
-    const opt = currentOptionAndValues.optionValues.find(valAndLabel => valAndLabel.value === optionValue);
+
+    const opt = currentOptionAndValues.optionValues
+      .find(valAndLabel => valAndLabel.value === optionValue);
 
     this.setState({
       [propType]: {

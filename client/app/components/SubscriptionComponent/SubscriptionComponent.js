@@ -49,6 +49,17 @@ export default class SubscriptionComponent extends React.Component<Props> {
     return providerActions[action.type];
   }
 
+  triggerOrActionOptions = (actionOrTrigger: actionType | triggerType) => {
+    const { options } = actionOrTrigger;
+    if (!options) return;
+
+    return (
+      Object.keys(options).map(key => (
+        <p>{options[key].label}</p>
+      ))
+    );
+  }
+
   render() {
     const { metadata: triggerMetadata } = this.triggerKlass;
     const { metadata: actionMetadata } = this.actionKlass;
@@ -66,15 +77,12 @@ export default class SubscriptionComponent extends React.Component<Props> {
               <Icon type="delete" />
             </a>
           </div>
-          <Divider orientation="left">Trigger</Divider>
+          <Divider orientation="left">Trigger: {triggerMetadata.name}</Divider>
           <p>
             {triggerMetadata.description} ({ this.lastPerformInfo })
           </p>
-          <Divider orientation="left">Action</Divider>
-          <p>
-            {actionMetadata.description}
-            <br />{ JSON.stringify(this.props.action.options) }
-          </p>
+          <Divider orientation="left">Action: {actionMetadata.name}</Divider>
+          { this.triggerOrActionOptions(this.props.action) }
         </Card>
       </div>
     );

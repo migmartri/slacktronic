@@ -18,7 +18,7 @@ type metadataType = {
   description?: string
 };
 
-export type optionsValuesType = { [string]: string };
+export type optionsValuesType = { [string]: { value: any, label?: string }};
 
 class TriggerOrAction {
   // Assigning typed static options does not work.
@@ -28,7 +28,7 @@ class TriggerOrAction {
   // Validates that the required options are present
   constructor(triggerActionOptions: triggerOptionsTypes, optionsValues: optionsValuesType) {
     triggerActionOptions.filter(opt => opt.required).forEach(opt => {
-      const value = optionsValues[opt.ID];
+      const { value } = optionsValues[opt.ID];
       if (!value || value === '') throw new Error(`${opt.ID} is required`);
     });
   }

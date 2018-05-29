@@ -35,7 +35,7 @@ class Mention extends SlackTrigger implements TriggerType {
 
   constructor(optionValues: optionsValuesType) {
     super(Mention.options, optionValues);
-    this.currentUserID = optionValues.currentUserID;
+    this.currentUserID = optionValues.currentUserID.value;
   }
 
   // Override to check that it is a generic message

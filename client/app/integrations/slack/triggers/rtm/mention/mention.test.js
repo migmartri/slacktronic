@@ -6,7 +6,7 @@ describe('Mention subscription type', () => {
   const userID = 'myUserID';
   let mentionInstance;
   beforeEach(() => {
-    mentionInstance = new Mention({ currentUserID: userID });
+    mentionInstance = new Mention({ currentUserID: { value: userID } });
   });
 
   describe('#constructor', () => {

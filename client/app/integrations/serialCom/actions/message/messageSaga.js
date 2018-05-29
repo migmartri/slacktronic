@@ -3,6 +3,7 @@ import { delay } from 'redux-saga';
 
 import shortID from 'shortid';
 import actionTypes from '../../../../actions/actionTypes';
+import Message from './message';
 import type { serialMessage } from '../../../../models/serialMessage';
 import MessageStatus from '../../../../models/serialMessage';
 import { AVAILABLE_PROVIDERS } from '../../../index';
@@ -113,7 +114,10 @@ function* processReceivedActionPerform(action) {
   debug('SerialCom action found %o', referencedSerialAction);
 
   const { enabled } = action.data;
-  let { payload } = referencedSerialAction.options;
+
+  // Initialize a message instance to extract its payload
+  const messageInstance = new Message(referencedSerialAction.options);
+  let { payload } = messageInstance;
 
   payload = enabled ? payload.toUpperCase() : payload;
   // Store the message in the store

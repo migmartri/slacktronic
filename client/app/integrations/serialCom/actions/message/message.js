@@ -28,7 +28,7 @@ class Message extends TriggerOrAction implements ActionType {
 
   constructor(optionValues: optionsValuesType) {
     super(Message.options, optionValues);
-    this.payload = optionValues.payload;
+    this.payload = optionValues.payload.value;
   }
 }
 

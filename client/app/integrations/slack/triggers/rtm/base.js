@@ -3,7 +3,6 @@
 import TriggerOrAction from '../../../base';
 
 export type slackEventType = { type: string, ...{[string]: string} };
-export type optionsValuesType = { [string]: string };
 
 class SlackTrigger extends TriggerOrAction {
   slackEventNames: string[];

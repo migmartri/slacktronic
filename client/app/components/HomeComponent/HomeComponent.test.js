@@ -10,7 +10,8 @@ describe('Home component', () => {
   const onLoadFn = jest.fn();
   const testProps = {
     onLoad: onLoadFn,
-    slackConfigured: false
+    slackConfigured: false,
+    location: {}
   };
 
   it('shows the slackConfig info by default', () => {
