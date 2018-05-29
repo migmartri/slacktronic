@@ -90,7 +90,7 @@ function* watchSubscriptionCreation() {
     });
 
     // Redirect to homepage
-    yield put(push('/'));
+    yield put(push({ pathname: '/', state: { skipInit: true } }));
   }
 }
 

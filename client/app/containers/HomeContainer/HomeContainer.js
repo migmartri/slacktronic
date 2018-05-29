@@ -16,10 +16,13 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  onLoad: () => {
+  onLoad: (skipInit: boolean) => {
+    if (skipInit) return;
+
     // Load token from store
     // Validate and store in redux the slack info
     // TODO(miguel) Have a general load info from local storage
+    // TODO(miguel) Initialize when creating a trigger or action if required
     const token = configStore.get('slack.token');
     if (token) {
       dispatch(providerActions.initialize(AVAILABLE_PROVIDERS.slack, { token }));
@@ -27,8 +30,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
     dispatch(providerActions.initialize(AVAILABLE_PROVIDERS.serialCom));
     dispatch({ type: actionTypes.STORE_SNAPSHOT_RETRIEVE });
-
-    // dispatch(subscriptionActions.clearSubscriptions());
   }
 });
 

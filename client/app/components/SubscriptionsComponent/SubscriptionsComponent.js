@@ -74,18 +74,23 @@ export default class SubscriptionsComponent extends Component<Props, State> {
           </Col>
         </Row>
         <Row gutter={16}>
-          <Col span={18}>
-            <Row gutter={16}>
+          <Col span={16}>
+            <Row>
               {
                 this.props.subscriptions.map((sub) => (
-                  <Col span={12} key={sub.ID} className={styles.subscription}>
+                  <Col key={sub.ID} className={styles.subscription}>
                     <SubscriptionContainer subscriptionID={sub.ID} />
                   </Col>
                 ))
               }
+              { !this.props.subscriptions.length &&
+                <div style={{ textAlign: 'center' }}>
+                  You do not have any subscription yet.
+                  Click <Link to="/subscriptions/new">here</Link> to create one.
+                </div> }
             </Row>
           </Col>
-          <Col span={6} className={styles.sidebar}>
+          <Col span={8} className={styles.sidebar}>
             <Card className={styles.timeline}>
               <p>Serial messages</p>
               <MessagesTimelineContainer />

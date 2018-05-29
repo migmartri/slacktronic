@@ -73,7 +73,7 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     });
 
     this.setState({
-      allOptionsAndValues: { [propType]: allOptionsAndValues },
+      allOptionsAndValues: { ...this.state.allOptionsAndValues, [propType]: allOptionsAndValues },
       [propType]: {
         options, providerName, type
       }
@@ -160,7 +160,7 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
         { this.triggerForm('trigger', AVAILABLE_TRIGGERS) }
         { this.triggerForm('action', AVAILABLE_ACTIONS) }
         <Button type="primary" htmlType="submit" >Save</Button>
-        <Link to="/home" style={{ marginLeft: 8 }}><Button>Cancel</Button></Link>
+        <Link to={{ pathname: '/', state: { skipInit: true } }} style={{ marginLeft: 8 }}><Button>Cancel</Button></Link>
       </Form>
     );
   }
