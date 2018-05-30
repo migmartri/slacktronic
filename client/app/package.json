@@ -1,19 +1,19 @@
 {
   "name": "slacktronic",
   "productName": "Slacktronic",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Connect your Slack workspace to Arduino",
   "main": "./main.prod.js",
   "author": {
-    "name": "C. T. Lin",
-    "email": "chentsulin@gmail.com",
-    "url": "https://github.com/chentsulin"
+    "name": "Miguel Martinez",
+    "email": "migmartri@gmail.com",
+    "url": "https://github.com/migmartri"
   },
   "scripts": {
     "electron-rebuild": "node -r babel-register ../internals/scripts/ElectronRebuild.js",
     "postinstall": "npm run electron-rebuild"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
     "serialport": "^6.2.0"
   }

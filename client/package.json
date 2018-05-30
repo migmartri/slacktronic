@@ -1,7 +1,7 @@
 {
   "name": "slacktronic",
   "productName": "Slacktronic",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "description": "Connect your Slack workspace to Arduino",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
@@ -82,7 +82,7 @@
     "email": "migmartri@gmail.com",
     "url": "https://github.com/migmartri"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/migmartri/slacktronic/issues"
   },
