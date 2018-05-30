@@ -10,4 +10,3 @@ export const slackEvent = (data: any): Action => ({
 });
 
 export default slackEvent;
-

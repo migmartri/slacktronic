@@ -1,13 +1,14 @@
 // @flow
 import actionTypes from '../actions/actionTypes';
-import type { providerType, supportedProviderName } from '../models/provider';
+import type { providerType } from '../models/provider';
+import type { availableProviderNamesType } from '../integrations';
 
 const initialState = {
   byName: {}, allNames: []
 };
 
 type reduxStateType = {
-  byName: { [supportedProviderName]: providerType },
+  byName: { [availableProviderNamesType]: providerType },
   allNames: string[]
 };
 

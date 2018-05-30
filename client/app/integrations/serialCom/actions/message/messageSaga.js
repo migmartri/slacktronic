@@ -3,12 +3,13 @@ import { delay } from 'redux-saga';
 
 import shortID from 'shortid';
 import actionTypes from '../../../../actions/actionTypes';
+import Message from './message';
 import type { serialMessage } from '../../../../models/serialMessage';
 import MessageStatus from '../../../../models/serialMessage';
+import { AVAILABLE_PROVIDERS } from '../../../index';
 
-const debug = require('debug')('slacktronic@actions.serialCom.sendMessage.saga');
+const debug = require('debug')('slacktronic@actions.serialCom.message.saga');
 
-const PROVIDER_NAME = 'serialCom';
 const registeredActions = [];
 let serialClient: SlacktronicSerialClient;
 
@@ -113,9 +114,12 @@ function* processReceivedActionPerform(action) {
   debug('SerialCom action found %o', referencedSerialAction);
 
   const { enabled } = action.data;
-  const { char } = referencedSerialAction.options;
 
-  const payload = enabled ? char.toUpperCase() : char;
+  // Initialize a message instance to extract its payload
+  const messageInstance = new Message(referencedSerialAction.options);
+  let { payload } = messageInstance;
+
+  payload = enabled ? payload.toUpperCase() : payload;
   // Store the message in the store
   const message = yield call(createMessage, payload);
   // Block until message is sent
@@ -125,10 +129,23 @@ function* processReceivedActionPerform(action) {
 function watchSerialComActionsCreation(action) {
   const { providerName } = action.data;
 
-  if (providerName !== PROVIDER_NAME) return;
+  if (providerName !== AVAILABLE_PROVIDERS.serialCom) return;
   debug('Received action creation', action);
   registeredActions.push(action.data);
-  debug('Actions registered %o', registeredActions);
+}
+
+function watchSerialComActionsDeletion(action) {
+  debug('Received action deletion', action);
+  const { ID: actionID } = action.data;
+
+  const indexToDelete = registeredActions.findIndex(t => (
+    t.ID === actionID
+  ));
+
+  if (indexToDelete !== -1) {
+    registeredActions.splice(indexToDelete, 1);
+    debug('registeredActions updated after deletion %o', registeredActions);
+  }
 }
 
 function* watchProviderInitialized() {
@@ -136,7 +153,7 @@ function* watchProviderInitialized() {
     const action = yield take(actionTypes.PROVIDER_INITIALIZED);
     debug('Provider initialize received %o', action);
     const { name } = action.data;
-    if (name !== PROVIDER_NAME) continue;
+    if (name !== AVAILABLE_PROVIDERS.serialCom) continue;
     debug('Provider initialize accepted %o', action);
 
     const { client } = action.data.options;
@@ -149,6 +166,7 @@ function* rootSlackSaga() {
   yield all([
     call(watchProviderInitialized),
     takeEvery(actionTypes.ACTION_CREATE, watchSerialComActionsCreation),
+    takeEvery(actionTypes.ACTION_DELETE, watchSerialComActionsDeletion),
     takeEvery(actionTypes.ACTION_PERFORM, processReceivedActionPerform)
   ]);
 }

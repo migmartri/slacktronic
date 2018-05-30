@@ -2,11 +2,11 @@
 import shortID from 'shortid';
 import type { Action } from './common';
 import actionTypes from './actionTypes';
-import type { subscriptionTypeAttrs, } from '../models/subscription';
+import type { subscriptionTypeAttrs, subscriptionType } from '../models/subscription';
 import type { actionAttrs } from '../models/action';
 import type { triggerAttrs } from '../models/trigger';
 
-type craftSubPayload = {
+export type craftSubPayload = {
   trigger: triggerAttrs,
   action: actionAttrs,
   enabled: boolean
@@ -21,6 +21,11 @@ export const craftSubscription = (payload: craftSubPayload): Action => ({
 export const createSubscription = (sub: subscriptionTypeAttrs): Action => ({
   type: actionTypes.SUBSCRIPTION_CREATE,
   data: { ID: shortID.generate(), ...sub }
+});
+
+export const deleteSubscription = (sub: subscriptionType): Action => ({
+  type: actionTypes.SUBSCRIPTION_DELETE,
+  data: sub
 });
 
 export const clearSubscriptions = (): Action => ({

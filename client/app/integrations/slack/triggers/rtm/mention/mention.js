@@ -1,8 +1,10 @@
 // @flow
 
 import type { slackEventType } from '../base';
+import type { optionsValuesType, valuesEntries } from '../../../../base';
 import SlackTrigger from '../base';
-import type { TriggerType } from '../../';
+import type { TriggerType } from '../../../../';
+import SlackClient from '../../../client';
 
 // Mention works in a similar way than the Direct message, with the difference
 // that it checks for an @UserID pattern and it relies on the channel_marked event
@@ -12,14 +14,28 @@ class Mention extends SlackTrigger implements TriggerType {
     description: 'Notify me when I am mentioned'
   }
 
+  static fetchCurrentUser = (client: SlackClient): valuesEntries => {
+    const { userID, user } = client.userInfo;
+    return [{ value: userID, label: user }];
+  };
+
+  static options = [
+    {
+      ID: 'currentUserID',
+      required: true,
+      values: Mention.fetchCurrentUser,
+      controlType: 'hidden'
+    }
+  ];
+
   slackEventNames = ['message', 'channel_marked'];
-  currentUserID: string;
   // { DABC: 'read', DIII: 'unread }
   receivedMessagesChannels = {};
+  currentUserID: string;
 
-  constructor(currentUserID: string) {
-    super();
-    this.currentUserID = currentUserID;
+  constructor(optionValues: optionsValuesType) {
+    super(Mention.options, optionValues);
+    this.currentUserID = optionValues.currentUserID.value;
   }
 
   // Override to check that it is a generic message

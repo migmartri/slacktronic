@@ -22,6 +22,15 @@ function providers(state: reduxStateType = initialState, action: any) {
         },
         allIDs: [...state.allIDs, action.data.ID]
       };
+    case actionTypes.ACTION_DELETE:
+      const allActions = Object.assign({}, state.byID);
+      delete allActions[action.data.ID];
+
+      return {
+        ...state,
+        byID: allActions,
+        allIDs: state.allIDs.filter(ID => action.data.ID !== ID)
+      };
     default:
       return state;
   }

@@ -1,6 +1,7 @@
 // @flow
 import { connect } from 'react-redux';
 import SubscriptionsComponent from '../../components/SubscriptionsComponent';
+import { AVAILABLE_PROVIDERS } from '../../integrations';
 
 const mapStateToProps = (state) => {
   const subsByID = state.subscriptions.byID;
@@ -9,7 +10,10 @@ const mapStateToProps = (state) => {
   const eventsByID = state.slack.events.byID;
   const slackEvents = Object.keys(eventsByID).map(k => eventsByID[k]);
   const providersByName = state.providers.byName;
-  const { slack: slackProvider, serialCom: serialProvider } = providersByName;
+  const {
+    [AVAILABLE_PROVIDERS.slack]: slackProvider,
+    [AVAILABLE_PROVIDERS.serialCom]: serialProvider
+  } = providersByName;
 
   let serialPort;
   let slackUserInfo;

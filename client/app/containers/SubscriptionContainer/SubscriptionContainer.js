@@ -1,6 +1,9 @@
 // @flow
 import { connect } from 'react-redux';
+import type { Dispatch } from '../../actions/common';
+import type { subscriptionType } from '../../models/subscription';
 import SubscriptionComponent from '../../components/SubscriptionComponent';
+import { deleteSubscription } from '../../actions/subscriptions';
 
 const mapStateToProps = (state, ownProps) => {
   const providersByName = state.providers.byName;
@@ -15,5 +18,11 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-export default connect(mapStateToProps, null)(SubscriptionComponent);
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  onDelete: (subscription: subscriptionType) => {
+    dispatch(deleteSubscription(subscription));
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SubscriptionComponent);
 

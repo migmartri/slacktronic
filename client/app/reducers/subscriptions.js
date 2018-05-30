@@ -23,6 +23,15 @@ function subscriptions(state: subscriptionsReduxStateType = initialState, action
         },
         allIDs: [...state.allIDs, action.data.ID]
       };
+    case actionTypes.SUBSCRIPTION_DELETE:
+      const allSubscriptions = Object.assign({}, state.byID);
+      delete allSubscriptions[action.data.ID];
+
+      return {
+        ...state,
+        byID: allSubscriptions,
+        allIDs: state.allIDs.filter(ID => action.data.ID !== ID)
+      };
     case actionTypes.SUBSCRIPTION_STATUS_CHANGE:
       return {
         ...state,

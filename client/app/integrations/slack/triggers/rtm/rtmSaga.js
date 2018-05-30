@@ -5,11 +5,10 @@ import actionTypes from '../../../../actions/actionTypes';
 import * as slackActions from '../../../../actions/slack';
 import * as triggersActions from '../../../../actions/triggers';
 import SlackClient from '../../client';
-import SUPPORTED_TRIGGERS from './index';
+import { AVAILABLE_SLACK_TRIGGERS } from '../index';
+import { AVAILABLE_PROVIDERS } from '../../../index';
 
 const debug = require('debug')('slacktronic@triggers.slack.rtm.saga');
-
-const PROVIDER_NAME = 'slack';
 
 function slackEventsChannel(client: SlackClient) {
   const { rtmClient } = client;
@@ -45,23 +44,18 @@ function slackEventsChannel(client: SlackClient) {
 
 // TODO(miguel) Initialize Trigger classes in watchSlackTrigger generator
 // and remove client from here.
-function* processSlackEvent(event, client: SlackClient) {
-  yield all(registeredTriggers.map(t => call(processTrigger, event, client, t)));
+function* processSlackEvent(event) {
+  yield all(registeredTriggers.map(t => call(processTrigger, event, t)));
 }
 
-function* processTrigger(event, client, t) {
-  const TriggerTypeClass = SUPPORTED_TRIGGERS[t.type];
+function* processTrigger(event, t) {
+  const TriggerTypeClass = AVAILABLE_SLACK_TRIGGERS[t.type];
   if (!TriggerTypeClass) {
     debug('Trigger type not found, skipping');
     return;
   }
 
-  let trigger;
-  if (t.type === 'mention' || t.type === 'dm') {
-    trigger = new TriggerTypeClass(client.userInfo.userID);
-  } else {
-    trigger = new TriggerTypeClass();
-  }
+  const trigger = new TriggerTypeClass(t.options);
 
   debug('Processing event %o on trigger %o', event, trigger);
   if (trigger.shouldTrigger(event)) {
@@ -79,7 +73,7 @@ function* watchSlackEventsTriggers(client: SlackClient) {
     while (true) {
       const event = yield take(chan);
       debug('Events received from channel %o', event);
-      yield fork(processSlackEvent, event, client);
+      yield fork(processSlackEvent, event);
       yield put(slackActions.slackEvent(event));
     }
   } finally {
@@ -94,10 +88,24 @@ const registeredTriggers = [];
 function watchSlackTriggersCreation(action) {
   const { providerName } = action.data;
 
-  if (providerName !== PROVIDER_NAME) return;
+  if (providerName !== AVAILABLE_PROVIDERS.slack) return;
   debug('Received trigger creation', action);
   registeredTriggers.push(action.data);
   debug('Triggers registered %o', registeredTriggers);
+}
+
+function watchSlackTriggersDeletion(action) {
+  debug('Received trigger deletion', action);
+  const { ID: triggerID } = action.data;
+
+  const indexToDelete = registeredTriggers.findIndex(t => (
+    t.ID === triggerID
+  ));
+
+  if (indexToDelete !== -1) {
+    registeredTriggers.splice(indexToDelete, 1);
+    debug('registeredTriggers updated after deletion %o', registeredTriggers);
+  }
 }
 
 function* watchProviderInitialized() {
@@ -105,7 +113,7 @@ function* watchProviderInitialized() {
     const action = yield take(actionTypes.PROVIDER_INITIALIZED);
     debug('Provider initialize received %o', action);
     const { name } = action.data;
-    if (name !== PROVIDER_NAME) continue;
+    if (name !== AVAILABLE_PROVIDERS.slack) continue;
     debug('Provider initialize accepted %o', action);
 
     const { client } = action.data.options;
@@ -116,7 +124,8 @@ function* watchProviderInitialized() {
 function* rootSlackSaga() {
   yield all([
     call(watchProviderInitialized),
-    takeEvery(actionTypes.TRIGGER_CREATE, watchSlackTriggersCreation)
+    takeEvery(actionTypes.TRIGGER_CREATE, watchSlackTriggersCreation),
+    takeEvery(actionTypes.TRIGGER_DELETE, watchSlackTriggersDeletion)
   ]);
 }
 

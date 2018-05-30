@@ -4,7 +4,8 @@ import HomeComponent from '../../components/HomeComponent';
 import configStore from '../../lib/configStore';
 import type { Dispatch } from '../../actions/common';
 import * as providerActions from '../../actions/providers';
-import * as subscriptionActions from '../../actions/subscriptions';
+import actionTypes from '../../actions/actionTypes';
+import { AVAILABLE_PROVIDERS } from '../../integrations';
 
 const mapStateToProps = (state) => {
   const providersByName = state.providers.byName;
@@ -15,56 +16,20 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  onLoad: async () => {
+  onLoad: (skipInit: boolean) => {
+    if (skipInit) return;
+
     // Load token from store
     // Validate and store in redux the slack info
     // TODO(miguel) Have a general load info from local storage
+    // TODO(miguel) Initialize when creating a trigger or action if required
     const token = configStore.get('slack.token');
     if (token) {
-      dispatch(providerActions.initialize('slack', { token }));
+      dispatch(providerActions.initialize(AVAILABLE_PROVIDERS.slack, { token }));
     }
 
-    dispatch(providerActions.initialize('serialCom'));
-
-    dispatch(subscriptionActions.clearSubscriptions());
-
-    // TODO(miguel) This will be loaded from store and will
-    // include required config settings
-    let payload = {
-      trigger: {
-        providerName: 'slack', type: 'away'
-      },
-      action: {
-        providerName: 'serialCom', type: 'message', options: { char: 'a' }
-      },
-      enabled: true
-    };
-
-    dispatch(subscriptionActions.craftSubscription(payload));
-
-    payload = {
-      trigger: {
-        providerName: 'slack', type: 'dm'
-      },
-      action: {
-        providerName: 'serialCom', type: 'message', options: { char: 'b' }
-      },
-      enabled: true
-    };
-
-    dispatch(subscriptionActions.craftSubscription(payload));
-
-    payload = {
-      trigger: {
-        providerName: 'slack', type: 'mention'
-      },
-      action: {
-        providerName: 'serialCom', type: 'message', options: { char: 'c' }
-      },
-      enabled: true
-    };
-
-    dispatch(subscriptionActions.craftSubscription(payload));
+    dispatch(providerActions.initialize(AVAILABLE_PROVIDERS.serialCom));
+    dispatch({ type: actionTypes.STORE_SNAPSHOT_RETRIEVE });
   }
 });
 

@@ -3,6 +3,7 @@ import SerialPort from 'serialport';
 import SlacktronicSerialClient from './client';
 import actionTypes from '../../actions/actionTypes';
 import * as providersActions from '../../actions/providers';
+import { AVAILABLE_PROVIDERS } from '../';
 
 function* arduinoConnectedPorts() {
   const ports = yield call(SerialPort.list);
@@ -52,14 +53,14 @@ function* clientInitializationFlow() {
   while (true) {
     const providerAction = yield take(actionTypes.PROVIDER_INITIALIZE);
     const { name } = providerAction;
-    if (name !== 'serialCom') continue;
+    if (name !== AVAILABLE_PROVIDERS.serialCom) continue;
 
     try {
       const client = yield call(initializeAndValidateClient);
       const data = {
         options: { client },
         status: 'ready',
-        name: 'serialCom',
+        name: AVAILABLE_PROVIDERS.serialCom,
       };
 
       yield put(providersActions.initialized(data));

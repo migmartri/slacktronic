@@ -3,20 +3,21 @@ import * as React from 'react';
 import { TimeAgo } from 'react-time-ago';
 import TimeAgoJS from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
-import { Card, Icon, Row, Col } from 'antd';
+import { Icon, Card, Divider } from 'antd';
 import type { subscriptionType } from '../../models/subscription';
 import type { actionType } from '../../models/action';
 import type { triggerType } from '../../models/trigger';
 import styles from './subscription.scss';
-import SUPPORTED_TRIGGERS from '../../integrations/slack/triggers/rtm';
+import { AVAILABLE_TRIGGERS, AVAILABLE_ACTIONS } from '../../integrations';
+import TriggerOrAction from '../../integrations/base';
 
 TimeAgoJS.locale(en);
 
 type Props = {
   subscription: subscriptionType,
-  // eslint-disable-next-line react/no-unused-prop-types
   action: actionType,
-  trigger: triggerType
+  trigger: triggerType,
+  onDelete: (subscriptionType) => void
 };
 
 export default class SubscriptionComponent extends React.Component<Props> {
@@ -32,26 +33,56 @@ export default class SubscriptionComponent extends React.Component<Props> {
     return <span>{enabled} <TimeAgo>{lastTriggeredAt}</TimeAgo></span>;
   }
 
+  deleteSubscription = () => {
+    this.props.onDelete(this.props.subscription);
+  }
+
+  get triggerKlass(): TriggerOrAction.constructor {
+    const { trigger } = this.props;
+    const providerTriggers = AVAILABLE_TRIGGERS[trigger.providerName];
+    return providerTriggers[trigger.type];
+  }
+
+  get actionKlass(): TriggerOrAction.constructor {
+    const { action } = this.props;
+    const providerActions = AVAILABLE_ACTIONS[action.providerName];
+    return providerActions[action.type];
+  }
+
+  triggerOrActionOptions = (actionOrTrigger: actionType | triggerType) => {
+    const { options } = actionOrTrigger;
+    if (!options) return;
+
+    return (
+      Object.keys(options).map(key => (
+        <p>{options[key].label}</p>
+      ))
+    );
+  }
+
   render() {
-    const sub = this.props.subscription;
-    const TriggerTypeClass = SUPPORTED_TRIGGERS[this.props.trigger.type];
-    const { metadata } = TriggerTypeClass;
+    const { metadata: triggerMetadata } = this.triggerKlass;
+    const { metadata: actionMetadata } = this.actionKlass;
     return (
       <div>
         <Card>
-          <p>{metadata.description}</p>
-          <Row className={styles.icons}>
-            <Col span={8}><Icon type="slack" /></Col>
-            <Col span={8}><Icon type="arrow-right" /></Col>
-            <Col span={8}><Icon type="usb" /></Col>
-          </Row>
-          <ul className={styles.summary}>
-            <li>Trigger: {metadata.name} ({ this.lastPerformInfo })</li>
-            <li>Action: Serial Message</li>
-            <li>
-              Enabled: {sub.enabled ? 'Yes' : 'No'}
-            </li>
-          </ul>
+          <div className={styles.actions}>
+            <a
+              onClick={this.deleteSubscription}
+              onKeyPress={this.deleteSubscription}
+              tabIndex="0"
+              role="link"
+              title="Delete subscription"
+            >
+              <Icon type="delete" />
+            </a>
+          </div>
+          <Divider orientation="left">Trigger: {triggerMetadata.name}</Divider>
+          <p>
+            {triggerMetadata.description} ({ this.lastPerformInfo })
+          </p>
+          <Divider orientation="left">Action: {actionMetadata.name}</Divider>
+          { this.triggerOrActionOptions(this.props.action) }
         </Card>
       </div>
     );

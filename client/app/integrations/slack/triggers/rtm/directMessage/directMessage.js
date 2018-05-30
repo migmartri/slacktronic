@@ -1,8 +1,10 @@
 // @flow
 
 import type { slackEventType } from '../base';
+import type { optionsValuesType, valuesEntries } from '../../../../base';
 import SlackTrigger from '../base';
-import type { TriggerType } from '../../';
+import type { TriggerType } from '../../../../';
+import SlackClient from '../../../client';
 
 class DirectMessage extends SlackTrigger implements TriggerType {
   static metadata = {
@@ -10,14 +12,29 @@ class DirectMessage extends SlackTrigger implements TriggerType {
     description: 'Notify me when I receive a direct message'
   }
 
+  static fetchCurrentUser = (client: SlackClient): valuesEntries => {
+    const { userID, user } = client.userInfo;
+    return [{ value: userID, label: user }];
+  };
+
   slackEventNames = ['message', 'im_marked'];
   currentUserID: string;
   // { DABC: 'read', DIII: 'unread }
   receivedMessagesChannels = {};
 
-  constructor(currentUserID: string) {
-    super();
-    this.currentUserID = currentUserID;
+  static options = [
+    {
+      ID: 'currentUserID',
+      required: true,
+      values: DirectMessage.fetchCurrentUser,
+      controlType: 'hidden'
+    }
+  ];
+
+
+  constructor(optionValues: optionsValuesType) {
+    super(DirectMessage.options, optionValues);
+    this.currentUserID = optionValues.currentUserID.value;
   }
 
   // Override to check that it is a generic message

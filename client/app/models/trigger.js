@@ -1,6 +1,6 @@
 // @flow
 
-export type options = { [string]: any };
+import type { optionsValuesType } from '../integrations/base';
 
 export type triggerPerformType = {
   triggeredAt: Date,
@@ -10,8 +10,8 @@ export type triggerPerformType = {
 export type triggerAttrs = {
   providerName: string,
   type: string,
-  options?: options,
-  lastPerform?: triggerPerformType
+  options?: optionsValuesType,
+  lastPerform?: ?triggerPerformType
 };
 
 export type triggerType = {

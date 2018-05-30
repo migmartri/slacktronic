@@ -7,7 +7,8 @@ import SubscriptionsContainer from '../../containers/SubscriptionsContainer';
 
 type Props = {
   slackConfigured: boolean,
-  onLoad: () => void
+  onLoad: (boolean) => void,
+  location: { state?: { skipInit: boolean }}
 };
 
 class HomeComponent extends Component<Props> {
@@ -28,8 +29,10 @@ class HomeComponent extends Component<Props> {
     );
   }
 
-  async componentDidMount() {
-    this.props.onLoad();
+  componentDidMount() {
+    const { state } = this.props.location;
+    const skipInit = !!(state && state.skipInit);
+    this.props.onLoad(skipInit);
   }
 
   render() {

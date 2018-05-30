@@ -4,6 +4,7 @@ import slackTriggerSaga from './integrations/slack/triggers';
 import slackProviderSaga from './integrations/slack/providerSaga';
 import serialComProviderSaga from './integrations/serialCom/providerSaga';
 import subscriptionsSaga from './sagas/subscriptionsSaga';
+import diskStoreSaga from './sagas/diskStoreSaga';
 
 const sagas = [
   // Providers
@@ -14,7 +15,8 @@ const sagas = [
   // Triggers
   slackTriggerSaga,
   // Misc
-  subscriptionsSaga
+  subscriptionsSaga,
+  diskStoreSaga
 ];
 
 export default function* root() {
