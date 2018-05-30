@@ -28,6 +28,9 @@ class TriggerOrAction {
   // Validates that the required options are present
   constructor(triggerActionOptions: triggerOptionsTypes, optionsValues: optionsValuesType) {
     triggerActionOptions.filter(opt => opt.required).forEach(opt => {
+      const option = optionsValues[opt.ID];
+      if (!option) throw new Error(`${opt.ID} is required`);
+
       const { value } = optionsValues[opt.ID];
       if (!value || value === '') throw new Error(`${opt.ID} is required`);
     });
