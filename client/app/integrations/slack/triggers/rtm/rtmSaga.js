@@ -48,6 +48,9 @@ function* processSlackEvent(event) {
   yield all(registeredTriggers.map(t => call(processTrigger, event, t)));
 }
 
+// This will contain the list of initialized triggers so they can keep state between calls
+const initializedTriggers = {};
+
 function* processTrigger(event, t) {
   const TriggerTypeClass = AVAILABLE_SLACK_TRIGGERS[t.type];
   if (!TriggerTypeClass) {
@@ -55,7 +58,14 @@ function* processTrigger(event, t) {
     return;
   }
 
-  const trigger = new TriggerTypeClass(t.options);
+  let trigger = initializedTriggers[t.ID];
+  if (!trigger) {
+    trigger = new TriggerTypeClass(t.options);
+    initializedTriggers[t.ID] = trigger;
+    debug('Initialized trigger not found, initializing %o', trigger);
+  } else {
+    debug('Loading initialized trigger from cache %o', trigger);
+  }
 
   debug('Processing event %o on trigger %o', event, trigger);
   if (trigger.shouldTrigger(event)) {

@@ -55,7 +55,7 @@ export default class SubscriptionComponent extends React.Component<Props> {
 
     return (
       Object.keys(options).map(key => (
-        <p>{options[key].label}</p>
+        <p key={key}>{options[key].label}</p>
       ))
     );
   }
