@@ -44,14 +44,17 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
     },
     {
       ID: 'channelID',
+      label: 'Channel the message was sent to',
       required: false,
       values: ChannelMessage.fetchChannels,
       controlType: 'select'
     },
     {
       ID: 'messageRegexp',
+      label: 'Match the message body with this regular expression',
       required: false,
       controlType: 'input',
+      placeholder: 'Leave empty to match all the messages'
     }
   ];
 

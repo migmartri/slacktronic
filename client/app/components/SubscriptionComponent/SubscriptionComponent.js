@@ -5,6 +5,7 @@ import TimeAgoJS from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import { Icon, Card, Divider } from 'antd';
 import type { subscriptionType } from '../../models/subscription';
+import type { triggerOptionsTypes, optionsValuesType } from '../../integrations/base';
 import type { actionType } from '../../models/action';
 import type { triggerType } from '../../models/trigger';
 import styles from './subscription.scss';
@@ -49,20 +50,30 @@ export default class SubscriptionComponent extends React.Component<Props> {
     return providerActions[action.type];
   }
 
-  triggerOrActionOptions = (actionOrTrigger: actionType | triggerType) => {
-    const { options } = actionOrTrigger;
+  triggerOrActionOptions = (options: ?optionsValuesType, optionsDef: triggerOptionsTypes) => {
     if (!options) return;
 
+    const visibleOptions = Object.keys(options).filter(key => {
+      const def = optionsDef.find(od => od.ID === key);
+      return !def || def.controlType !== 'hidden';
+    });
+
     return (
-      Object.keys(options).map(key => (
-        <p key={key}>{options[key].label}</p>
-      ))
+      visibleOptions.map(key => {
+        const def = optionsDef.find(od => od.ID === key);
+        if (!def || !options) return '';
+        return (
+          <p key={key}>
+            {def.label || def.ID}: &quot;{options[key].label || options[key].value}&quot;
+          </p>
+        );
+      })
     );
   }
 
   render() {
-    const { metadata: triggerMetadata } = this.triggerKlass;
-    const { metadata: actionMetadata } = this.actionKlass;
+    const { metadata: triggerMetadata, options: triggerOptions } = this.triggerKlass;
+    const { metadata: actionMetadata, options: actionOptions } = this.actionKlass;
     return (
       <div>
         <Card>
@@ -77,12 +88,10 @@ export default class SubscriptionComponent extends React.Component<Props> {
               <Icon type="delete" />
             </a>
           </div>
-          <Divider orientation="left">Trigger: {triggerMetadata.name}</Divider>
-          <p>
-            {triggerMetadata.description} ({ this.lastPerformInfo })
-          </p>
+          <Divider orientation="left">Trigger: {triggerMetadata.description} ({ this.lastPerformInfo })</Divider>
+          { this.triggerOrActionOptions(this.props.trigger.options, triggerOptions) }
           <Divider orientation="left">Action: {actionMetadata.name}</Divider>
-          { this.triggerOrActionOptions(this.props.action) }
+          { this.triggerOrActionOptions(this.props.action.options, actionOptions) }
         </Card>
       </div>
     );

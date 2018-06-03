@@ -2,13 +2,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Form, Button, Select, Input } from 'antd';
+import { Form, Button, Select, Input, Divider } from 'antd';
 import { AVAILABLE_TRIGGERS, AVAILABLE_ACTIONS } from '../../integrations';
 import type { actionAttrs } from '../../models/action';
 import type { triggerAttrs } from '../../models/trigger';
 import SlackClient from '../../integrations/slack/client';
 import * as subscriptionActions from '../../actions/subscriptions';
 import type { craftSubPayload } from '../../actions/subscriptions';
+import styles from './newSubscription.scss';
 
 const FormItem = Form.Item;
 const { Option, OptGroup } = Select;
@@ -131,7 +132,8 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     availableOptions
   ): React.Node {
     return (
-      <FormItem label={propName.toUpperCase()} required="true">
+      <FormItem required="true">
+        <Divider orientation="left">{propName.toUpperCase()}</Divider>
         <Select onChange={this.handleTriggerOrActionChange}>
           {
             Object.keys(availableOptions).map(provName => (
@@ -145,9 +147,11 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
             ))
           }
         </Select>
-        { /* Options */ }
-        { propName === 'trigger' && this.triggerOrActionOptions(propName, this.state.trigger, this.state.allOptionsAndValues[propName]) }
-        { propName === 'action' && this.triggerOrActionOptions(propName, this.state.action, this.state.allOptionsAndValues[propName]) }
+        <div className={styles['trigger-action-options']}>
+          { /* Options */ }
+          { propName === 'trigger' && this.triggerOrActionOptions(propName, this.state.trigger, this.state.allOptionsAndValues[propName]) }
+          { propName === 'action' && this.triggerOrActionOptions(propName, this.state.action, this.state.allOptionsAndValues[propName]) }
+        </div>
       </FormItem>
     );
   }
@@ -169,7 +173,7 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
         const { opt, optionValues } = optAndVal;
         const current = options[opt.ID].value;
         return (
-          <FormItem key={opt.ID} label={opt.ID} required={opt.required}>
+          <FormItem key={opt.ID} label={opt.label || opt.ID} required={opt.required} >
             <Select defaultValue={`${type}@${opt.ID}@${current}`} onChange={this.handleTriggerOrActionOption}>
               {
                 optionValues.map(optVal => (
@@ -188,8 +192,13 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
         const { opt } = optAndVal;
         const c = (e) => this.handleTriggerOrActionOptionInputChange(e.target.value, type, opt.ID);
         return (
-          <FormItem key={opt.ID} label={opt.ID} required={opt.required}>
-            <Input triggeroraction={type} optionid={opt.ID} onChange={c} />
+          <FormItem key={opt.ID} label={opt.label || opt.ID} required={opt.required}>
+            <Input
+              placeholder={opt.placeholder}
+              triggeroraction={type}
+              optionid={opt.ID}
+              onChange={c}
+            />
           </FormItem>
         );
       });
