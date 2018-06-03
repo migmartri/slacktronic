@@ -69,7 +69,7 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     const allOptionsAndValues = await this.loadOptionValues(klass.options);
     allOptionsAndValues.forEach(optAndVal => {
       const { optionValues } = optAndVal;
-      options[optAndVal.opt.ID] = optionValues ? optionValues[0] : '';
+      options[optAndVal.opt.ID] = optionValues ? optionValues[0] : { value: '' };
     });
 
     this.setState({
@@ -121,7 +121,7 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     this.setState({
       [propType]: {
         ...this.state[propType],
-        options: { ...this.state[propType].options, [optionID]: { value: optionValue }},
+        options: { ...this.state[propType].options, [optionID]: { value: optionValue } },
       }
     });
   }
@@ -183,7 +183,6 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   }
 
   inputOptions(type, options, allOptionsAndValues): React.node {
-    console.warn(this.state, allOptionsAndValues);
     return allOptionsAndValues.filter(optAndVal => optAndVal.opt.controlType === 'input')
       .map(optAndVal => {
         const { opt } = optAndVal;
@@ -197,7 +196,6 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   }
 
   render() {
-    console.warn(this.state);
     return (
       <Form onSubmit={this.handleSubscriptionSubmit}>
         { this.triggerForm('trigger', AVAILABLE_TRIGGERS) }

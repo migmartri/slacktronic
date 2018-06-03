@@ -31,6 +31,7 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
   currentUserID: string;
   // Channel in which we want to monitor messages
   channelID: string;
+  messageRegexp: string;
   // { DABC: 'read', DIII: 'unread }
   receivedMessagesChannels = {};
 
@@ -48,7 +49,7 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
       controlType: 'select'
     },
     {
-      ID: 'messageRegex',
+      ID: 'messageRegexp',
       required: false,
       controlType: 'input',
     }
@@ -58,8 +59,12 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
     super(ChannelMessage.options, optionValues);
     this.currentUserID = optionValues.currentUserID.value;
     const channelID = optionValues.channelID.value;
+    const messageRegexp = optionValues.messageRegexp.value;
     if (channelID !== '') {
       this.channelID = channelID;
+    }
+    if (messageRegexp !== '') {
+      this.messageRegexp = messageRegexp;
     }
   }
 
@@ -86,12 +91,14 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
   )
 
   assertChannel = (event: slackEventType): boolean => (
-    !event.channel.match(/^D.*/) && (!this.channelID || this.channelID === event.channel)
+    !/^D.*/.test(event.channe) && (!this.channelID || this.channelID === event.channel)
   )
 
-  assertMessageRegexp = (event: slackEventType): boolean => (
-    true
-  )
+  assertMessageRegexp = (event: slackEventType): boolean => {
+    if (!this.messageRegexp) return true;
+    const re = RegExp(this.messageRegexp);
+    return re.test(event.text);
+  }
 
   triggerValue = (event: { type: string, channel: string }): boolean => {
     const { channel } = event;
