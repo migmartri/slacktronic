@@ -10,7 +10,7 @@ export type valuesFuncType = (...args?: any) => valuesEntries;
 type controlType = 'select' | 'input' | 'hidden';
 
 export type triggerOptionsTypes = {
-  ID: string, required: boolean, values: valuesFuncType, controlType: controlType
+  ID: string, required: boolean, values?: valuesFuncType, controlType: controlType
 }[];
 
 type metadataType = {

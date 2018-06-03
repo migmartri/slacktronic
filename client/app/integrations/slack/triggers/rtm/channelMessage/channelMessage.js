@@ -22,7 +22,8 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
     const values = channels.channels.map(c => (
       { value: c.id, label: `#${c.name}` }
     ));
-    values.unshift({ value: '*', label: 'Any channel' });
+    // TODO, rely on non required values
+    values.unshift({ label: 'Any channel', value: '' });
     return values;
   };
 
@@ -42,9 +43,14 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
     },
     {
       ID: 'channelID',
-      required: true,
+      required: false,
       values: ChannelMessage.fetchChannels,
       controlType: 'select'
+    },
+    {
+      ID: 'messageRegex',
+      required: false,
+      controlType: 'input',
     }
   ];
 
@@ -52,7 +58,7 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
     super(ChannelMessage.options, optionValues);
     this.currentUserID = optionValues.currentUserID.value;
     const channelID = optionValues.channelID.value;
-    if (channelID !== '*') {
+    if (channelID !== '') {
       this.channelID = channelID;
     }
   }
@@ -62,7 +68,8 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
   shouldTrigger = (event: slackEventType): boolean => {
     // It is not a direct message or sent by me or already registered
     if (event.type === 'message' &&
-      this.inDesiredChannel(event) &&
+      this.assertChannel(event) &&
+      this.assertMessageRegexp(event) &&
       !this.isUnread(event.channel) &&
       event.user !== this.currentUserID) {
       return true;
@@ -78,9 +85,13 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
     this.receivedMessagesChannels[channelID] === 'unread'
   )
 
-  inDesiredChannel = (event: slackEventType): boolean => {
-    return !event.channel.match(/^D.*/) && (!this.channelID || this.channelID === event.channel)
-  }
+  assertChannel = (event: slackEventType): boolean => (
+    !event.channel.match(/^D.*/) && (!this.channelID || this.channelID === event.channel)
+  )
+
+  assertMessageRegexp = (event: slackEventType): boolean => (
+    true
+  )
 
   triggerValue = (event: { type: string, channel: string }): boolean => {
     const { channel } = event;
