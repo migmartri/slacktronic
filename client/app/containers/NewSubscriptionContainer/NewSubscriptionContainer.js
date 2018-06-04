@@ -2,13 +2,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Form, Button, Select } from 'antd';
+import { Form, Button, Select, Input, Divider } from 'antd';
 import { AVAILABLE_TRIGGERS, AVAILABLE_ACTIONS } from '../../integrations';
 import type { actionAttrs } from '../../models/action';
 import type { triggerAttrs } from '../../models/trigger';
 import SlackClient from '../../integrations/slack/client';
 import * as subscriptionActions from '../../actions/subscriptions';
 import type { craftSubPayload } from '../../actions/subscriptions';
+import styles from './newSubscription.scss';
 
 const FormItem = Form.Item;
 const { Option, OptGroup } = Select;
@@ -68,8 +69,8 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     // Fetches all the options
     const allOptionsAndValues = await this.loadOptionValues(klass.options);
     allOptionsAndValues.forEach(optAndVal => {
-      // eslint-disable-next-line prefer-destructuring
-      options[optAndVal.opt.ID] = optAndVal.optionValues[0];
+      const { optionValues } = optAndVal;
+      options[optAndVal.opt.ID] = optionValues ? optionValues[0] : { value: '' };
     });
 
     this.setState({
@@ -85,6 +86,11 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     // Regular for allows to use await
     for (let i = 0; i < options.length; i += 1) {
       const opt = options[i];
+      // The configuration option might not contain options.
+      if (!opt.values) {
+        allOptionsAndValues.push({ opt });
+        break;
+      }
       // eslint-disable-next-line no-await-in-loop
       const optionValues = await opt.values(this.props.slackClient);
       allOptionsAndValues.push({ opt, optionValues });
@@ -112,12 +118,22 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
     });
   }
 
+  handleTriggerOrActionOptionInputChange = (optionValue, propType, optionID: string): void => {
+    this.setState({
+      [propType]: {
+        ...this.state[propType],
+        options: { ...this.state[propType].options, [optionID]: { value: optionValue } },
+      }
+    });
+  }
+
   triggerForm(
     propName: string,
     availableOptions
   ): React.Node {
     return (
-      <FormItem label={propName.toUpperCase()} required="true">
+      <FormItem required="true">
+        <Divider orientation="left">{propName.toUpperCase()}</Divider>
         <Select onChange={this.handleTriggerOrActionChange}>
           {
             Object.keys(availableOptions).map(provName => (
@@ -131,9 +147,11 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
             ))
           }
         </Select>
-        { /* Options */ }
-        { propName === 'trigger' && this.triggerOrActionOptions(propName, this.state.trigger, this.state.allOptionsAndValues[propName]) }
-        { propName === 'action' && this.triggerOrActionOptions(propName, this.state.action, this.state.allOptionsAndValues[propName]) }
+        <div className={styles['trigger-action-options']}>
+          { /* Options */ }
+          { propName === 'trigger' && this.triggerOrActionOptions(propName, this.state.trigger, this.state.allOptionsAndValues[propName]) }
+          { propName === 'action' && this.triggerOrActionOptions(propName, this.state.action, this.state.allOptionsAndValues[propName]) }
+        </div>
       </FormItem>
     );
   }
@@ -141,25 +159,49 @@ class NewSubscriptionComponent extends React.Component<Props, State> {
   triggerOrActionOptions(type, triggerOrAction, allOptionsAndValues): React.Node {
     const { options } = triggerOrAction;
     if (!allOptionsAndValues) return;
-
     return (
-      allOptionsAndValues.filter(optAndVal => optAndVal.opt.controlType === 'select')
-        .map(optAndVal => {
-          const { opt, optionValues } = optAndVal;
-          const current = options[opt.ID].value;
-          return (
-            <FormItem key={opt.ID} label={opt.ID} required={opt.required}>
-              <Select defaultValue={`${type}@${opt.ID}@${current}`} onChange={this.handleTriggerOrActionOption}>
-                {
-                  optionValues.map(optVal => (
-                    <Option key={optVal.value} value={`${type}@${opt.ID}@${optVal.value}`}>{optVal.label}</Option>
-                ))
-                }
-              </Select>
-            </FormItem>
-          );
-        })
+      <div>
+        { this.selectOptions(type, options, allOptionsAndValues) }
+        { this.inputOptions(type, options, allOptionsAndValues) }
+      </div>
     );
+  }
+
+  selectOptions(type, options, allOptionsAndValues): React.node {
+    return allOptionsAndValues.filter(optAndVal => optAndVal.opt.controlType === 'select')
+      .map(optAndVal => {
+        const { opt, optionValues } = optAndVal;
+        const current = options[opt.ID].value;
+        return (
+          <FormItem key={opt.ID} label={opt.label || opt.ID} required={opt.required} >
+            <Select defaultValue={`${type}@${opt.ID}@${current}`} onChange={this.handleTriggerOrActionOption}>
+              {
+                optionValues.map(optVal => (
+                  <Option key={optVal.value} value={`${type}@${opt.ID}@${optVal.value}`}>{optVal.label}</Option>
+              ))
+              }
+            </Select>
+          </FormItem>
+        );
+      });
+  }
+
+  inputOptions(type, options, allOptionsAndValues): React.node {
+    return allOptionsAndValues.filter(optAndVal => optAndVal.opt.controlType === 'input')
+      .map(optAndVal => {
+        const { opt } = optAndVal;
+        const c = (e) => this.handleTriggerOrActionOptionInputChange(e.target.value, type, opt.ID);
+        return (
+          <FormItem key={opt.ID} label={opt.label || opt.ID} required={opt.required}>
+            <Input
+              placeholder={opt.placeholder}
+              triggeroraction={type}
+              optionid={opt.ID}
+              onChange={c}
+            />
+          </FormItem>
+        );
+      });
   }
 
   render() {

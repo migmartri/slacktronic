@@ -14,6 +14,7 @@ class Message extends TriggerOrAction implements ActionType {
     {
       ID: 'payload',
       required: true,
+      label: 'Payload',
       values: Message.availableChars,
       controlType: 'select'
     }
