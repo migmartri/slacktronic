@@ -110,7 +110,7 @@ function* sendMessage(message: serialMessage) {
 function* watchReceivedActionPerform() {
   // Use action channel to queue actions.
   // We need it since we want to enforce serialized messaging with delay
-  const requestChan = yield actionChannel(actionTypes.ACTION_PERFORM)
+  const requestChan = yield actionChannel(actionTypes.ACTION_PERFORM);
 
   while (true) {
     const action = yield take(requestChan);
