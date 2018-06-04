@@ -1,4 +1,4 @@
-import { put, all, take, call, takeEvery } from 'redux-saga/effects';
+import { put, all, take, call, takeEvery, actionChannel } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 
 import shortID from 'shortid';
@@ -76,7 +76,7 @@ function send(payload: string) {
         // Add some time between successful messages
         // TODO(miguel) Use ack and ready byte instead
         debug('message "%s" sent', payload);
-        setTimeout(() => resolve(), 400);
+        resolve();
       });
     });
   });
@@ -107,23 +107,33 @@ function* sendMessage(message: serialMessage) {
   }
 }
 
-function* processReceivedActionPerform(action) {
-  debug('ActionPerform received %o', action);
-  const referencedSerialAction = registeredActions.find((a) => a.ID === action.data.ID);
-  if (!referencedSerialAction) return;
-  debug('SerialCom action found %o', referencedSerialAction);
+function* watchReceivedActionPerform() {
+  // Use action channel to queue actions.
+  // We need it since we want to enforce serialized messaging with delay
+  const requestChan = yield actionChannel(actionTypes.ACTION_PERFORM)
 
-  const { enabled } = action.data;
+  while (true) {
+    const action = yield take(requestChan);
 
-  // Initialize a message instance to extract its payload
-  const messageInstance = new Message(referencedSerialAction.options);
-  let { payload } = messageInstance;
+    debug('ActionPerform received %o', action);
+    const referencedSerialAction = registeredActions.find((a) => a.ID === action.data.ID);
+    if (!referencedSerialAction) return;
+    debug('SerialCom action found %o', referencedSerialAction);
 
-  payload = enabled ? payload.toUpperCase() : payload;
-  // Store the message in the store
-  const message = yield call(createMessage, payload);
-  // Block until message is sent
-  yield call(sendMessage, message);
+    const { enabled } = action.data;
+
+    // Initialize a message instance to extract its payload
+    const messageInstance = new Message(referencedSerialAction.options);
+    let { payload } = messageInstance;
+
+    payload = enabled ? payload.toUpperCase() : payload;
+    // Store the message in the store
+    const message = yield call(createMessage, payload);
+    // Block until message is sent
+    yield call(sendMessage, message);
+    // Add some delay between messages
+    yield delay(500);
+  }
 }
 
 function watchSerialComActionsCreation(action) {
@@ -167,7 +177,7 @@ function* rootSlackSaga() {
     call(watchProviderInitialized),
     takeEvery(actionTypes.ACTION_CREATE, watchSerialComActionsCreation),
     takeEvery(actionTypes.ACTION_DELETE, watchSerialComActionsDeletion),
-    takeEvery(actionTypes.ACTION_PERFORM, processReceivedActionPerform)
+    call(watchReceivedActionPerform)
   ]);
 }
 
