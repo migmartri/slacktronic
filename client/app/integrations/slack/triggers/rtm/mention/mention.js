@@ -45,7 +45,7 @@ class Mention extends SlackTrigger implements TriggerType {
       A mention includes the following pattern with the userID <@xxxxxx>
     */
     const strMatcher = `<@${this.currentUserID}>`;
-    if (event.type === 'message' && event.text && event.text.match(strMatcher)) {
+    if (event.type === 'message' && event.user !== this.currentUserID && event.text && event.text.match(strMatcher)) {
       return true;
     }
     return event.type === 'channel_marked';
