@@ -21,28 +21,62 @@ describe('Mention subscription type', () => {
   });
 
   describe('#shouldTrigger', () => {
-    it('responds based on the senderID the msg content and event type', () => {
-      const testCases = [
-        // type = 'message'
-        { event: { type: 'message', text: `<@${userID}>`, user: 'ANOTHERUSER' }, result: true },
-        { event: { type: 'message', text: `<@${userID}> hi there`, user: 'ANOTHERUSER' }, result: true },
-        { event: { type: 'message', text: `Buddy <@${userID}> hi there`, user: 'ANOTHERUSER' }, result: true },
-        { event: { type: 'message', text: '<@ANOTHER_USER>', user: 'USER' }, result: false },
-        { event: { type: 'message', text: `<@${userID}> hi there`, user: 'ANOTHERUSER' }, result: true },
-        { event: { type: 'message', text: `<${userID}> hi there`, user: 'ANOTHERUSER' }, result: false },
-        { event: { type: 'message', text: `Buddy @${userID} hi there`, user: 'ANOTHERUSER' }, result: false },
-        // Not sent from me
-        { event: { type: 'message', text: `<@${userID}> hi there`, user: userID }, result: false },
-        // message_replied does not have inf
-        { event: { type: 'message', user: userID }, result: false },
-        { event: { type: 'BOGUS' }, result: false },
-        // type = channel_marked
-        { event: { type: 'channel_marked' }, result: true },
-      ];
+    context('when event.type = message', () => {
+      it('responds based on the senderID the msg content and event type', () => {
+        const testCases = [
+          // type = 'message'
+          { event: { type: 'message', text: `<@${userID}>`, user: 'ANOTHERUSER' }, result: true },
+          { event: { type: 'message', text: `<@${userID}> hi there`, user: 'ANOTHERUSER' }, result: true },
+          { event: { type: 'message', text: `Buddy <@${userID}> hi there`, user: 'ANOTHERUSER' }, result: true },
+          { event: { type: 'message', text: '<@ANOTHER_USER>', user: 'USER' }, result: false },
+          { event: { type: 'message', text: `<@${userID}> hi there`, user: 'ANOTHERUSER' }, result: true },
+          { event: { type: 'message', text: `<${userID}> hi there`, user: 'ANOTHERUSER' }, result: false },
+          { event: { type: 'message', text: `Buddy @${userID} hi there`, user: 'ANOTHERUSER' }, result: false },
+          // Not sent from me
+          { event: { type: 'message', text: `<@${userID}> hi there`, user: userID }, result: false },
+          // message_replied does not have inf
+          { event: { type: 'message', user: 'ANOTHERUSER' }, result: false },
+        ];
 
-      testCases.forEach(tc => (
-        expect(mentionInstance.shouldTrigger(tc.event)).toEqual(tc.result)
-      ));
+        testCases.forEach(tc => (
+          expect(mentionInstance.shouldTrigger(tc.event)).toEqual(tc.result)
+        ));
+      });
+
+      it('returns false the second time if channel already registered', () => {
+        const event = {
+          type: 'message', text: `<@${userID}>`, channel: 'foo', user: 'ANOTHERUSER'
+        };
+        expect(mentionInstance.shouldTrigger(event)).toBeTruthy();
+        expect(mentionInstance.triggerValue(event)).toBeTruthy();
+        expect(mentionInstance.shouldTrigger(event)).toBeFalsy();
+      });
+    });
+
+    context('when event.type = channel_marked', () => {
+      it('returns false if it does not hasUnreadMessages', () => {
+        const event = {
+          type: 'channel_marked'
+        };
+        expect(mentionInstance.shouldTrigger(event)).toBeFalsy();
+
+        mentionInstance.receivedMessagesChannels.foo = 'read';
+        expect(mentionInstance.shouldTrigger(event)).toBeFalsy();
+      });
+
+      it('returns true if it hasUnreadMessages', () => {
+        const event = {
+          type: 'channel_marked'
+        };
+        mentionInstance.receivedMessagesChannels.foo = 'unread';
+        expect(mentionInstance.shouldTrigger(event)).toBeTruthy();
+      });
+    });
+
+    context('when event.type = anything-else', () => {
+      it('returns false', () => {
+        expect(mentionInstance.shouldTrigger({ type: 'bogus' })).toBeFalsy();
+      });
     });
   });
 
