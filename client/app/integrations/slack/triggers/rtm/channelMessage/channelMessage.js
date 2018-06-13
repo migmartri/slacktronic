@@ -62,12 +62,17 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
     super(ChannelMessage.options, optionValues);
     this.currentUserID = optionValues.currentUserID.value;
     const channelID = optionValues.channelID.value;
-    const messageRegexp = optionValues.messageRegexp.value;
+
+    // messageRegexp is not required but we still pass it
+    if (optionValues.messageRegexp) {
+      const messageRegexp = optionValues.messageRegexp.value;
+      if (messageRegexp !== '') {
+        this.messageRegexp = messageRegexp;
+      }
+    }
+
     if (channelID !== '') {
       this.channelID = channelID;
-    }
-    if (messageRegexp !== '') {
-      this.messageRegexp = messageRegexp;
     }
   }
 
