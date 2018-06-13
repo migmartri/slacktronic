@@ -21,30 +21,28 @@ describe('Mention subscription type', () => {
   });
 
   describe('#shouldTrigger', () => {
-    it('returns true if we receive a message with my user ID', () => {
-      const testCases = [`<@${userID}>`, `<@${userID}> hi there`, `Buddy <@${userID}> hi there`];
-      testCases.forEach(c => (
-        expect(mentionInstance.shouldTrigger({ type: 'message', text: c })).toBeTruthy()
+    it('responds based on the senderID the msg content and event type', () => {
+      const testCases = [
+        // type = 'message'
+        { event: { type: 'message', text: `<@${userID}>`, user: 'ANOTHERUSER' }, result: true },
+        { event: { type: 'message', text: `<@${userID}> hi there`, user: 'ANOTHERUSER' }, result: true },
+        { event: { type: 'message', text: `Buddy <@${userID}> hi there`, user: 'ANOTHERUSER' }, result: true },
+        { event: { type: 'message', text: '<@ANOTHER_USER>', user: 'USER' }, result: false },
+        { event: { type: 'message', text: `<@${userID}> hi there`, user: 'ANOTHERUSER' }, result: true },
+        { event: { type: 'message', text: `<${userID}> hi there`, user: 'ANOTHERUSER' }, result: false },
+        { event: { type: 'message', text: `Buddy @${userID} hi there`, user: 'ANOTHERUSER' }, result: false },
+        // Not sent from me
+        { event: { type: 'message', text: `<@${userID}> hi there`, user: userID }, result: false },
+        // message_replied does not have inf
+        { event: { type: 'message', user: userID }, result: false },
+        { event: { type: 'BOGUS' }, result: false },
+        // type = channel_marked
+        { event: { type: 'channel_marked' }, result: true },
+      ];
+
+      testCases.forEach(tc => (
+        expect(mentionInstance.shouldTrigger(tc.event)).toEqual(tc.result)
       ));
-    });
-
-    it('returns false if we receive a message not including my user ID', () => {
-      const testCases = ['<@anotherUser>', `<${userID}> hi there`, `Buddy @${userID} hi there`, 'Hi'];
-      testCases.forEach(c => (
-        expect(mentionInstance.shouldTrigger({ type: 'message', text: c })).toBeFalsy()
-      ));
-    });
-
-    it('returns false if we receive a message without text a.k.a message_replied', () => {
-      expect(mentionInstance.shouldTrigger({ type: 'message' })).toBeFalsy();
-    });
-
-    it('returns true if we receive a channel_marked event', () => {
-      expect(mentionInstance.shouldTrigger({ type: 'channel_marked' })).toBeTruthy();
-    });
-
-    it('returns false if another event type is sent', () => {
-      expect(mentionInstance.shouldTrigger({ type: 'BOGUS' })).toBeFalsy();
     });
   });
 
