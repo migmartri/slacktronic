@@ -46,7 +46,7 @@ class Mention extends SlackTrigger implements TriggerType {
     */
 
     if (event.type === 'message' &&
-      this.assertMessageRegexp(event.text, `<@${this.currentUserID}>`) &&
+      event.text && this.assertMessageRegexp(event.text, `<@${this.currentUserID}>`) &&
       !this.isUnread(this.receivedMessagesChannels, event.channel) &&
       event.user !== this.currentUserID) {
       return true;

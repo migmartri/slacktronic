@@ -3,7 +3,7 @@
 import TriggerOrAction from '../../../base';
 
 export type slackEventType = { type: string, ...{[string]: string} };
-type channelReadInfo = { [string]: 'unread' | 'read' }; 
+type channelReadInfo = { [string]: 'unread' | 'read' };
 
 class SlackTrigger extends TriggerOrAction {
   slackEventNames: string[];
@@ -17,14 +17,13 @@ class SlackTrigger extends TriggerOrAction {
   )
 
   assertMessageRegexp = (text: string, regstr: string): boolean => {
-    const re = RegExp(regstr);
+    const re = RegExp(regstr, 'i');
     return re.test(text);
   }
 
-  hasUnreadMessages = (channels: channelReadInfo): boolean => {
-    return Object.keys(channels).length > 0 && Object.values(channels).includes('unread');
-  }
-
+  hasUnreadMessages = (channels: channelReadInfo): boolean => (
+    Object.keys(channels).length > 0 && Object.values(channels).includes('unread')
+  )
 }
 
 export default SlackTrigger;

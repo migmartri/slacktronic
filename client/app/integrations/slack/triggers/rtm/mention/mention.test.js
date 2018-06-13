@@ -35,7 +35,7 @@ describe('Mention subscription type', () => {
           // Not sent from me
           { event: { type: 'message', text: `<@${userID}> hi there`, user: userID }, result: false },
           // message_replied does not have inf
-          { event: { type: 'message', user: userID }, result: false },
+          { event: { type: 'message', user: 'ANOTHERUSER' }, result: false },
         ];
 
         testCases.forEach(tc => (

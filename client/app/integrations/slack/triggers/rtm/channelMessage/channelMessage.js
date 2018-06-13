@@ -61,9 +61,7 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
   constructor(optionValues: optionsValuesType) {
     super(ChannelMessage.options, optionValues);
     this.currentUserID = optionValues.currentUserID.value;
-    const channelID = optionValues.channelID.value;
 
-    // messageRegexp is not required but we still pass it
     if (optionValues.messageRegexp) {
       const messageRegexp = optionValues.messageRegexp.value;
       if (messageRegexp !== '') {
@@ -71,8 +69,11 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
       }
     }
 
-    if (channelID !== '') {
-      this.channelID = channelID;
+    if (optionValues.channelID) {
+      const channelID = optionValues.channelID.value;
+      if (channelID !== '') {
+        this.channelID = channelID;
+      }
     }
   }
 
@@ -81,8 +82,9 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
   shouldTrigger = (event: slackEventType): boolean => {
     // It is not a direct message or sent by me or already registered
     if (event.type === 'message' &&
+      !event.thread_ts && // for now we ignore threads
       this.assertChannel(event) &&
-      this.assertMessageRegexp(event.text, this.messageRegexp || '.*') &&
+      event.text && this.assertMessageRegexp(event.text, this.messageRegexp || '.*') &&
       !this.isUnread(this.receivedMessagesChannels, event.channel) &&
       event.user !== this.currentUserID) {
       return true;
@@ -109,7 +111,7 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
     // We flag any possible channel to read
     this.receivedMessagesChannels[channel] = 'read';
     // We return false if all the messages have been read
-    return this.hasUnreadMessages;
+    return this.hasUnreadMessages(this.receivedMessagesChannels);
   }
 }
 
