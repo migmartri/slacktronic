@@ -44,27 +44,15 @@ class Mention extends SlackTrigger implements TriggerType {
     /*
       A mention includes the following pattern with the userID <@xxxxxx>
     */
+
     if (event.type === 'message' &&
-      this.assertMessageRegexp(event) &&
-      !this.isUnread(event.channel) &&
+      this.assertMessageRegexp(event.text, `<@${this.currentUserID}>`) &&
+      !this.isUnread(this.receivedMessagesChannels, event.channel) &&
       event.user !== this.currentUserID) {
       return true;
     }
 
-    return event.type === 'channel_marked' && this.hasUnreadMessages;
-  }
-
-  isUnread = (channelID: string): boolean => (
-    this.receivedMessagesChannels[channelID] === 'unread'
-  )
-
-  assertMessageRegexp = (event: slackEventType): boolean => {
-    const re = RegExp(`<@${this.currentUserID}>`);
-    return re.test(event.text);
-  }
-
-  get hasUnreadMessages(): boolean {
-    return Object.keys(this.receivedMessagesChannels).length > 0 && Object.values(this.receivedMessagesChannels).includes('unread');
+    return event.type === 'channel_marked' && this.hasUnreadMessages(this.receivedMessagesChannels);
   }
 
   triggerValue = (event: { type: string, channel: string }): boolean => {

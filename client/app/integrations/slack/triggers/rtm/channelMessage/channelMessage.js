@@ -82,31 +82,17 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
     // It is not a direct message or sent by me or already registered
     if (event.type === 'message' &&
       this.assertChannel(event) &&
-      this.assertMessageRegexp(event) &&
-      !this.isUnread(event.channel) &&
+      this.assertMessageRegexp(event.text, this.messageRegexp || '.*') &&
+      !this.isUnread(this.receivedMessagesChannels, event.channel) &&
       event.user !== this.currentUserID) {
       return true;
     }
-    return event.type === 'channel_marked' && this.hasUnreadMessages;
+    return event.type === 'channel_marked' && this.hasUnreadMessages(this.receivedMessagesChannels);
   }
-
-  get hasUnreadMessages(): boolean {
-    return Object.values(this.receivedMessagesChannels).includes('unread');
-  }
-
-  isUnread = (channelID: string): boolean => (
-    this.receivedMessagesChannels[channelID] === 'unread'
-  )
 
   assertChannel = (event: slackEventType): boolean => (
     !/^D.*/.test(event.channe) && (!this.channelID || this.channelID === event.channel)
   )
-
-  assertMessageRegexp = (event: slackEventType): boolean => {
-    if (!this.messageRegexp) return true;
-    const re = RegExp(this.messageRegexp);
-    return re.test(event.text);
-  }
 
   triggerValue = (event: { type: string, channel: string }): boolean => {
     const { channel } = event;
