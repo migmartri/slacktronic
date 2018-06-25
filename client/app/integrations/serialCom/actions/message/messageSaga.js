@@ -1,4 +1,4 @@
-import { put, all, take, call, takeEvery, actionChannel, fork, cancel, cancelled } from 'redux-saga/effects';
+import { put, all, take, call, takeEvery, fork, cancel, cancelled } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 
 import shortID from 'shortid';
@@ -87,7 +87,7 @@ function* sendMessage(message: serialMessage) {
   for (let i = 0; i < 5; i += 1) {
     try {
       // Add some delay between messages so they can get canceled
-      yield delay(1000);
+      yield delay(7000);
       yield call(validateClient);
       yield call(send, message.payload);
       yield call(updateMessageStatus, message.ID, { status: MessageStatus.sent });
@@ -133,10 +133,13 @@ function* watchReceivedActionPerform(action) {
   let { payload } = messageInstance;
 
   payload = enabled ? payload.toUpperCase() : payload;
-  // Store the message in the store
-  const message = yield call(createMessage, payload);
-  // Block until message is sent
-  const task = yield fork(sendMessage, message);
+
+  // Do not enqueue the same message twice
+  if (messagesQueue[payload]) {
+    debug('Message with same payload already queued, ignoring...')
+    return;
+  }
+
   // If there is a pending message with the opposite payload we cancel it
   // We want to cancel for example A -> a, so we do not send A
   // In practice this is a debounce method but canceling each other based on the payload
@@ -145,9 +148,13 @@ function* watchReceivedActionPerform(action) {
     debug('Opposite pending message to be sent found %o, canceling...', oppositeTask);
     yield cancel(oppositeTask);
     messagesQueue[payload.toUpperCase()] = null;
-  } else {
-    messagesQueue[payload] = task;
   }
+
+  // Store the message in the store
+  const message = yield call(createMessage, payload);
+  // Block until message is sent
+  const task = yield fork(sendMessage, message);
+  messagesQueue[payload] = task;
 }
 
 function watchSerialComActionsCreation(action) {
