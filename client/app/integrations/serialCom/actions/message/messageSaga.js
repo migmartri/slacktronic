@@ -86,7 +86,7 @@ function* sendMessage(message: serialMessage) {
   // Retry the communication
   for (let i = 0; i < 5; i += 1) {
     try {
-      // Add some delay between messages so they can get canceled
+      // Add some delay between messages so they can get cancelled
       yield delay(7000);
       yield call(validateClient);
       yield call(send, message.payload);
@@ -136,7 +136,7 @@ function* watchReceivedActionPerform(action) {
 
   // Do not enqueue the same message twice
   if (messagesQueue[payload]) {
-    debug('Message with same payload already queued, ignoring...')
+    debug('Message with same payload already queued, ignoring...');
     return;
   }
 
