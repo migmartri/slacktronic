@@ -111,7 +111,7 @@ function* sendMessage(message: serialMessage) {
         debug('Message send canceled %o', message.payload);
         yield call(
           updateMessageStatus,
-          message.ID, { status: MessageStatus.abborted }
+          message.ID, { status: MessageStatus.aborted }
         );
       }
     }
