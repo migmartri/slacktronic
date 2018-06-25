@@ -1,4 +1,4 @@
-import { put, all, take, call, takeEvery, actionChannel } from 'redux-saga/effects';
+import { put, all, take, call, takeEvery, actionChannel, fork, cancel, cancelled } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 
 import shortID from 'shortid';
@@ -86,9 +86,12 @@ function* sendMessage(message: serialMessage) {
   // Retry the communication
   for (let i = 0; i < 5; i += 1) {
     try {
+      // Add some delay between messages so they can get canceled
+      yield delay(1000);
       yield call(validateClient);
       yield call(send, message.payload);
       yield call(updateMessageStatus, message.ID, { status: MessageStatus.sent });
+      messagesQueue[message.payload] = null;
       return;
     } catch (err) {
       if (i < 4) {
@@ -103,36 +106,47 @@ function* sendMessage(message: serialMessage) {
           message.ID, { status: MessageStatus.error, errorMessage: err.message }
         );
       }
+    } finally {
+      if (yield cancelled()) {
+        debug('Message send canceled %o', message.payload);
+        yield call(
+          updateMessageStatus,
+          message.ID, { status: MessageStatus.aborted }
+        );
+      }
     }
   }
 }
 
-function* watchReceivedActionPerform() {
-  // Use action channel to queue actions.
-  // We need it since we want to enforce serialized messaging with delay
-  const requestChan = yield actionChannel(actionTypes.ACTION_PERFORM);
+const messagesQueue = {}; // [[payload]: [task]]
 
-  while (true) {
-    const action = yield take(requestChan);
+function* watchReceivedActionPerform(action) {
+  debug('ActionPerform received %o', action);
+  const referencedSerialAction = registeredActions.find((a) => a.ID === action.data.ID);
+  if (!referencedSerialAction) return;
+  debug('SerialCom action found %o', referencedSerialAction);
 
-    debug('ActionPerform received %o', action);
-    const referencedSerialAction = registeredActions.find((a) => a.ID === action.data.ID);
-    if (!referencedSerialAction) return;
-    debug('SerialCom action found %o', referencedSerialAction);
+  const { enabled } = action.data;
 
-    const { enabled } = action.data;
+  // Initialize a message instance to extract its payload
+  const messageInstance = new Message(referencedSerialAction.options);
+  let { payload } = messageInstance;
 
-    // Initialize a message instance to extract its payload
-    const messageInstance = new Message(referencedSerialAction.options);
-    let { payload } = messageInstance;
-
-    payload = enabled ? payload.toUpperCase() : payload;
-    // Store the message in the store
-    const message = yield call(createMessage, payload);
-    // Block until message is sent
-    yield call(sendMessage, message);
-    // Add some delay between messages
-    yield delay(500);
+  payload = enabled ? payload.toUpperCase() : payload;
+  // Store the message in the store
+  const message = yield call(createMessage, payload);
+  // Block until message is sent
+  const task = yield fork(sendMessage, message);
+  // If there is a pending message with the opposite payload we cancel it
+  // We want to cancel for example A -> a, so we do not send A
+  // In practice this is a debounce method but canceling each other based on the payload
+  const oppositeTask = messagesQueue[payload.toUpperCase()];
+  if (oppositeTask) {
+    debug('Opposite pending message to be sent found %o, canceling...', oppositeTask);
+    yield cancel(oppositeTask);
+    messagesQueue[payload.toUpperCase()] = null;
+  } else {
+    messagesQueue[payload] = task;
   }
 }
 
@@ -177,7 +191,7 @@ function* rootSlackSaga() {
     call(watchProviderInitialized),
     takeEvery(actionTypes.ACTION_CREATE, watchSerialComActionsCreation),
     takeEvery(actionTypes.ACTION_DELETE, watchSerialComActionsDeletion),
-    call(watchReceivedActionPerform)
+    takeEvery(actionTypes.ACTION_PERFORM, watchReceivedActionPerform),
   ]);
 }
 
