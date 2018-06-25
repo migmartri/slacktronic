@@ -22,8 +22,8 @@ class TimelineComponent extends React.Component<Props> {
 
   static badgeClassName(m: serialMessage) {
     const toBadgeStatus = {
-      pending: 'default',
-      sending: 'processing',
+      pending: 'processing',
+      aborted: 'default',
       sent: 'success',
       error: 'error',
     };

@@ -4,6 +4,7 @@ const serialMessageStatus = {
   pending: 'pending',
   sent: 'sent',
   error: 'error',
+  aborted: 'aborted',
 };
 
 type MessageStatusType = $Keys<typeof serialMessageStatus>;
