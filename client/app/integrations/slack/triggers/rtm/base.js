@@ -7,6 +7,10 @@ type channelReadInfo = { [string]: 'unread' | 'read' };
 
 class SlackTrigger extends TriggerOrAction {
   slackEventNames: string[];
+  // Delay time in milliseconds since the message gets enqueued until it gets sent.
+  // This time can be used to cancel this trigger out if
+  // the opposite one arrived within this time window.
+  debounceTime = 500;
   // Assigning typed static options does not work.
   shouldTrigger = (slackEvent: slackEventType): boolean => (
     !!this.slackEventNames && this.slackEventNames.includes(slackEvent.type)

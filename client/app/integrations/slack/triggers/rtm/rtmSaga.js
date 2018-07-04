@@ -69,7 +69,7 @@ function* processTrigger(event, t) {
 
   debug('Processing event %o on trigger %o', event, trigger);
   if (trigger.shouldTrigger(event)) {
-    yield put(triggersActions.triggered(t.ID, trigger.triggerValue(event)));
+    yield put(triggersActions.triggered(t.ID, trigger.triggerValue(event), trigger.debounceTime));
     debug('Triggering %o', trigger);
   }
 }

@@ -17,6 +17,8 @@ class DirectMessage extends SlackTrigger implements TriggerType {
     return [{ value: userID, label: user }];
   };
 
+  // debounceTime override since the reception of the im_marked cancelation can take some time
+  debounceTime = 5000;
   slackEventNames = ['message', 'im_marked'];
   currentUserID: string;
   // { DABC: 'read', DIII: 'unread }

@@ -28,6 +28,8 @@ class ChannelMessage extends SlackTrigger implements TriggerType {
   };
 
   slackEventNames = ['message', 'channel_marked'];
+  // debounceTime override since the reception of the channel_marked cancelation can take some time
+  debounceTime = 5000;
   currentUserID: string;
   // Channel in which we want to monitor messages
   channelID: string;
