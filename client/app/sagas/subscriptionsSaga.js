@@ -137,7 +137,7 @@ function* processTrigger(trigger, subscription) {
   debug('Checking subscription %o on trigger %o', subscription, triggerID);
   if (triggerID === subscription.triggerID) {
     debug('Subscription %o contains trigger, dispatching action %o', subscription, subscription.actionID);
-    yield put(actionsActions.perform(subscription.actionID, enabled));
+    yield put(actionsActions.perform(subscription.actionID, enabled, trigger.debounceTime));
   }
 }
 

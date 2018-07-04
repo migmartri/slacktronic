@@ -17,6 +17,8 @@ class DirectMessage extends SlackTrigger implements TriggerType {
     return [{ value: userID, label: user }];
   };
 
+  // debounceTime override since the reception of the im_marked cancelation can take some time
+  debounceTime = 5000;
   slackEventNames = ['message', 'im_marked'];
   currentUserID: string;
   // { DABC: 'read', DIII: 'unread }
@@ -51,7 +53,7 @@ class DirectMessage extends SlackTrigger implements TriggerType {
         event.subtype !== 'bot_message') {
       return true;
     }
-    return event.type === 'im_marked';
+    return event.type === 'im_marked' && this.hasUnreadMessages(this.receivedMessagesChannels);
   }
 
   triggerValue = (event: { type: string, channel: string }): boolean => {

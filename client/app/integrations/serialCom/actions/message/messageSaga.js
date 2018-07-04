@@ -82,12 +82,13 @@ function send(payload: string) {
   });
 }
 
-function* sendMessage(message: serialMessage) {
+function* sendMessage(message: serialMessage, debounceTime: number) {
   // Retry the communication
   for (let i = 0; i < 5; i += 1) {
     try {
       // Add some delay between messages so they can get cancelled
-      yield delay(7000);
+      debug('Message %o queued and will be sent in %oms unless canceled', message.payload, debounceTime);
+      yield delay(debounceTime);
       yield call(validateClient);
       yield call(send, message.payload);
       yield call(updateMessageStatus, message.ID, { status: MessageStatus.sent });
@@ -127,12 +128,15 @@ function* watchReceivedActionPerform(action) {
   debug('SerialCom action found %o', referencedSerialAction);
 
   const { enabled } = action.data;
+  let { debounceTime } = action.data;
 
   // Initialize a message instance to extract its payload
   const messageInstance = new Message(referencedSerialAction.options);
   let { payload } = messageInstance;
 
   payload = enabled ? payload.toUpperCase() : payload;
+  // If we are turning off an actuator we do not wait
+  if (!enabled) debounceTime = 0;
 
   // Do not enqueue the same message twice
   if (messagesQueue[payload]) {
@@ -153,7 +157,7 @@ function* watchReceivedActionPerform(action) {
   // Store the message in the store
   const message = yield call(createMessage, payload);
   // Block until message is sent
-  const task = yield fork(sendMessage, message);
+  const task = yield fork(sendMessage, message, debounceTime);
   messagesQueue[payload] = task;
 }
 
