@@ -40,10 +40,15 @@ class DirectMessage extends SlackTrigger implements TriggerType {
   // Override to check that it is a generic message
   // This subscription cares only about direct messages and im_read notifications
   shouldTrigger = (event: slackEventType): boolean => {
-    /* A direct message in the RTM API means can be detected checking that the channel starts
-     with a D. We also check that the message is not from the currentUser
+    /* - It's a direct message means that the channel starts with a D.
+       - Check that the currentUser is not the one that sent it
+       - Check that it is not a bot the one that sends a message https://github.com/migmartri/slacktronic/issues/67
     */
-    if (event.type === 'message' && event.channel.match(/^D.*/) && event.user !== this.currentUserID) {
+    if (event.type === 'message' &&
+        event.channel.match(/^D.*/) &&
+        event.user !== this.currentUserID &&
+        event.hidden !== true &&
+        event.subtype !== 'bot_message') {
       return true;
     }
     return event.type === 'im_marked';
@@ -64,7 +69,7 @@ class DirectMessage extends SlackTrigger implements TriggerType {
     // We flag any possible channel to read
     this.receivedMessagesChannels[channel] = 'read';
     // We return false if all the messages have been read
-    return Object.values(this.receivedMessagesChannels).includes('unread');
+    return this.hasUnreadMessages(this.receivedMessagesChannels);
   }
 }
 
