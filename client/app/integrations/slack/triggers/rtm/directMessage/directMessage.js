@@ -51,7 +51,7 @@ class DirectMessage extends SlackTrigger implements TriggerType {
         event.subtype !== 'bot_message') {
       return true;
     }
-    return event.type === 'im_marked';
+    return event.type === 'im_marked' && this.hasUnreadMessages(this.receivedMessagesChannels);
   }
 
   triggerValue = (event: { type: string, channel: string }): boolean => {

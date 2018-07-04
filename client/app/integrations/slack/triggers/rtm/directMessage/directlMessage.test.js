@@ -50,10 +50,21 @@ describe('DirectMessage trigger type', () => {
     });
 
     context('when event.type = im_marked', () => {
-      it('returns true', () => {
+      it('returns false if it does not hasUnreadMessages', () => {
         const event = {
           type: 'im_marked'
         };
+        expect(dmInstance.shouldTrigger(event)).toBeFalsy();
+
+        dmInstance.receivedMessagesChannels.foo = 'read';
+        expect(dmInstance.shouldTrigger(event)).toBeFalsy();
+      });
+
+      it('returns true if it hasUnreadMessages', () => {
+        const event = {
+          type: 'im_marked'
+        };
+        dmInstance.receivedMessagesChannels.foo = 'unread';
         expect(dmInstance.shouldTrigger(event)).toBeTruthy();
       });
     });
