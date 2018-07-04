@@ -2,7 +2,7 @@
 
 import TriggerOrAction from '../../../base';
 
-export type slackEventType = { type: string, ...{[string]: string} };
+export type slackEventType = { type: string, ...{[string]: any} };
 type channelReadInfo = { [string]: 'unread' | 'read' };
 
 class SlackTrigger extends TriggerOrAction {
