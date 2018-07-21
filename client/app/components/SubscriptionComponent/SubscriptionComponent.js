@@ -3,7 +3,7 @@ import * as React from 'react';
 import { TimeAgo } from 'react-time-ago';
 import TimeAgoJS from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
-import { Icon, Card, Divider } from 'antd';
+import { Icon, Card, Divider, Switch } from 'antd';
 import type { subscriptionType } from '../../models/subscription';
 import type { triggerOptionsTypes, optionsValuesType } from '../../integrations/base';
 import type { actionType } from '../../models/action';
@@ -18,20 +18,36 @@ type Props = {
   subscription: subscriptionType,
   action: actionType,
   trigger: triggerType,
-  onDelete: (subscriptionType) => void
+  onDelete: (subscriptionType) => void,
+  onManualTrigger: (trigger: triggerType, checked: boolean) => void
 };
 
 export default class SubscriptionComponent extends React.Component<Props> {
   props: Props;
 
+  triggerSubscriptionChange = (checked: boolean) => {
+    this.props.onManualTrigger(this.props.trigger, checked);
+  }
+
   get lastPerformInfo(): React.Node {
     const { lastPerform } = this.props.trigger;
-    if (!lastPerform) return 'No triggered yet';
 
-    const lastTriggeredAt = lastPerform.triggeredAt;
-    const enabled = lastPerform.enabled ? 'ON' : 'OFF';
+    const res = [
+      <span title="Manually trigger the subscription">
+        <Switch
+          checked={lastPerform && lastPerform.enabled}
+          onChange={this.triggerSubscriptionChange}
+        />
+      </span>
+    ];
+    /* eslint-disable function-paren-newline */
+    if (lastPerform) {
+      res.push(
+        <React.Fragment> - triggered <TimeAgo>{lastPerform.triggeredAt}</TimeAgo></React.Fragment>
+      );
+    }
 
-    return <span>{enabled} <TimeAgo>{lastTriggeredAt}</TimeAgo></span>;
+    return res;
   }
 
   deleteSubscription = () => {
@@ -88,7 +104,8 @@ export default class SubscriptionComponent extends React.Component<Props> {
               <Icon type="delete" />
             </a>
           </div>
-          <Divider orientation="left">Trigger: {triggerMetadata.description} ({ this.lastPerformInfo })</Divider>
+          <Divider orientation="left">Trigger: {triggerMetadata.description}</Divider>
+          { this.lastPerformInfo }
           { this.triggerOrActionOptions(this.props.trigger.options, triggerOptions) }
           <Divider orientation="left">Action: {actionMetadata.name}</Divider>
           { this.triggerOrActionOptions(this.props.action.options, actionOptions) }
