@@ -3412,7 +3412,7 @@ electron-publish@20.23.1:
     lazy-val "^1.0.3"
     mime "^2.3.1"
 
-electron-rebuild@^1.7.3:
+electron-rebuild@1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/electron-rebuild/-/electron-rebuild-1.8.1.tgz#9f3d53eaecde9c0a9abad2c9d148868de87b0825"
   dependencies:
