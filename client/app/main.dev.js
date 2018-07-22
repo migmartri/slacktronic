@@ -11,6 +11,7 @@
  * @flow
  */
 import { app, BrowserWindow } from 'electron';
+import { autoUpdater } from 'electron-updater';
 import MenuBuilder from './menu';
 import TrayMenuBuilder from './tray-menu';
 
@@ -87,4 +88,6 @@ app.on('ready', async () => {
 
   const trayMenuBuilder = new TrayMenuBuilder(mainWindow);
   trayMenuBuilder.buildMenu();
+
+  autoUpdater.checkForUpdatesAndNotify();
 });
