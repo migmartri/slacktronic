@@ -48,7 +48,7 @@ export default class MenuBuilder {
         { label: 'Examples', click() { shell.openExternal('https://github.com/migmartri/slacktronic/tree/master/devices'); } },
         { label: 'Search Issues', click() { shell.openExternal('https://github.com/migmartri/slacktronic/issues'); } },
         { type: 'separator' },
-        { label: 'Quit', accelerator: 'Command+Q', click: () => { app.quit(); } }
+        { label: 'Quit', accelerator: 'Command+Q', click: () => { app.isQuiting = true; app.quit(); } }
       ]
     };
     const subMenuViewDev = {
@@ -84,7 +84,7 @@ export default class MenuBuilder {
         { label: 'Examples', click() { shell.openExternal('https://github.com/migmartri/slacktronic/tree/master/devices'); } },
         { label: 'Search Issues', click() { shell.openExternal('https://github.com/migmartri/slacktronic/issues'); } },
         { type: 'separator' },
-        { label: '&Close', accelerator: 'Ctrl+W', click: () => { this.mainWindow.close(); } }
+        { label: '&Quit', accelerator: 'Ctrl+W', click: () => { app.isQuiting = true; app.quit(); } }
       ]
     }, {
       label: '&View',

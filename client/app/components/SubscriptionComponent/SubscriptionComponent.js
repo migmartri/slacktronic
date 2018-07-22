@@ -33,7 +33,7 @@ export default class SubscriptionComponent extends React.Component<Props> {
     const { lastPerform } = this.props.trigger;
 
     const res = [
-      <span title="Manually trigger the subscription">
+      <span key="switch" title="Manually trigger the subscription">
         <Switch
           checked={lastPerform && lastPerform.enabled}
           onChange={this.triggerSubscriptionChange}
@@ -43,11 +43,11 @@ export default class SubscriptionComponent extends React.Component<Props> {
     /* eslint-disable function-paren-newline */
     if (lastPerform) {
       res.push(
-        <React.Fragment> - triggered <TimeAgo>{lastPerform.triggeredAt}</TimeAgo></React.Fragment>
+        <span key="time"> - triggered <TimeAgo>{lastPerform.triggeredAt}</TimeAgo></span>
       );
     }
 
-    return res;
+    return <p>{res}</p>;
   }
 
   deleteSubscription = () => {
