@@ -1,7 +1,7 @@
 {
   "name": "slacktronic",
   "productName": "Slacktronic",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Connect your Slack workspace to Arduino",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
@@ -43,7 +43,7 @@
       "package.json"
     ],
     "extraResources": [
-       "resources"
+      "resources"
     ],
     "dmg": {
       "contents": [
@@ -193,6 +193,7 @@
     "devtron": "^1.4.0",
     "electron-debug": "^1.5.0",
     "electron-store": "^1.3.0",
+    "electron-updater": "^3.0.3",
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",
     "node-abi": "2.4.3",
