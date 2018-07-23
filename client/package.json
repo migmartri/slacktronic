@@ -1,7 +1,7 @@
 {
   "name": "slacktronic",
   "productName": "Slacktronic",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Connect your Slack workspace to Arduino",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",

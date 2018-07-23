@@ -2,6 +2,9 @@
 import { app, BrowserWindow, Tray, nativeImage, Menu } from 'electron';
 import path from 'path';
 
+// Keep a global reference of the tray icon to avoid problems with garbage collector
+let tray: ?Tray = null;
+
 export default class TrayMenuBuilder {
   mainWindow: BrowserWindow;
 
@@ -30,7 +33,7 @@ export default class TrayMenuBuilder {
       }
     ]);
 
-    const tray = new Tray(nimage);
+    tray = new Tray(nimage);
     tray.setContextMenu(contextMenu);
 
     this.mainWindow.on('close', (event) => {
