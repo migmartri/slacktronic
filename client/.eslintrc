@@ -10,6 +10,9 @@
     "node": true,
     "jest/globals": true
   },
+  "globals": {
+    "VERSION": true
+  },
   "rules": {
     "arrow-parens": ["off"],
     "no-case-declarations": ["off"],
