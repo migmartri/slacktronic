@@ -4,7 +4,11 @@
 
 import path from 'path';
 import webpack from 'webpack';
+import GitRevisionPlugin from 'git-revision-webpack-plugin';
+
 import { dependencies as externals } from './app/package.json';
+
+const gitRevisionPlugin = new GitRevisionPlugin({ lightweightTags: true });
 
 export default {
   externals: Object.keys(externals || {}),
@@ -45,5 +49,8 @@ export default {
     }),
 
     new webpack.NamedModulesPlugin(),
+    new webpack.DefinePlugin({
+      VERSION: JSON.stringify(gitRevisionPlugin.version()),
+    })
   ],
 };
