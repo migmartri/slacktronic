@@ -19,7 +19,7 @@ class AppComponent extends React.Component<Props> {
     return (
       <div>
         {this.props.children}
-        <div style={{ textAlign: 'right' }}>
+        <div style={{ textAlign: 'right', marginTop: '1em' }}>
           <p>
             Version: &nbsp;
             <a onClick={AppComponent.openUrl} href="https://github.com/migmartri/slacktronic/releases">

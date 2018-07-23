@@ -4,9 +4,12 @@ import { Card } from 'antd';
 import { Link } from 'react-router-dom';
 import styles from './HomeComponent.scss';
 import SubscriptionsContainer from '../../containers/SubscriptionsContainer';
+import LoadingPageWrapper from '../LoadingWrapperComponent';
+import type { AppInitializationStatus } from '../../reducers/app';
 
 type Props = {
   slackConfigured: boolean,
+  appInitializationStatus: AppInitializationStatus,
   onLoad: (boolean) => void,
   location: { state?: { skipInit: boolean }}
 };
@@ -38,8 +41,10 @@ class HomeComponent extends Component<Props> {
   render() {
     return (
       <div className={styles.home}>
-        { !this.props.slackConfigured && HomeComponent.slackConfigInfo() }
-        { this.props.slackConfigured && <SubscriptionsContainer /> }
+        <LoadingPageWrapper loaded={this.props.appInitializationStatus === 'finished'}>
+          { !this.props.slackConfigured && HomeComponent.slackConfigInfo() }
+          { this.props.slackConfigured && <SubscriptionsContainer /> }
+        </LoadingPageWrapper>
       </div>
     );
   }
