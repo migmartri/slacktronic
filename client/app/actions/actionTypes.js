@@ -3,6 +3,9 @@
 const prefix = 'slacktronic';
 
 const actions = [
+  'APP_INITIALIZE',
+  'APP_INITIALIZED',
+  'APP_INITIALIZATION_ERROR',
   'SUBSCRIPTION_CRAFT',
   'SUBSCRIPTION_CREATE',
   'SUBSCRIPTION_DELETE',

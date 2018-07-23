@@ -7,6 +7,7 @@ import actions from './actions';
 import triggers from './triggers';
 import serial from './serial';
 import providers from './providers';
+import app from './app';
 
 
 const rootReducer = combineReducers({
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   triggers,
   router,
   providers,
+  app
 });
 
 export default rootReducer;
