@@ -13,7 +13,6 @@ export default class TrayMenuBuilder {
   }
 
   buildMenu() {
-    console.warn(process.platform)
     let trayIcon = path.join(__dirname, '../resources/icons/tray/default.png');
     if (process.platform === 'darwin') {
       trayIcon = path.join(__dirname, '../resources/icons/tray/mac.png');
@@ -21,7 +20,6 @@ export default class TrayMenuBuilder {
       trayIcon = path.join(__dirname, '../resources/icons/tray/windows.ico');
     }
 
-    console.warn(trayIcon)
     const nimage = nativeImage.createFromPath(trayIcon);
 
     const contextMenu = Menu.buildFromTemplate([
