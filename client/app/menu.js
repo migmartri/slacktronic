@@ -51,13 +51,16 @@ export default class MenuBuilder {
         { label: 'Quit', accelerator: 'Command+Q', click: () => { app.isQuiting = true; app.quit(); } }
       ]
     };
-    const subMenuWindow = {
-      label: 'Window',
+    const subMenuEdit = {
+      label: 'Edit',
       submenu: [
-        { label: 'Minimize', accelerator: 'Command+M', selector: 'performMiniaturize:' },
-        { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
+        { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
+        { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
         { type: 'separator' },
-        { label: 'Bring All to Front', selector: 'arrangeInFront:' }
+        { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
+        { label: 'Copy', accelerator: 'Command+C', selector: 'copy:' },
+        { label: 'Paste', accelerator: 'Command+V', selector: 'paste:' },
+        { label: 'Select All', accelerator: 'Command+A', selector: 'selectAll:' }
       ]
     };
     const subMenuViewDev = {
