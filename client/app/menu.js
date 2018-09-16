@@ -51,6 +51,15 @@ export default class MenuBuilder {
         { label: 'Quit', accelerator: 'Command+Q', click: () => { app.isQuiting = true; app.quit(); } }
       ]
     };
+    const subMenuWindow = {
+      label: 'Window',
+      submenu: [
+        { label: 'Minimize', accelerator: 'Command+M', selector: 'performMiniaturize:' },
+        { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
+        { type: 'separator' },
+        { label: 'Bring All to Front', selector: 'arrangeInFront:' }
+      ]
+    };
     const subMenuViewDev = {
       label: 'View',
       submenu: [
@@ -72,6 +81,7 @@ export default class MenuBuilder {
 
     return [
       subMenuAbout,
+      subMenuEdit,
       subMenuView,
     ];
   }
