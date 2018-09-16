@@ -13,13 +13,15 @@ export default class TrayMenuBuilder {
   }
 
   buildMenu() {
-    let trayIcon = path.join(__dirname, '../resources/icon.png');
+    console.warn(process.platform)
+    let trayIcon = path.join(__dirname, '../resources/icons/tray/default.png');
     if (process.platform === 'darwin') {
-      trayIcon = path.join(__dirname, '../resources/icon.icns');
+      trayIcon = path.join(__dirname, '../resources/icons/tray/mac.png');
     } else if (process.platform === 'win32') { // This is also win64
-      trayIcon = path.join(__dirname, '../resources/icon.ico');
+      trayIcon = path.join(__dirname, '../resources/icons/tray/windows.ico');
     }
 
+    console.warn(trayIcon)
     const nimage = nativeImage.createFromPath(trayIcon);
 
     const contextMenu = Menu.buildFromTemplate([
