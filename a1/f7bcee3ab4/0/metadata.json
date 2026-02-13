@@ -1,0 +1,31 @@
+{
+  "cli_version": "0.4.4",
+  "checkpoint_id": "a1f7bcee3ab4",
+  "session_id": "b736ca2f-949c-4268-9256-cde29afb9521",
+  "strategy": "manual-commit",
+  "created_at": "2026-02-13T22:47:40.269866Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "REPOSITORY_REPORT.md"
+  ],
+  "agent": "Claude Code",
+  "transcript_identifier_at_start": "21f1117f-b5ef-4d63-948a-2cbb71a2d107",
+  "token_usage": {
+    "input_tokens": 92,
+    "cache_creation_tokens": 33764,
+    "cache_read_tokens": 378137,
+    "output_tokens": 1001,
+    "api_call_count": 11
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-13T22:47:40.225297Z",
+    "agent_lines": 194,
+    "human_added": 93,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 287,
+    "agent_percentage": 67.59581881533101
+  },
+  "transcript_path": ".claude/projects/-Users-miguelmartinez-work-chainloop-playground-slacktronic/b736ca2f-949c-4268-9256-cde29afb9521.jsonl"
+}
