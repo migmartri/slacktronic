@@ -1,0 +1,27 @@
+{
+  "cli_version": "0.11.3",
+  "checkpoint_id": "b6ab34c8ae39",
+  "strategy": "manual-commit",
+  "branch": "fix/client-vulnerable-deps",
+  "checkpoints_count": 10,
+  "files_touched": [
+    "client/package.json",
+    "client/yarn.lock"
+  ],
+  "sessions": [
+    {
+      "metadata": "/b6/ab34c8ae39/0/metadata.json",
+      "transcript": "/b6/ab34c8ae39/0/full.jsonl",
+      "compact_transcript": "/b6/ab34c8ae39/0/transcript.jsonl",
+      "content_hash": "/b6/ab34c8ae39/0/content_hash.txt",
+      "prompt": "/b6/ab34c8ae39/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 100,
+    "cache_creation_tokens": 50457,
+    "cache_read_tokens": 3500814,
+    "output_tokens": 22489,
+    "api_call_count": 48
+  }
+}
